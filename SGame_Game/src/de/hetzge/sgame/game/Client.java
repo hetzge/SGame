@@ -35,14 +35,14 @@ public class Client extends BaseGame {
 
 		ApplicationConfig.INSTANCE.modulePool.registerModules(this.libGdxModule, this.renderModule);
 
-		RenderConfig.INSTANCE.initRenderablePool = (renderablePool) -> {
+		RenderConfig.INSTANCE.initRenderableConsumers.add((renderablePool) -> {
 			renderablePool.registerRenderableRessource(new RenderableKey().animationKey(AnimationKey.TEST), new LibGdxRenderableTexture("assets/test.png"));
 
 			renderablePool.registerRenderableRessource(IF_RenderableKey.DEFAULT_RENDERABLE_KEY, new PixmapWrapper("assets/ground/grass.png"));
 
 			renderablePool.registerRenderableRessource(Client.GROUND_GRASS_RENDERABLE_KEY, new PixmapWrapper("assets/ground/grass.png"));
 			renderablePool.registerRenderableRessource(Client.GROUND_DESERT_RENDERABLE_KEY, new PixmapWrapper("assets/ground/desert.png"));
-		};
+		});
 	}
 
 	public static void main(String[] args) {

@@ -32,4 +32,18 @@ public class RenderablePool implements IF_Renderable<IF_RenderableContext> {
 		}
 	}
 
+	@Override
+	public void renderShapes(IF_RenderableContext context) {
+		for (IF_Renderable<IF_RenderableContext> if_Renderable : this.toRenderComponents) {
+			if_Renderable.renderShapes(context);
+		}
+	}
+
+	@Override
+	public void renderFilledShapes(IF_RenderableContext context) {
+		for (IF_Renderable<IF_RenderableContext> if_Renderable : this.toRenderComponents) {
+			if_Renderable.renderFilledShapes(context);
+		}
+	}
+
 }

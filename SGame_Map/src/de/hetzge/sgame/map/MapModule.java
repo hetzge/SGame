@@ -32,4 +32,14 @@ public class MapModule implements IF_Module, IF_Renderable<IF_RenderableContext>
 		MapConfig.INSTANCE.getTileMap().render(context);
 	}
 
+	@Override
+	public void renderShapes(IF_RenderableContext context) {
+		MapConfig.INSTANCE.getTileMap().renderShapes(context);
+	}
+
+	@Override
+	public void renderFilledShapes(IF_RenderableContext context) {
+		MapConfig.INSTANCE.getTileMap().renderFilledShapes(context);
+	}
+
 }

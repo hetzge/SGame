@@ -37,4 +37,12 @@ public class EntityModule implements IF_Module, IF_Renderable<IF_RenderableConte
 		EntityConfig.INSTANCE.entityPool.render(context);
 	}
 
+	@Override
+	public void renderShapes(IF_RenderableContext context) {
+	}
+
+	@Override
+	public void renderFilledShapes(IF_RenderableContext context) {
+	}
+
 }

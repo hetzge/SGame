@@ -127,4 +127,12 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 		}
 	}
 
+	@Override
+	public void renderShapes(IF_RenderableContext context) {
+	}
+
+	@Override
+	public void renderFilledShapes(IF_RenderableContext context) {
+	}
+
 }

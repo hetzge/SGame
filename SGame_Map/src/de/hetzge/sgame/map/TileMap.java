@@ -1,6 +1,8 @@
 package de.hetzge.sgame.map;
 
 import java.io.Serializable;
+import java.util.Set;
+import java.util.function.Consumer;
 
 import de.hetzge.sgame.common.activemap.ActiveMap;
 import de.hetzge.sgame.common.definition.IF_Collision;
@@ -60,10 +62,19 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 
 		@Override
 		public boolean isCollision(int x, int y) {
-			int tileX = x - (x % TileMap.this.collisionTileFactor) / TileMap.this.collisionTileFactor;
-			int tileY = y - (y % TileMap.this.collisionTileFactor) / TileMap.this.collisionTileFactor;
+			int tileX = (x - (x % TileMap.this.collisionTileFactor)) / TileMap.this.collisionTileFactor;
+			int tileY = (y - (y % TileMap.this.collisionTileFactor)) / TileMap.this.collisionTileFactor;
+			boolean isMapCollision = TileMap.this.tiles[tileX][tileY].tileDefinition.getCollision().isCollision(x % TileMap.this.collisionTileFactor, y % TileMap.this.collisionTileFactor);
+			if (isMapCollision)
+				return true;
 
-			return TileMap.this.tiles[tileX][tileY].tileDefinition.getCollision().isCollision(x % TileMap.this.collisionTileFactor, y % TileMap.this.collisionTileFactor);
+			Set<Boolean> connectedObjects = TileMap.this.entityCollisionMap.getConnectedObjects(x, y);
+			for (Boolean aBoolean : connectedObjects) {
+				if (aBoolean)
+					return true;
+			}
+
+			return false;
 		}
 
 		@Override
@@ -101,7 +112,33 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 
 	@Override
 	public void render(IF_RenderableContext context) {
+		this.iterateVisibleTiles((tile) -> {
+			RenderUtil.render(context, tile);
+		});
+	}
 
+	@Override
+	public void renderShapes(IF_RenderableContext context) {
+		this.iterateVisibleTiles((tile) -> {
+			RenderUtil.render(context, new IF_RenderInformation() {
+				@Override
+				public Rectangle getRenderedRectangle() {
+					return tile.renderedRectangle;
+				}
+
+				@Override
+				public IF_RenderableKey getRenderableKey() {
+					return IF_RenderableKey.DEFAULT_RECTANGLE_KEY;
+				}
+			});
+		});
+	}
+
+	@Override
+	public void renderFilledShapes(IF_RenderableContext context) {
+	}
+
+	private void iterateVisibleTiles(Consumer<Tile> consumer) {
 		int startX = (int) Math.floor(RenderConfig.INSTANCE.viewport.getStartPosition().getX() / this.tileSize);
 		int startY = (int) Math.floor(RenderConfig.INSTANCE.viewport.getStartPosition().getY() / this.tileSize);
 		int endX = startX + (int) Math.ceil(RenderConfig.INSTANCE.viewport.getDimension().getWidth() / this.tileSize) + 1;
@@ -118,7 +155,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		for (int x = startX; x < endX; x++) {
 			for (int y = startY; y < endY; y++) {
 				TileMap<CONTEXT>.Tile tile = this.tiles[x][y];
-				RenderUtil.render(context, tile);
+				consumer.accept(tile);
 			}
 		}
 	}
@@ -167,4 +204,5 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	public float getCollisionTileSize() {
 		return this.collisionTileSize;
 	}
+
 }

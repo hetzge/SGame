@@ -1,5 +1,7 @@
 package de.hetzge.sgame.libgdx;
 
+import java.util.function.Consumer;
+
 import org.lwjgl.opengl.GL11;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -8,14 +10,19 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import de.hetzge.sgame.common.geometry.Dimension;
 import de.hetzge.sgame.common.geometry.Position;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableContext;
 import de.hetzge.sgame.render.RenderConfig;
+import de.hetzge.sgame.render.RenderablePool;
 
 public class LibGdxApplication implements ApplicationListener {
 	private SpriteBatch batch;
+	private ShapeRenderer shapeRenderer;
+	private ShapeRenderer filledShapeRenderer;
 	private OrthographicCamera camera;
 	private LibGdxRenderableContext libGdxRenderableContext;
 	private final FPSLogger fpsLogger;
@@ -32,10 +39,14 @@ public class LibGdxApplication implements ApplicationListener {
 	public void create() {
 		this.camera = new OrthographicCamera();
 		this.batch = new SpriteBatch();
-		this.libGdxRenderableContext = new LibGdxRenderableContext(this.batch);
+		this.shapeRenderer = new ShapeRenderer();
+		this.filledShapeRenderer = new ShapeRenderer();
+		this.libGdxRenderableContext = new LibGdxRenderableContext(this.batch, this.shapeRenderer, this.filledShapeRenderer);
 		this.camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-		RenderConfig.INSTANCE.initRenderablePool.accept(RenderConfig.INSTANCE.renderablePool);
+		for (Consumer<RenderablePool> consumer : RenderConfig.INSTANCE.initRenderableConsumers) {
+			consumer.accept(RenderConfig.INSTANCE.renderablePool);
+		}
 	}
 
 	@Override
@@ -51,10 +62,16 @@ public class LibGdxApplication implements ApplicationListener {
 		this.batch.setProjectionMatrix(this.camera.combined);
 
 		this.batch.begin();
-
 		RenderConfig.INSTANCE.renderablePool.render(this.libGdxRenderableContext);
-
 		this.batch.end();
+
+		this.filledShapeRenderer.begin(ShapeType.Filled);
+		RenderConfig.INSTANCE.renderablePool.renderFilledShapes(this.libGdxRenderableContext);
+		this.filledShapeRenderer.end();
+
+		this.shapeRenderer.begin(ShapeType.Line);
+		RenderConfig.INSTANCE.renderablePool.renderShapes(this.libGdxRenderableContext);
+		this.shapeRenderer.end();
 
 		// sync viewport with camera
 

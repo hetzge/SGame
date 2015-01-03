@@ -1,8 +1,10 @@
 package de.hetzge.sgame.render;
 
+import java.io.Serializable;
+
 import de.hetzge.sgame.common.geometry.Rectangle;
 
-public interface IF_RenderInformation {
+public interface IF_RenderInformation extends Serializable {
 
 	public Rectangle getRenderedRectangle();
 

@@ -284,7 +284,7 @@ public class LibGdxRenderableFactory implements IF_RenderableFactory, Applicatio
 		this.renderable = new LibGdxRenderableFactory().by(tileDefinition);
 		this.spriteBatch = new SpriteBatch();
 
-		this.libGdxRenderableContext = new LibGdxRenderableContext(this.spriteBatch);
+		this.libGdxRenderableContext = new LibGdxRenderableContext(this.spriteBatch, null, null);
 	}
 
 	@Override
