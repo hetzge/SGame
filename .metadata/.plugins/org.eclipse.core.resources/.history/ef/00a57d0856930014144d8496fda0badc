@@ -1,0 +1,17 @@
+package de.hetzge.sgame.entity.module;
+
+import de.hetzge.sgame.entity.BaseEntityModule;
+
+public class CollisionModule extends BaseEntityModule {
+
+	@Override
+	public void init() {
+
+	}
+
+	@Override
+	public void update() {
+
+	}
+
+}

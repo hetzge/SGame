@@ -13,7 +13,6 @@ import de.hetzge.sgame.common.geometry.Dimension;
 import de.hetzge.sgame.common.geometry.Position;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableContext;
 import de.hetzge.sgame.render.RenderConfig;
-import de.hetzge.sgame.render.RenderUtil;
 
 public class LibGdxApplication implements ApplicationListener {
 	private SpriteBatch batch;
@@ -45,9 +44,6 @@ public class LibGdxApplication implements ApplicationListener {
 
 	@Override
 	public void render() {
-		System.out.println(RenderUtil.renderCounter);
-		RenderUtil.renderCounter = 0;
-
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL11.GL_COLOR_BUFFER_BIT);
 

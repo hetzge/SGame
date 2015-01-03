@@ -1,15 +1,14 @@
 package de.hetzge.sgame.common.definition;
 
-
 public interface IF_Map {
 
 	public float getWidthInPx();
 
 	public float getHeightInPx();
 
-	public float getWidthInTiles();
+	public int getWidthInTiles();
 
-	public float getHeightInTiles();
+	public int getHeightInTiles();
 
 	public int getCollisionTileFactor();
 

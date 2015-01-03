@@ -10,6 +10,8 @@ import javolution.util.FastCollection;
 import javolution.util.FastMap;
 import javolution.util.FastSet;
 import javolution.util.FastTable;
+import de.hetzge.sgame.common.CommonConfig;
+import de.hetzge.sgame.common.activemap.ActiveMap;
 import de.hetzge.sgame.common.definition.IF_EntityType;
 import de.hetzge.sgame.entity.module.RenderableModule;
 import de.hetzge.sgame.render.IF_Renderable;
@@ -24,8 +26,11 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 	private final FastMap<String, Entity> entitiesById = new FastMap<String, Entity>().parallel();
 	private final FastMap<Class<? extends BaseEntityModule>, FastSet<Entity>> entitiesByModule = new FastMap<Class<? extends BaseEntityModule>, FastSet<Entity>>().parallel();
 	private final FastMap<IF_EntityType, Set<Entity>> entitiesByType = new FastMap<IF_EntityType, Set<Entity>>().parallel();
+	private final ActiveMap<Boolean> collisionMap = new ActiveMap<Boolean>(CommonConfig.INSTANCE.map.getWidthInTiles(), CommonConfig.INSTANCE.map.getHeightInTiles());
 
 	public void addEntity(Entity entity) {
+		entity.init();
+
 		// add
 		this.entities.add(entity);
 

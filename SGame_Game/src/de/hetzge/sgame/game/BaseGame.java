@@ -55,7 +55,6 @@ public class BaseGame extends Application {
 	}
 
 	protected final MapModule mapModule;
-	protected final CommonModule commonModule;
 	protected final NetworkModule networkModule;
 	protected final SyncModule syncModule;
 	protected final EntityModule entityModule;
@@ -63,13 +62,12 @@ public class BaseGame extends Application {
 
 	public BaseGame() {
 		this.mapModule = new MapModule();
-		this.commonModule = new CommonModule();
 		this.networkModule = new NetworkModule();
 		this.syncModule = new SyncModule();
 		this.entityModule = new EntityModule();
 		this.messageModule = new MessageModule();
 
-		ApplicationConfig.modulePool.registerModules(this.mapModule, this.commonModule, this.networkModule, this.syncModule, this.entityModule, this.messageModule);
+		ApplicationConfig.INSTANCE.modulePool.registerModules(this.mapModule, this.networkModule, this.syncModule, this.entityModule, this.messageModule);
 
 		EntityConfig.INSTANCE.entityFactory.registerFactory(EntityType.SILLY_BLOCK, (entity) -> {
 			RenderableModule renderableModule = new RenderableModule(entity);

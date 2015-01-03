@@ -4,8 +4,6 @@ import de.hetzge.sgame.common.geometry.Rectangle;
 
 public final class RenderUtil {
 
-	public static int renderCounter = 0;
-
 	private RenderUtil() {
 	}
 
@@ -17,7 +15,6 @@ public final class RenderUtil {
 				throw new IllegalStateException("No renderable for key " + onScreen.getRenderableKey());
 			}
 			renderable.render(context, onScreen);
-			RenderUtil.renderCounter++;
 		}
 	}
 

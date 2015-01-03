@@ -1,5 +1,6 @@
 package de.hetzge.sgame.map;
 
+import de.hetzge.sgame.common.CommonConfig;
 import de.hetzge.sgame.common.definition.IF_Callback;
 import de.hetzge.sgame.common.definition.IF_Module;
 import de.hetzge.sgame.map.message.TileMapMessage;
@@ -10,12 +11,16 @@ import de.hetzge.sgame.render.IF_RenderableContext;
 
 public class MapModule implements IF_Module, IF_Renderable<IF_RenderableContext> {
 
+	public MapModule() {
+		MapConfig.INSTANCE.setTileMap(new TileMap<IF_RenderableContext>(100, 100, CommonConfig.INSTANCE.tileSize));
+	}
+
 	@Override
 	public void init() {
 		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(TileMapMessage.class, new TileMapMessageHandler());
 
 		MessageConfig.INSTANCE.serverToNewClientMessages.add((IF_Callback<Object>) () -> {
-			return new TileMapMessage(MapConfig.INSTANCE.tileMap);
+			return new TileMapMessage(MapConfig.INSTANCE.getTileMap());
 		});
 	}
 
@@ -25,7 +30,7 @@ public class MapModule implements IF_Module, IF_Renderable<IF_RenderableContext>
 
 	@Override
 	public void render(IF_RenderableContext context) {
-		MapConfig.INSTANCE.tileMap.render(context);
+		MapConfig.INSTANCE.getTileMap().render(context);
 	}
 
 }

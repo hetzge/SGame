@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.hetzge.sgame.common.BaseCollisionImpl;
+import de.hetzge.sgame.common.CommonConfig;
 import de.hetzge.sgame.common.definition.IF_Collision;
 
 public class TileDefinition implements Serializable {
@@ -49,7 +50,7 @@ public class TileDefinition implements Serializable {
 	}
 
 	IF_Collision calculateCollision() {
-		BaseCollisionImpl collision = new BaseCollisionImpl(MapConfig.INSTANCE.collisionTileFacor, MapConfig.INSTANCE.collisionTileFacor);
+		BaseCollisionImpl collision = new BaseCollisionImpl(CommonConfig.INSTANCE.collisionTileFactor, CommonConfig.INSTANCE.collisionTileFactor);
 		for (TileLayer tileLayer : this.tileLayers) {
 			if (tileLayer.isCollision()) {
 				IF_Collision tileOrientationAsCollision = tileLayer.getTileOrientation().asCollision();

@@ -1,0 +1,6 @@
+package de.hetzge.sgame.common;
+
+public class ActiveCollisionMap {
+
+	
+}

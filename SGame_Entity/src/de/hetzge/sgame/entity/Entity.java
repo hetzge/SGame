@@ -1,17 +1,17 @@
 package de.hetzge.sgame.entity;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javolution.util.FastMap;
 import de.hetzge.sgame.common.UUID;
 import de.hetzge.sgame.common.definition.IF_EntityType;
 
 public class Entity implements Serializable {
 
-	private final Map<Class<? extends BaseEntityModule>, BaseEntityModule> modules = new HashMap<>();
+	private final Map<Class<? extends BaseEntityModule>, BaseEntityModule> modules = new FastMap<>();
 	private final IF_EntityType type;
 	private final String id = UUID.generateKey();
 
@@ -62,12 +62,22 @@ public class Entity implements Serializable {
 		return this.id;
 	}
 
+	/**
+	 * called when the entity is registered in a pool
+	 */
 	public void init() {
-
+		for (BaseEntityModule baseEntityModule : this.modules.values()) {
+			baseEntityModule.init();
+		}
 	}
 
+	/**
+	 * called in the update cycle
+	 */
 	public void update() {
-
+		for (BaseEntityModule baseEntityModule : this.modules.values()) {
+			baseEntityModule.update();
+		}
 	}
 
 	@Override

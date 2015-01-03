@@ -2,6 +2,7 @@ package de.hetzge.sgame.map;
 
 import java.io.Serializable;
 
+import de.hetzge.sgame.common.CommonConfig;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.geometry.Dimension;
@@ -45,7 +46,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		}
 	}
 
-	private class MapCollision implements IF_Collision {
+	private class MapCollision implements IF_Collision, Serializable {
 
 		@Override
 		public int getWidthInTiles() {
@@ -59,7 +60,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 
 		@Override
 		public boolean isCollision(int x, int y) {
-			int collisionTileFactor = MapConfig.INSTANCE.collisionTileFacor;
+			int collisionTileFactor = CommonConfig.INSTANCE.collisionTileFactor;
 			int tileX = x - (x % collisionTileFactor) / collisionTileFactor;
 			int tileY = y - (y % collisionTileFactor) / collisionTileFactor;
 
@@ -74,12 +75,12 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	}
 
 	private final Tile[][] tiles;
-	private final int tileSize;
+	private final float tileSize;
 	private final int widthInTiles;
 	private final int heightInTiles;
 	private final MapCollision mapCollision;
 
-	public TileMap(int widthInTiles, int heightInTiles, int tileSize) {
+	public TileMap(int widthInTiles, int heightInTiles, float tileSize) {
 		this.tileSize = tileSize;
 		this.widthInTiles = widthInTiles;
 		this.heightInTiles = heightInTiles;
@@ -128,12 +129,12 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	}
 
 	@Override
-	public float getWidthInTiles() {
+	public int getWidthInTiles() {
 		return this.widthInTiles;
 	}
 
 	@Override
-	public float getHeightInTiles() {
+	public int getHeightInTiles() {
 		return this.heightInTiles;
 	}
 

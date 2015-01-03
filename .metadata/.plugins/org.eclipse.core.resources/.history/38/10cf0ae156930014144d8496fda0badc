@@ -1,0 +1,49 @@
+package de.hetzge.sgame.entity.module;
+
+import de.hetzge.sgame.common.definition.IF_Collision;
+import de.hetzge.sgame.entity.BaseEntityModule;
+import de.hetzge.sgame.entity.Entity;
+
+public class CollisionModule extends BaseEntityModule implements IF_Collision {
+
+	
+	
+	public CollisionModule(Entity entity) {
+		super(entity);
+	}
+
+	@Override
+	public void init() {
+
+	}
+
+	@Override
+	public void update() {
+
+	}
+
+	@Override
+	public int getWidthInTiles() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getHeightInTiles() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean isCollision(int x, int y) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean setCollision(int x, int y, boolean collision) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

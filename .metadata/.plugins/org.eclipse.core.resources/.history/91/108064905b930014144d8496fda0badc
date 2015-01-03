@@ -1,0 +1,31 @@
+package de.hetzge.sgame.common;
+
+public class ActiveCollisionMap {
+
+	private class ActiveCollisionNode {
+
+		private final FastSet<ActiveCollisionConnector> connectors;
+
+	}
+
+	private class ActiveCollisionConnector<TYPE> {
+
+		private final TYPE object;
+		private ActiveCollisionNode connectedWith;
+
+		public ActiveCollisionConnector(TYPE object) {
+			this.object = object;
+		}
+
+		public void connectTo(ActiveCollisionNode activeCollisionNode) {
+			if (this.connectedWith != null) {
+
+			}
+		}
+
+	}
+
+	private final int widthInTiles;
+	private final int heightInTiles;
+
+}

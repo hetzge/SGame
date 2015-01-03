@@ -1,14 +1,22 @@
 package de.hetzge.sgame.map;
 
+import de.hetzge.sgame.common.CommonConfig;
 import de.hetzge.sgame.render.IF_RenderableContext;
 
 public class MapConfig {
 
 	public static final MapConfig INSTANCE = new MapConfig();
 
-	public final int collisionTileFacor = 3;
+	private TileMap<IF_RenderableContext> tileMap;
 
-	public TileMap<IF_RenderableContext> tileMap = new TileMap<IF_RenderableContext>(100, 100, 32);
+	public TileMap<IF_RenderableContext> getTileMap() {
+		return this.tileMap;
+	}
+
+	public void setTileMap(TileMap<IF_RenderableContext> tileMap) {
+		this.tileMap = tileMap;
+		CommonConfig.INSTANCE.map = tileMap;
+	}
 
 	private MapConfig() {
 	}

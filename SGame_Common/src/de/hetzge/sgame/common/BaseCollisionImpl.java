@@ -1,8 +1,10 @@
 package de.hetzge.sgame.common;
 
+import java.io.Serializable;
+
 import de.hetzge.sgame.common.definition.IF_Collision;
 
-public class BaseCollisionImpl implements IF_Collision {
+public class BaseCollisionImpl implements IF_Collision, Serializable {
 
 	private final boolean[][] collision;
 	private final int widthInTiles;

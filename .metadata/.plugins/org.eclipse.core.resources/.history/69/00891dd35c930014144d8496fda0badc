@@ -1,0 +1,50 @@
+package de.hetzge.sgame.common;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class ActiveCollisionMap {
+
+	private class ActiveCollisionNode {
+		private final Set<ActiveCollisionConnector> connectors = new HashSet<>();
+	}
+
+	private class ActiveCollisionConnector<TYPE> {
+
+		private final TYPE object;
+		private ActiveCollisionNode connectedWith;
+
+		public ActiveCollisionConnector(TYPE object) {
+			this.object = object;
+		}
+
+		public void connectTo(ActiveCollisionNode activeCollisionNode) {
+			if (this.connectedWith != null) {
+				this.connectedWith.connectors.remove(this);
+			}
+			activeCollisionNode.connectors.add(this);
+			this.connectedWith = activeCollisionNode;
+		}
+
+		public TYPE getObject() {
+			return this.object;
+		}
+	}
+
+	private final int widthInTiles;
+	private final int heightInTiles;
+
+	public ActiveCollisionMap(int widthInTiles, int heightInTiles) {
+		this.widthInTiles = widthInTiles;
+		this.heightInTiles = heightInTiles;
+		
+		for (int x = 0; x < widthInTiles; x++) {
+			for (int y = 0; y < heightInTiles; y++) {
+				
+			}
+		}
+	}
+	
+	
+
+}
