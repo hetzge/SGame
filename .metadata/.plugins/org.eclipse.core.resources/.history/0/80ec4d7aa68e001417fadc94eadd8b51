@@ -1,9 +1,0 @@
-package de.hetzge.sgame.application;
-
-public class Application {
-
-	public void update() {
-
-	}
-
-}

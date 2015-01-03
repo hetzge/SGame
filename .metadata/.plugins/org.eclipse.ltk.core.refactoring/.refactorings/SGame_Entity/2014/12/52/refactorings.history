@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename type &apos;de.hetzge.sgame.entity.IF_EntityModule&apos; to &apos;BaseEntityModule&apos;&#x0D;&#x0A;- Original project: &apos;SGame_Entity&apos;&#x0D;&#x0A;- Original element: &apos;de.hetzge.sgame.entity.IF_EntityModule&apos;&#x0D;&#x0A;- Renamed element: &apos;de.hetzge.sgame.entity.BaseEntityModule&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;IF_EntityModule&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;de.hetzge.sgame.entity{IF_EntityModule.java[IF_EntityModule" matchStrategy="1" name="BaseEntityModule" qualified="false" references="true" similarDeclarations="false" stamp="1419807542514" textual="false" version="1.0"/>
-</session>

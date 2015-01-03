@@ -1,5 +1,0 @@
-package de.hetzge.sgame.application;
-
-public interface IF_Map {
-
-}

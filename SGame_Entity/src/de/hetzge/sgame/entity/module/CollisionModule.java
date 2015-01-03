@@ -24,25 +24,40 @@ public class CollisionModule extends BaseEntityModule {
 	public void update() {
 	}
 
+	/**
+	 * registers the collision on the map
+	 */
+	public void updateCollisionOnMap() {
+		if (this.entity.hasModule(PositionAndDimensionModule.class)) {
+			PositionAndDimensionModule module = this.entity.getModule(PositionAndDimensionModule.class);
+			Rectangle positionAndDimensionRectangle = module.dimensionSyncProperty.getValue();
+
+			int startCollisionTileX = (int) Math.floor(positionAndDimensionRectangle.getStartPosition().getX() / CommonConfig.INSTANCE.map.getCollisionTileSize());
+			int startCollisionTileY = (int) Math.floor(positionAndDimensionRectangle.getStartPosition().getY() / CommonConfig.INSTANCE.map.getCollisionTileSize());
+
+			CommonConfig.INSTANCE.map.getEntityCollisionActiveMap().connect(startCollisionTileX, startCollisionTileY, this.activeCollisionMap.getOldValue());
+		}
+	}
+
+	/**
+	 * set complete rectangle as collision
+	 */
+	// TODO WARNING wrong result if this happens before map sync
 	public void setCollision(boolean collision) {
 		if (this.entity.hasModule(PositionAndDimensionModule.class)) {
 			PositionAndDimensionModule module = this.entity.getModule(PositionAndDimensionModule.class);
 			Rectangle positionAndDimensionRectangle = module.dimensionSyncProperty.getValue();
-			int widthInTiles = (int) Math.ceil(positionAndDimensionRectangle.getDimension().getWidth() / CommonConfig.INSTANCE.collisionTileSize);
-			int heightInTiles = (int) Math.ceil(positionAndDimensionRectangle.getDimension().getHeight() / CommonConfig.INSTANCE.collisionTileSize);
-			ActiveMap<Boolean> activeMap = new ActiveMap<>(widthInTiles, heightInTiles);
+			int widthInCollisionTiles = (int) Math.ceil(positionAndDimensionRectangle.getDimension().getWidth() / CommonConfig.INSTANCE.map.getCollisionTileSize());
+			int heightInCollisionTiles = (int) Math.ceil(positionAndDimensionRectangle.getDimension().getHeight() / CommonConfig.INSTANCE.map.getCollisionTileSize());
+			ActiveMap<Boolean> activeMap = new ActiveMap<>(widthInCollisionTiles, heightInCollisionTiles);
 			activeMap.setObject(true);
 			this.activeCollisionMap.setValue(activeMap);
 		}
 	}
 
-	public void updateCollisionOnMap() {
-		if (this.entity.hasModule(PositionAndDimensionModule.class)) {
-			PositionAndDimensionModule module = this.entity.getModule(PositionAndDimensionModule.class);
-
-		}
-	}
-
+	/**
+	 * set given boolean array as collision tiles
+	 */
 	public void setCollision(boolean[][] collision) {
 		if (collision.length == 0)
 			return;

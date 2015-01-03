@@ -1,7 +1,0 @@
-package de.hetzge.sgame.entity.message;
-
-import java.io.Serializable;
-
-public class SyncAllEntitiesMessage implements Serializable {
-
-}

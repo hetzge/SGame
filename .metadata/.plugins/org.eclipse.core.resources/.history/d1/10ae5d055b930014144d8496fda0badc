@@ -1,9 +1,0 @@
-package de.hetzge.sgame.common;
-
-public class QuadTree<TYPE> {
-
-	private class QuadTreeNode<TYPE> {
-
-	}
-
-}

@@ -1,7 +1,0 @@
-package de.hetzge.sgame.common.renderable;
-
-public interface Renderable {
-
-	public void render(IF_RenderableContext<?> context);
-
-}

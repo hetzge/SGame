@@ -1,5 +1,0 @@
-package de.hetzge.sgame.libgdx;
-
-public interface IF_EntityKey {
-
-}

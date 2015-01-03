@@ -1,7 +1,0 @@
-package de.hetzge.sgame.game;
-
-import de.hetzge.sgame.common.IF_Module;
-
-public class GameModule implements IF_Module {
-
-}

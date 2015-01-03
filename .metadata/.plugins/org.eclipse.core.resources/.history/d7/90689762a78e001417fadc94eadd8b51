@@ -1,7 +1,0 @@
-package de.hetzge.sgame.application;
-
-public class ModulePool {
-
-	private final List<IF_Module> modules = new LinkedList<>();
-	
-}

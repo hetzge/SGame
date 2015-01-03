@@ -1,7 +1,0 @@
-package de.hetzge.sgame.libgdx.renderable;
-
-import de.hetzge.sgame.common.renderable.Renderable;
-
-public class LibGdxRenderableAnimation implements Renderable {
-
-}

@@ -1,7 +1,0 @@
-package de.hetzge.sgame.libgdx.renderable;
-
-import de.hetzge.sgame.common.renderable.IF_RenderableContext;
-
-public class LibGdxRenderableContext implements IF_RenderableContext {
-
-}

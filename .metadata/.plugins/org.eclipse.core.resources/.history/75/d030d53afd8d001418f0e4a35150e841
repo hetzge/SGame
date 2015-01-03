@@ -1,7 +1,0 @@
-package de.hetzge.sgame.libgdx;
-
-public class LibGdxConfig {
-
-	public static float stateTime = 0f;
-	
-}

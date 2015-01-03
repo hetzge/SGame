@@ -1,7 +1,0 @@
-package de.hetzge.sgame.render;
-
-public interface IF_RenderableWrapper<TYPE extends IF_RenderableContext> {
-	public void render(TYPE context, IF_OnScreen onScreen);
-
-	public Object getNativeObject();
-}

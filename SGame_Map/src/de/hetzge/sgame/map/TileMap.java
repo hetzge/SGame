@@ -2,7 +2,7 @@ package de.hetzge.sgame.map;
 
 import java.io.Serializable;
 
-import de.hetzge.sgame.common.CommonConfig;
+import de.hetzge.sgame.common.activemap.ActiveMap;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.geometry.Dimension;
@@ -60,11 +60,10 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 
 		@Override
 		public boolean isCollision(int x, int y) {
-			int collisionTileFactor = CommonConfig.INSTANCE.collisionTileFactor;
-			int tileX = x - (x % collisionTileFactor) / collisionTileFactor;
-			int tileY = y - (y % collisionTileFactor) / collisionTileFactor;
+			int tileX = x - (x % TileMap.this.collisionTileFactor) / TileMap.this.collisionTileFactor;
+			int tileY = y - (y % TileMap.this.collisionTileFactor) / TileMap.this.collisionTileFactor;
 
-			return TileMap.this.tiles[tileX][tileY].tileDefinition.getCollision().isCollision(x % collisionTileFactor, y % collisionTileFactor);
+			return TileMap.this.tiles[tileX][tileY].tileDefinition.getCollision().isCollision(x % TileMap.this.collisionTileFactor, y % TileMap.this.collisionTileFactor);
 		}
 
 		@Override
@@ -76,12 +75,17 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 
 	private final Tile[][] tiles;
 	private final float tileSize;
+	private final int collisionTileFactor;
+	private final float collisionTileSize;
 	private final int widthInTiles;
 	private final int heightInTiles;
 	private final MapCollision mapCollision;
+	private final ActiveMap<Boolean> entityCollisionMap;
 
-	public TileMap(int widthInTiles, int heightInTiles, float tileSize) {
+	public TileMap(int widthInTiles, int heightInTiles, float tileSize, int collisionTileFactor) {
 		this.tileSize = tileSize;
+		this.collisionTileFactor = collisionTileFactor;
+		this.collisionTileSize = tileSize / collisionTileFactor;
 		this.widthInTiles = widthInTiles;
 		this.heightInTiles = heightInTiles;
 		this.tiles = new TileMap.Tile[widthInTiles][];
@@ -92,6 +96,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 			}
 		}
 		this.mapCollision = new MapCollision();
+		this.entityCollisionMap = new ActiveMap<>(widthInTiles * collisionTileFactor, heightInTiles * collisionTileFactor);
 	}
 
 	@Override
@@ -146,5 +151,20 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	@Override
 	public IF_Collision getCollision() {
 		return null;
+	}
+
+	@Override
+	public ActiveMap<Boolean> getEntityCollisionActiveMap() {
+		return this.entityCollisionMap;
+	}
+
+	@Override
+	public float getTileSize() {
+		return this.tileSize;
+	}
+
+	@Override
+	public float getCollisionTileSize() {
+		return this.collisionTileSize;
 	}
 }

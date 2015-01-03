@@ -1,7 +1,0 @@
-package de.hetzge.sgame.entity.module;
-
-import de.hetzge.sgame.entity.EntityModule;
-
-public class PositionAndDimensionModule extends EntityModule {
-
-}

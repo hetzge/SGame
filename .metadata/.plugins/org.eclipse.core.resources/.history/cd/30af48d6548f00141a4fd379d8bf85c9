@@ -1,7 +1,0 @@
-package de.hetzge.sgame.entity;
-
-public class EntityFactory {
-	
-	private final Map<IF_EntityType, Consumer<Entity>> factories = new HashMap<>();
-
-}

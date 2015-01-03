@@ -1,7 +1,0 @@
-package de.hetzge.sgame.libgdx.renderable;
-
-public interface Renderable {
-	
-	public void render(SpriteBatch spriteBatch)
-
-}

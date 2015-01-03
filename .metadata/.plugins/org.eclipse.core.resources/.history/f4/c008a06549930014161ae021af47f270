@@ -1,9 +1,0 @@
-package de.hetzge.sgame.application;
-
-public interface IF_Module {
-
-	public void init();
-
-	public void update();
-
-}

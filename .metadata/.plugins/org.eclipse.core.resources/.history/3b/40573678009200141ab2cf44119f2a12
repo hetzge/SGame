@@ -1,7 +1,0 @@
-package de.hetzge.sgame.render;
-
-public interface IF_RenderableCreator {
-	public Renderable<?> createRenderable();
-
-	public RenderableKey getRenderableKey();
-}

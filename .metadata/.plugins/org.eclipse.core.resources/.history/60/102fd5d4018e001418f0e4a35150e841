@@ -1,5 +1,0 @@
-package de.hetzge.sgame.common.exception;
-
-public class StartupException extends RuntimeException {
-
-}

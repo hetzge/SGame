@@ -1,7 +1,0 @@
-package de.hetzge.sgame.entity.message;
-
-import de.hetzge.sgame.message.IF_MessageHandler;
-
-public class SyncAllEntitiesMessageHandler implements IF_MessageHandler<SyncAllEntitiesMessage>{
-
-}

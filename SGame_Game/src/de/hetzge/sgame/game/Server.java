@@ -35,7 +35,17 @@ public class Server extends BaseGame {
 		Set<Entity> entitiesByType = EntityConfig.INSTANCE.entityPool.getEntitiesByType(EntityType.SILLY_BLOCK);
 		for (Entity entity : entitiesByType) {
 			PositionAndDimensionModule module = entity.getModule(PositionAndDimensionModule.class);
-			module.move(Orientation.EAST, 0.1f);
+
+			double random = Math.random();
+			if (random > 0.75d) {
+				module.move(Orientation.EAST, 0.1f);
+			} else if (random > 0.5d) {
+				module.move(Orientation.SOUTH, 0.1f);
+			} else if (random > 0.25) {
+				module.move(Orientation.NORTH, 0.1f);
+			} else {
+				module.move(Orientation.WEST, 0.1f);
+			}
 		}
 	}
 

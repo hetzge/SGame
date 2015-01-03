@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename type &apos;de.hetzge.sgame.game.Game&apos; to &apos;Server&apos;&#x0D;&#x0A;- Original project: &apos;SGame_Game&apos;&#x0D;&#x0A;- Original element: &apos;de.hetzge.sgame.game.Game&apos;&#x0D;&#x0A;- Renamed element: &apos;de.hetzge.sgame.game.Server&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;Game&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;de.hetzge.sgame.game{Game.java[Game" matchStrategy="1" name="Server" qualified="false" references="true" similarDeclarations="false" stamp="1419784437989" textual="false" version="1.0"/>
-</session>

@@ -1,9 +1,0 @@
-package de.hetzge.sgame.sync;
-
-public class Test {
-
-	public static void main(String[] args) {
-		
-	}
-	
-}
