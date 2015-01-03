@@ -1,0 +1,8 @@
+package de.hetzge.sgame.sync;
+
+public class SyncMessage {
+
+	public String id;
+	public Object value;
+
+}

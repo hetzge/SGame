@@ -1,0 +1,37 @@
+package de.hetzge.sgame.common;
+
+import de.hetzge.sgame.common.definition.IF_Collision;
+import de.hetzge.sgame.map.TileMap;
+
+public class BaseCollisionImpl implements IF_Collision {
+
+	private final boolean[][] collision;
+
+	public MapCollision() {
+		this.collision = new boolean[TileMap.this.widthInTiles][];
+		for (int x = 0; x < TileMap.this.tiles.length; x++) {
+			this.collision[x] = new boolean[TileMap.this.heightInTiles];
+		}
+	}
+
+	@Override
+	public int getWidthInTiles() {
+		return TileMap.this.widthInTiles;
+	}
+
+	@Override
+	public int getHeightInTiles() {
+		return TileMap.this.heightInTiles;
+	}
+
+	@Override
+	public boolean isCollision(int x, int y) {
+		return this.collision[x][y];
+	}
+
+	@Override
+	public boolean setCollision(int x, int y, boolean collision) {
+		return this.collision[x][y] = collision;
+	}
+	
+}

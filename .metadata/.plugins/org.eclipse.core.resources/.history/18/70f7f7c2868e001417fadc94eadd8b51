@@ -1,0 +1,82 @@
+package de.hetzge.sgame.network;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.nustaq.serialization.FSTObjectOutput;
+
+import de.hetzge.sgame.common.Log;
+import de.hetzge.sgame.common.exception.DefaultUncaughtExceptionHandler;
+import de.hetzge.sgame.common.exception.NetworkException;
+import de.hetzge.sgame.common.exception.SomeException;
+
+public class Server {
+
+	private final Map<String, Connection> clients = new HashMap<>();
+
+	public Server() {
+	}
+
+	public void start() {
+
+		Thread acceptClientsThread = new Thread(() -> {
+			try (ServerSocket serverSocket = new ServerSocket(NetworkConfig.PORT)) {
+				while (true) {
+
+					Log.NETWORK.info("Server wait for connection");
+
+					Socket socket = serverSocket.accept();
+					NetworkConfig.SERVER_LIFECYCLE.onClientConnected();
+					Connection connection = new Connection(socket);
+
+					Log.NETWORK.info("Server received connection");
+
+					Object registerMessage = connection.read();
+
+					Log.NETWORK.info("Server received register message from client");
+
+					Object registerAnswer = NetworkConfig.SERVER_LIFECYCLE.onClientRegister(registerMessage);
+					connection.write(registerAnswer);
+
+					Log.NETWORK.info("Server answered register message to client");
+
+					Thread acceptMessageThread = new Thread(() -> {
+						try {
+							while (true) {
+								Object message = connection.read();
+								NetworkConfig.SERVER_LIFECYCLE.handleMessage(message);
+							}
+						} catch (Exception e) {
+							throw new SomeException(e);
+						}
+					});
+					acceptMessageThread.setUncaughtExceptionHandler(DefaultUncaughtExceptionHandler.INSTANCE);
+					acceptMessageThread.start();
+					
+					clients.put(arg0, arg1)
+
+					Log.NETWORK.info("Server started accept message thread");
+				}
+			} catch (Exception e) {
+				throw new SomeException(e);
+			}
+		});
+		acceptClientsThread.setUncaughtExceptionHandler(DefaultUncaughtExceptionHandler.INSTANCE);
+		acceptClientsThread.start();
+	}
+
+	public void spreadMessage(Object message) {
+		for (Map.Entry<String, InOutStreams> entry : this.clients.entrySet()) {
+			try {
+				FSTObjectOutput objectOutput = entry.getValue().fstObjectOutput;
+				objectOutput.writeObject(message);
+				objectOutput.flush();
+			} catch (IOException e) {
+				throw new NetworkException(e);
+			}
+		}
+	}
+}

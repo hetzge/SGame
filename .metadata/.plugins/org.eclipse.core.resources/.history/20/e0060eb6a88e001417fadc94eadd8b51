@@ -1,0 +1,19 @@
+package de.hetzge.sgame.application;
+
+import de.hetzge.sgame.common.timer.Timer;
+
+public class Application {
+
+	private final Timer updateTimer = new Timer(ApplicationConfig.FPS);
+
+	public Application() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public void update() {
+		if (this.updateTimer.isTime()) {
+
+		}
+	}
+
+}

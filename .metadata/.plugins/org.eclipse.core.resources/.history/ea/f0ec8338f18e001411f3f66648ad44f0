@@ -1,0 +1,14 @@
+package de.hetzge.sgame.message;
+
+import java.io.Serializable;
+import java.util.function.Supplier;
+
+public class CallbackMessage implements Serializable {
+
+	private transient final Supplier<Object> supplier;
+
+	public CallbackMessage(Supplier<Object> supplier) {
+		this.supplier = supplier;
+	}
+
+}

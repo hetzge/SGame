@@ -1,0 +1,38 @@
+package de.hetzge.sgame.common;
+
+public interface IF_Collision {
+
+	public void getWidthInTiles();
+
+	public void getHeightInTiles();
+
+	public boolean isCollision(int x, int y);
+
+	public boolean setCollision(int x, int y, boolean collision);
+
+	public default void setCollision(int startX, int startY, IF_Collision collision) {
+		
+		int endX = startX + collision.getWidthInTiles();
+		int endY = startY + collision.getHeightInTiles();
+		
+		
+		if (startX < 0)
+			startX = 0;
+		if (startY < 0)
+			startY = 0;
+
+
+		
+		if (endX > this.getWidthInTiles())
+			endX = this.getWidthInTiles();
+		if (endY > this.getHeightInTiles())
+			endY = this.getHeightInTiles();
+
+		for (int x = startX; x < endX; x++) {
+			for (int y = startY; y < endY; y++) {
+
+			}
+		}
+
+	}
+}

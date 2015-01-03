@@ -1,0 +1,17 @@
+package de.hetzge.sgame.common;
+
+import de.hetzge.sgame.application.IF_Module;
+
+
+public class CommonModule implements IF_Module {
+
+	@Override
+	public void init() {
+	}
+
+	@Override
+	public void update() {
+
+	}
+
+}

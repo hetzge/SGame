@@ -1,0 +1,10 @@
+package de.hetzge.sgame.render;
+
+public class RenderConfig {
+
+	public static final RenderConfig INSTANCE = new RenderConfig();
+
+	private RenderConfig() {
+	}
+
+}

@@ -1,0 +1,19 @@
+package de.hetzge.sgame.entity;
+
+import de.hetzge.sgame.common.IF_Module;
+import de.hetzge.sgame.entity.message.NewEntityMessageHandler;
+import de.hetzge.sgame.message.MessageConfig;
+
+public class EntityModule implements IF_Module {
+
+	@Override
+	public void init() {
+		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(NewEntityMessage.class, new NewEntityMessageHandler());
+	}
+
+	@Override
+	public void update() {
+
+	}
+
+}

@@ -1,0 +1,43 @@
+package de.hetzge.sgame.sync;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
+
+import org.nustaq.serialization.FSTObjectInput;
+import org.nustaq.serialization.FSTObjectOutput;
+
+public class Test {
+
+	public static class XYZ implements Serializable {
+
+		public String x;
+
+		public String getX() {
+			return this.x;
+		}
+
+		public void setX(String x) {
+			System.out.println("call");
+			this.x = x;
+		}
+
+	}
+
+	public static void main(String[] args) throws IOException, ClassNotFoundException {
+
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		FSTObjectOutput out = new FSTObjectOutput(byteArrayOutputStream);
+		out.writeObject(new XYZ());
+		out.close(); // required !
+
+		byte[] byteArray = byteArrayOutputStream.toByteArray();
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArray);
+		FSTObjectInput in = new FSTObjectInput(byteArrayInputStream);
+		XYZ result = (XYZ) in.readObject();
+		in.close(); // required !
+
+	}
+
+}

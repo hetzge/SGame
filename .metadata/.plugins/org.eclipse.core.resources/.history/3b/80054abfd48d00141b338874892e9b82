@@ -1,0 +1,7 @@
+package de.hetzge.sgame.sync;
+
+public enum Spread {
+	
+	CLIENT_TO_SERVER, SERVER_TO_CLIENTS;
+
+}

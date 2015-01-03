@@ -1,0 +1,20 @@
+package de.hetzge.sgame.message;
+
+import de.hetzge.sgame.common.CommonConfig;
+import de.hetzge.sgame.common.IF_Module;
+import de.hetzge.sgame.sync.SyncProperty;
+import de.hetzge.sgame.sync.serializer.FSTSyncPropertySerializer;
+
+public class MessageModule implements IF_Module {
+
+	@Override
+	public void init() {
+		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(BatchMessage.class, new BatchMessageHandler());
+		CommonConfig.INSTANCE.fst.registerSerializer(SyncProperty.class, new FSTSyncPropertySerializer(), true);
+	}
+
+	@Override
+	public void update() {
+	}
+
+}

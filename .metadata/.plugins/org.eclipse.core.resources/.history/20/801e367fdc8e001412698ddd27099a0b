@@ -1,0 +1,5 @@
+package de.hetzge.sgame.message;
+
+public class BatchMessageHandler implements IF_MessageHandler<BatchMessage> {
+
+}

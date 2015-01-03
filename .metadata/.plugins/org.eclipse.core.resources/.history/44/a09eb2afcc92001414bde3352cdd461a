@@ -1,0 +1,12 @@
+package de.hetzge.sgame.render;
+
+public final class RenderUtil {
+
+	private RenderUtil() {
+	}
+
+	public static <CONTEXT extends IF_RenderableContext> render(IF_OnScreen onScreen) {
+
+	}
+
+}

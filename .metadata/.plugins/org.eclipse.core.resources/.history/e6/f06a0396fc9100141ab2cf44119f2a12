@@ -1,0 +1,16 @@
+package de.hetzge.sgame.map;
+
+import de.hetzge.sgame.render.Renderable;
+import de.hetzge.sgame.render.RenderableKey;
+
+public class MapConfig {
+
+	public static final MapConfig INSTANCE = new MapConfig();
+	
+	public Renderable<?> noTileRenderable;
+	
+
+	private MapConfig() {
+	}
+
+}

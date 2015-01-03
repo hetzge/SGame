@@ -1,0 +1,7 @@
+package de.hetzge.sgame.sync;
+
+import de.hetzge.sgame.common.IF_Module;
+
+public class SyncMessageHandler implements messa {
+
+}

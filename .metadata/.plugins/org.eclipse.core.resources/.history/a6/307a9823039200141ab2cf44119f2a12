@@ -1,0 +1,9 @@
+package de.hetzge.sgame.map;
+
+public enum GroundType {
+
+	SMOOTH, STRICT, WALL
+	
+	// TODO ROUND
+	
+}

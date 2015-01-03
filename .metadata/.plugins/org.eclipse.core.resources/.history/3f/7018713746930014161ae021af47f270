@@ -1,0 +1,15 @@
+package de.hetzge.sgame.application;
+
+
+public final class ApplicationConfig {
+
+	public static final int FPS = 30;
+
+	public static final ModulePool MODULE_POOL = new ModulePool();
+
+	static {
+	}
+
+	private ApplicationConfig() {
+	}
+}

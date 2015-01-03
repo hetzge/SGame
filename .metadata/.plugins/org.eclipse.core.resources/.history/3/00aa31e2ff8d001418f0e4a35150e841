@@ -1,0 +1,21 @@
+package de.hetzge.sgame.common.renderable;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class RenderablePool {
+
+	private final Map<RenderableKey, Renderable<?>> renderables = new HashMap<>();
+
+	public RenderablePool() {
+	}
+
+	public void registerRenderable(RenderableKey renderableKey, Renderable<?> renderable) {
+		renderables.put(renderableKey, renderable);
+	}
+	
+	public void getRenderable(RenderableKey renderableKey){
+		return renderables.get(renderableKey);
+	}
+
+}

@@ -1,0 +1,25 @@
+package de.hetzge.sgame.common;
+
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+
+public final class Log {
+
+	public static final String LOG_FOLDER = "log";
+
+	public static final Logger NETWORK = Logger.getLogger("NETWORK");
+	public static final Logger SYNC_COUNT = Logger.getLogger("SYNC_COUNT");
+
+	static {
+		try {
+			Log.SYNC_COUNT.addHandler(new FileHandler(Log.LOG_FOLDER + "//sync_count"));
+		} catch (SecurityException | IOException e) {
+			throw new IllegalStateException("Can't initalize logger", e);
+		}
+	}
+
+	private Log() {
+	}
+
+}

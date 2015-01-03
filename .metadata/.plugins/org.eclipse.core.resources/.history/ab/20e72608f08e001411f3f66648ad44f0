@@ -1,0 +1,12 @@
+package de.hetzge.sgame.entity.message;
+
+import java.io.Serializable;
+
+public class SyncAllEntitiesMessage implements Serializable {
+
+	public final List<Entity> entities;
+
+	public SyncAllEntitiesMessage(List<Entity> entities) {
+		this.entities = entities;
+	}
+}

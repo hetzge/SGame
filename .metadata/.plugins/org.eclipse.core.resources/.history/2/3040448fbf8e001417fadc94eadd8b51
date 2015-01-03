@@ -1,0 +1,15 @@
+package de.hetzge.sgame.sync.message;
+
+import de.hetzge.sgame.sync.SyncModule;
+import de.hetzge.sgame.sync.SyncProperty;
+
+public class SyncMessageHandler implements IF_MessageHandler<SyncMessage> {
+
+	@Override
+	public void handle(SyncMessage message) {
+		SyncProperty syncProperty = SyncModule.syncPool.getPropertyByKey(message.key);
+		if (syncProperty != null) {
+			syncProperty.setValueResetChange(message.value);
+		}
+	}
+}

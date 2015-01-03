@@ -1,0 +1,24 @@
+package de.hetzge.sgame.libgdx.renderable;
+
+import com.badlogic.gdx.graphics.Texture;
+
+import de.hetzge.sgame.common.IF_OnScreen;
+import de.hetzge.sgame.common.geometry.Rectangle;
+import de.hetzge.sgame.common.renderable.Renderable;
+
+public class LibGdxRenderableTexture implements Renderable<LibGdxRenderableContext> {
+
+	private final Texture texture;
+
+	public LibGdxRenderableTexture(Texture texture) {
+		this.texture = texture;
+	}
+
+	@Override
+	public void render(LibGdxRenderableContext context, IF_OnScreen onScreen) {
+		Rectangle rectangle = onScreen.getRenderedRectangle();
+		context.spriteBatch.draw(this.texture, rectangle.getPosition().getX(), rectangle.getPosition().getY(), rectangle.getDimension().getWidth(), rectangle.getDimension().getHeight());
+
+	}
+
+}

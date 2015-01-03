@@ -1,0 +1,14 @@
+package de.hetzge.sgame.render;
+
+import de.hetzge.sgame.common.RenderablePool;
+
+public class RenderConfig {
+
+	public static final RenderConfig INSTANCE = new RenderConfig();
+	
+	public final RenderablePool renderablePool = new RenderablePool();
+
+	private RenderConfig() {
+	}
+
+}

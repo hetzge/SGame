@@ -1,0 +1,12 @@
+package de.hetzge.sgame.entity;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Entity {
+
+	private final Map<Class<? extends IF_EntityModule>, IF_EntityModule> modules = new HashMap<>();
+	
+	
+
+}

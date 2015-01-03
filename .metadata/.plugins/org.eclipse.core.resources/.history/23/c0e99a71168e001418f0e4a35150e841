@@ -1,0 +1,28 @@
+package de.hetzge.sgame.network;
+
+public class Test {
+
+	public static void main(String[] args) {
+
+		new IF_ClientLifecycle() {
+
+			@Override
+			public void onClientRegisterSuccess(Object registerAnswer) {
+				
+			}
+
+			@Override
+			public void handleMessage(Object message) {
+
+			}
+		};
+
+		Server server = new Server();
+		server.start();
+
+		Client client = new Client();
+		client.connect(new NetworkData("127.0.0.1", NetworkConfig.PORT), new Object());
+
+	}
+
+}

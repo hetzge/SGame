@@ -1,0 +1,18 @@
+package de.hetzge.sgame.game;
+
+import de.hetzge.sgame.network.NetworkConfig;
+import de.hetzge.sgame.network.PeerRole;
+
+public class Server extends BaseGame {
+
+	public Server() {
+		super();
+		NetworkConfig.INSTANCE.peerRole = PeerRole.SERVER;
+	}
+
+	public static void main(String[] args) {
+		Server server = new Server();
+		server.start();
+	}
+
+}

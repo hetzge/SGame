@@ -1,0 +1,16 @@
+package de.hetzge.sgame.common;
+
+public interface IF_Collision {
+
+	public void getWidthInTiles();
+	public void getHeightInTiles();
+	
+	public boolean isCollision(int x, int y);
+	
+	public boolean setCollision(int x, int y, boolean collision);
+	
+	public default setCollision(int x, int y, IF_Collision collision){
+		
+	}
+	
+}

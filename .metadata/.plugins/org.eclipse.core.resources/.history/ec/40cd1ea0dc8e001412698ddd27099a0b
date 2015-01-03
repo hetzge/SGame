@@ -1,0 +1,11 @@
+package de.hetzge.sgame.message;
+
+public class BatchMessageHandler implements IF_MessageHandler<BatchMessage> {
+
+	@Override
+	public void handle(BatchMessage message) {
+
+		MessageConfig.INSTANCE.messageHandlerPool.handleMessage(message);
+	}
+
+}

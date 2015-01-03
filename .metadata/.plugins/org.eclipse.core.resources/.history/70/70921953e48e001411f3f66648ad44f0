@@ -1,0 +1,7 @@
+package de.hetzge.sgame.entity;
+
+public class Entity {
+
+	private final Map<Class<? extends IF_EntityModule>, IF_EntityModule> modules = new HashMap<>();
+	
+}

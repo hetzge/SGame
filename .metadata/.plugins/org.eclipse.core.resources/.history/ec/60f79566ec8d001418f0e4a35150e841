@@ -1,0 +1,10 @@
+package de.hetzge.sgame.sync;
+
+public final class SyncConfig {
+
+	public static SyncPool syncPool;
+
+	private SyncConfig() {
+	}
+
+}

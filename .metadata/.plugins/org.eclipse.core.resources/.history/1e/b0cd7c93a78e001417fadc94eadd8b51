@@ -1,0 +1,16 @@
+package de.hetzge.sgame.application;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import de.hetzge.sgame.common.IF_Module;
+
+public class ModulePool {
+
+	private final Set<IF_Module> modules = new HashSet<>();
+
+	public void registerModule(IF_Module module) {
+		this.modules.add(module);
+	}
+
+}

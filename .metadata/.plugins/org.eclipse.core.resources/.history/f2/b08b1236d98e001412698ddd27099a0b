@@ -1,0 +1,13 @@
+package de.hetzge.sgame.message;
+
+public class MessageConfig {
+
+	public static final MessageConfig INSTANCE = new MessageConfig();
+
+	public final MessagePool messagePool = new MessagePool();
+	public final MessageHandlerPool MessageHandlerPool = new MessageHandlerPool();
+
+	private MessageConfig() {
+	}
+
+}

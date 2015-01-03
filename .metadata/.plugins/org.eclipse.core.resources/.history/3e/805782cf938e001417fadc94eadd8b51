@@ -1,0 +1,13 @@
+package de.hetzge.sgame.network;
+
+public class AcceptMessageThread extends Thread {
+
+	public AcceptMessageThread() {
+		super(AcceptMessageThread::runnable);
+	}
+
+	private void runnable() {
+
+	}
+
+}

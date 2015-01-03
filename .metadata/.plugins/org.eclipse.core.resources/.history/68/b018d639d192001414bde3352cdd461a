@@ -1,0 +1,8 @@
+package de.hetzge.sgame.render;
+
+
+public interface IF_RenderableFactory {
+
+	IF_RenderableWrapper<?, ?> by(TileDefinition tileDefinition);
+
+}

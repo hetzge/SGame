@@ -1,0 +1,20 @@
+package de.hetzge.sgame.network;
+
+import org.nustaq.serialization.FSTConfiguration;
+
+public class NetworkConfig {
+
+	public static final NetworkConfig INSTANCE = new NetworkConfig();
+
+	public IF_ServerLifecycle serverLifecycle = null;
+	public IF_ClientLifecycle clientLifecycle = null;
+	public PeerRole peerRole;
+	public Peer peer;
+	public FSTConfiguration fst;
+	public NetworkData networkData = new NetworkData("127.0.0.1", 4321)
+	
+
+	private NetworkConfig() {
+		this.fst = FSTConfiguration.createDefaultConfiguration();
+	}
+}

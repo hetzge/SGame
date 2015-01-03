@@ -1,0 +1,27 @@
+package de.hetzge.sgame.sync.serializer;
+
+import java.io.IOException;
+
+import org.nustaq.serialization.FSTBasicObjectSerializer;
+import org.nustaq.serialization.FSTClazzInfo;
+import org.nustaq.serialization.FSTClazzInfo.FSTFieldInfo;
+import org.nustaq.serialization.FSTObjectInput;
+import org.nustaq.serialization.FSTObjectOutput;
+
+public class FSTSyncPropertySerializer extends FSTBasicObjectSerializer {
+
+	@Override
+	public void writeObject(FSTObjectOutput out, Object object, FSTClazzInfo clazzInfo, FSTFieldInfo fieldInfo, int str) throws IOException {
+		out.writeObject(object);
+
+		System.out.println("blab");
+	}
+
+	@Override
+	public void readObject(FSTObjectInput in, Object toRead, FSTClazzInfo clzInfo, FSTFieldInfo referencedBy) throws IOException, ClassNotFoundException, IllegalAccessException,
+			InstantiationException {
+
+		super.readObject(in, toRead, clzInfo, referencedBy);
+	}
+
+}

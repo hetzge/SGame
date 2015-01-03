@@ -1,0 +1,17 @@
+package de.hetzge.sgame.libgdx;
+
+import java.util.function.Consumer;
+
+import de.hetzge.sgame.render.RenderablePool;
+
+public class LibGdxConfig {
+
+	public static final LibGdxConfig INSTANCE = new LibGdxConfig();
+
+	public Consumer<RenderablePool> initRenderablePool = () -> ;
+
+	public float stateTime = 0f;
+
+	public String gameTitle = "Game";
+
+}

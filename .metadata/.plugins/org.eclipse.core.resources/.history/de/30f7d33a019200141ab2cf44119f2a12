@@ -1,0 +1,17 @@
+package de.hetzge.sgame.render;
+
+import java.util.function.Consumer;
+
+public class RenderConfig {
+
+	public static final RenderConfig INSTANCE = new RenderConfig();
+
+	public final RenderablePool renderablePool = new RenderablePool();
+
+	public Consumer<RenderablePool> initRenderablePool = (renderablePool) -> {
+	};
+
+	private RenderConfig() {
+	}
+
+}

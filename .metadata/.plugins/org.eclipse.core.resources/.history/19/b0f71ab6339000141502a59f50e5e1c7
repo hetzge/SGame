@@ -1,0 +1,10 @@
+package de.hetzge.sgame.render;
+
+public class RenderableKeyBuilder {
+	
+	private final RenderableKey renderableKey = new RenderableKey();
+	
+	
+	
+
+}

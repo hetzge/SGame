@@ -1,0 +1,19 @@
+package de.hetzge.sgame.sync;
+
+import java.util.List;
+
+import de.hetzge.sgame.common.IF_Module;
+import de.hetzge.sgame.sync.message.SyncMessage;
+
+public class SyncModule implements IF_Module {
+
+	@Override
+	public void init() {
+	}
+
+	@Override
+	public void update() {
+		List<SyncMessage> syncMessages = SyncConfig.INSTANCE.syncPool.collectSyncMessages();
+	}
+
+}

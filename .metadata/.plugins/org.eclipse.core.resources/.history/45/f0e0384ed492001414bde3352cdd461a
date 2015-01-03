@@ -1,0 +1,17 @@
+package de.hetzge.sgame.message;
+
+import de.hetzge.sgame.common.FstUtil;
+import de.hetzge.sgame.common.IF_Module;
+
+public class MessageModule implements IF_Module {
+
+	@Override
+	public void init() {
+		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(BatchMessage.class, new BatchMessageHandler());
+	}
+
+	@Override
+	public void update() {
+	}
+
+}

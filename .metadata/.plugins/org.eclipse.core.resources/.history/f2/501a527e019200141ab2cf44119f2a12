@@ -1,0 +1,28 @@
+package de.hetzge.sgame.libgdx;
+
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+
+import de.hetzge.sgame.common.IF_Module;
+
+public class LibGdxModule implements IF_Module {
+
+	private LwjglApplication lwjglApplication;
+
+	@Override
+	public void init() {
+	}
+
+	@Override
+	public void update() {
+		if (this.lwjglApplication == null) {
+			LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+			cfg.title = LibGdxConfig.INSTANCE.gameTitle;
+			cfg.useGL30 = false;
+			cfg.width = 480;
+			cfg.height = 320;
+			this.lwjglApplication = new LwjglApplication(new LibGdxApplication(), cfg);
+		}
+	}
+
+}

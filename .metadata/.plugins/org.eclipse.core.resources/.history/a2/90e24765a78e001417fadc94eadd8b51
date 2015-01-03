@@ -1,0 +1,11 @@
+package de.hetzge.sgame.application;
+
+import java.util.LinkedList;
+
+import de.hetzge.sgame.common.IF_Module;
+
+public class ModulePool {
+
+	private final List<IF_Module> modules = new LinkedList<>();
+
+}

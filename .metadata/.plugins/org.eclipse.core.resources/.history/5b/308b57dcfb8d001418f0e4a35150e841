@@ -1,0 +1,9 @@
+package de.hetzge.sgame.libgdx.renderable;
+
+public class RenderablePool {
+
+	public RenderablePool() {
+
+	}
+
+}

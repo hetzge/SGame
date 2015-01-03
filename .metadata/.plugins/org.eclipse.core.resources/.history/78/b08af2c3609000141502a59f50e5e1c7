@@ -1,0 +1,37 @@
+package de.hetzge.sgame.message;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.function.Supplier;
+
+import de.hetzge.sgame.common.IF_Callback;
+import de.hetzge.sgame.common.serializer.Serializer;
+
+public class CallbackMessage implements IF_Callback<Object>, Serializable {
+
+	private transient final Supplier<Object> supplier;
+
+	public CallbackMessage(Supplier<Object> supplier) {
+		this.supplier = supplier;
+	}
+
+	@Override
+	public Object callback() {
+		return this.supplier.get();
+	}
+
+	public static void main(String[] args) {
+		BatchMessage<Object> batchMessage = new BatchMessage<Object>(new LinkedList<Object>());
+
+		batchMessage.messages.add(new CallbackMessage(null));
+		
+		try {
+			Serializer.serialize(batchMessage);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+}

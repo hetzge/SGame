@@ -1,0 +1,19 @@
+package de.hetzge.sgame.common.timer;
+
+public class Timer {
+
+	private final long timespanInMs;
+	private long lastCall = 0;
+	
+	public boolean call(){
+		long currentTimeInMs = System.currentTimeMillis();
+		if(lastCall < currentTimeInMs){
+			lastCall = currentTimeInMs + timespanInMs;
+			return true;
+		}
+		return false;
+	}
+	
+	
+	
+}

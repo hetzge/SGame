@@ -1,0 +1,8 @@
+package de.hetzge.sgame.render;
+
+public class RenderConfig {
+
+	private RenderConfig() {
+	}
+	
+}

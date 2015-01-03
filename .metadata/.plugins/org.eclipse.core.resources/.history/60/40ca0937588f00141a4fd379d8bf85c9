@@ -1,0 +1,54 @@
+package de.hetzge.sgame.sync;
+
+import de.hetzge.sgame.common.UUID;
+import de.hetzge.sgame.sync.message.SyncMessage;
+
+public class SyncProperty<TYPE> {
+
+	private final String key;
+	private TYPE value;
+	private TYPE oldValue;
+
+	public SyncProperty(TYPE value) {
+		this.key = UUID.generateKey();
+		this.value = value;
+		SyncConfig.INSTANCE.syncPool.registerSyncProperty(this);
+	}
+
+	public SyncProperty() {
+		this(null);
+	}
+
+	public TYPE getValue() {
+		return this.value;
+	}
+
+	public void setValue(TYPE value) {
+		this.value = value;
+	}
+
+	public void setValueResetChange(TYPE value) {
+		this.setValue(value);
+		this.oldValue = value;
+	}
+
+	public void setChanged() {
+		this.oldValue = null;
+	}
+
+	protected SyncMessage flush() {
+		if (this.value != this.oldValue) {
+			this.oldValue = this.value;
+			SyncMessage syncMessage = new SyncMessage();
+			syncMessage.key = this.key;
+			syncMessage.value = this.value;
+			return syncMessage;
+		}
+		return null;
+	}
+
+	public String getKey() {
+		return this.key;
+	}
+
+}

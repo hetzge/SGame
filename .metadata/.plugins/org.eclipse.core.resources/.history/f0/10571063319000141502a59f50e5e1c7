@@ -1,0 +1,18 @@
+package de.hetzge.sgame.common;
+
+import org.nustaq.serialization.FSTConfiguration;
+
+import de.hetzge.sgame.common.renderable.RenderablePool;
+
+public class CommonConfig {
+
+	public static final CommonConfig INSTANCE = new CommonConfig();
+
+	public FSTConfiguration fst = FSTConfiguration.getDefaultConfiguration();
+	
+	public String assetsFolder = "C:\\Workspace SGame Mod\\SGame_Game\\assets";
+
+	private CommonConfig() {
+	}
+
+}

@@ -1,0 +1,14 @@
+import de.hetzge.sgame.common.geometry.Position;
+
+
+public enum Orientation {
+	
+	NORTH(new Position(0,-1)), NORTH_EAST(new Position(1, -1)), EAST(new Position(1, 0)), SOUTH_EAST(new Position(1, 1)), SOUTH(new Position(0, 1)), SOUTH_WEST(new Position(-1, 1)), WEST(new Position(-1, 0)), NORTH_WEST(new Position(-1, -1));
+	
+	public final Position orientationFactor;
+
+	private Orientation(Position orientationFactor) {
+		this.orientationFactor = orientationFactor;
+	}
+	
+}

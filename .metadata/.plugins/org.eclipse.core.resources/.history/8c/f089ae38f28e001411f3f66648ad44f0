@@ -1,0 +1,20 @@
+package de.hetzge.sgame.message;
+
+import java.io.IOException;
+
+public class FSTCallbackMessageSerializer extends FSTBasicObjectSerializer {
+
+	@Override
+	public void writeObject(FSTObjectOutput out, Object object, FSTClazzInfo clazzInfo, FSTFieldInfo fieldInfo, int str) throws IOException {
+		out.writeObject(object);
+	}
+
+	@Override
+	public void readObject(FSTObjectInput in, Object toRead, FSTClazzInfo clzInfo, FSTFieldInfo referencedBy) throws IOException, ClassNotFoundException, IllegalAccessException,
+			InstantiationException {
+		SyncProperty<?> syncProperty = (SyncProperty<?>) toRead;
+		SyncConfig.INSTANCE.syncPool.registerSyncProperty(syncProperty);
+		super.readObject(in, toRead, clzInfo, referencedBy);
+	}
+
+}

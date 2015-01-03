@@ -1,0 +1,30 @@
+package de.hetzge.sgame.sync;
+
+import org.nustaq.serialization.FSTObjectOutput;
+
+public class Test {
+
+	public static class XYZ{
+		
+		String x;
+		
+		public String getX() {
+			return x;
+		}
+		
+		public void setX(String x) {
+			this.x = x;
+		}
+		
+		
+	}
+	
+	public static void main(String[] args) {
+		
+		
+		FSTObjectOutput out = new FSTObjectOutput(stream);
+	    out.writeObject( toWrite );
+	    out.close(); // required !
+	}
+
+}

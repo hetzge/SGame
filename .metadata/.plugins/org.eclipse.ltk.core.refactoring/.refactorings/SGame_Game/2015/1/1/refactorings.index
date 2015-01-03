@@ -1,0 +1,3 @@
+1420239828331	Convert local variable 'messageModule' to field
+1420239901627	Convert local variable 'libGdxModule' to field
+1420239904558	Convert local variable 'renderModule' to field

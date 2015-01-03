@@ -1,0 +1,7 @@
+package de.hetzge.sgame.message;
+
+import java.io.Serializable;
+
+public class CallbackMessage implements Serializable {
+
+}

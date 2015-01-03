@@ -1,0 +1,10 @@
+package de.hetzge.sgame.message;
+
+public class MessageConfig {
+
+	public static final MessageConfig INSTANCE = new MessageConfig();
+
+	private MessageConfig() {
+	}
+
+}

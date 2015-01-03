@@ -1,0 +1,13 @@
+package de.hetzge.sgame.application;
+
+import java.util.Timer;
+
+public class Application {
+
+	private final Timer updateTimer = new Timer();
+	
+	public void update() {
+		
+	}
+
+}

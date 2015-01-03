@@ -1,0 +1,54 @@
+package de.hetzge.sgame.network;
+
+import java.io.IOException;
+import java.net.Socket;
+
+import de.hetzge.sgame.common.Log;
+import de.hetzge.sgame.common.exception.NetworkException;
+
+public class Client {
+
+	private Connection connection;
+
+	public Client() {
+	}
+
+	public void connect(NetworkData networkData, Object registerMessage) {
+		try {
+			Socket socket = new Socket(networkData.ipAddress, networkData.port);
+			Log.NETWORK.info("Client try to connect");
+
+			this.connection = new Connection(socket);
+
+			Log.NETWORK.info("Client connected");
+
+			this.connection.write(registerMessage);
+
+			Log.NETWORK.info("Client wrote register object");
+
+			Object registerAnswer = this.connection.read();
+			NetworkConfig.CLIENT_LIFECYCLE.onClientRegisterSuccess(registerAnswer);
+
+			Log.NETWORK.info("Client handled register answer");
+
+			new AcceptMessageThread(this.connection).start();
+
+			Log.NETWORK.info("Client message receive thread startet");
+
+		} catch (IOException | ClassNotFoundException e) {
+			throw new NetworkException(e);
+		}
+	}
+
+	public void sendMessage(Object message) {
+		if (this.connection == null)
+			throw new IllegalStateException();
+
+		try {
+			this.connection.write(message);
+		} catch (IOException e) {
+			throw new NetworkException(e);
+		}
+
+	}
+}

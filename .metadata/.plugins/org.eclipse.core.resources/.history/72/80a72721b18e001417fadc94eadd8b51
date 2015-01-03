@@ -1,0 +1,6 @@
+package de.hetzge.sgame.sync;
+
+
+public class SyncMessageHandler implements messa {
+
+}

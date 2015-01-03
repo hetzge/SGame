@@ -1,0 +1,39 @@
+package de.hetzge.sgame.entity.module;
+
+import de.hetzge.sgame.common.Orientation;
+import de.hetzge.sgame.common.renderable.RenderableKey;
+import de.hetzge.sgame.entity.BaseEntityModule;
+import de.hetzge.sgame.entity.Entity;
+import de.hetzge.sgame.sync.SyncProperty;
+
+public class RenderableModule extends BaseEntityModule {
+
+	private final SyncProperty<RenderableKey> renderableKeySyncProperty = new SyncProperty<>(new RenderableKey());
+
+	public RenderableModule(Entity entity) {
+		super(entity);
+	}
+
+	@Override
+	public void init() {
+
+	}
+
+	@Override
+	public void update() {
+
+	}
+
+	public void setOrientation(Orientation orientation) {
+		this.renderableKeySyncProperty.getValue().orientation = orientation;
+		this.renderableKeySyncProperty.setChanged();
+	}
+
+	public void setEntityKey(IF_EntityType entityType) {
+		this.renderableKeySyncProperty.getValue().entityKey = entityKey;
+		this.renderableKeySyncProperty.setChanged();
+	}
+	
+	public void set
+
+}

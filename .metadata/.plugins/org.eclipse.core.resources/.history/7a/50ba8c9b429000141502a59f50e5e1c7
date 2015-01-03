@@ -1,0 +1,28 @@
+package de.hetzge.sgame.message.serializer;
+
+import java.io.IOException;
+
+import org.nustaq.serialization.FSTBasicObjectSerializer;
+import org.nustaq.serialization.FSTClazzInfo;
+import org.nustaq.serialization.FSTClazzInfo.FSTFieldInfo;
+import org.nustaq.serialization.FSTObjectInput;
+import org.nustaq.serialization.FSTObjectOutput;
+
+import de.hetzge.sgame.message.CallbackMessage;
+
+public class FSTCallbackMessageSerializer extends FSTBasicObjectSerializer {
+
+	@Override
+	public void writeObject(FSTObjectOutput out, Object object, FSTClazzInfo clazzInfo, FSTFieldInfo fieldInfo, int str) throws IOException {
+		CallbackMessage callbackMessage = (CallbackMessage) object;
+		object = callbackMessage.resolve();
+		out.writeObject(object);
+	}
+
+	@Override
+	public void readObject(FSTObjectInput in, Object toRead, FSTClazzInfo clzInfo, FSTFieldInfo referencedBy) throws IOException, ClassNotFoundException, IllegalAccessException,
+			InstantiationException {
+		super.readObject(in, toRead, clzInfo, referencedBy);
+	}
+
+}

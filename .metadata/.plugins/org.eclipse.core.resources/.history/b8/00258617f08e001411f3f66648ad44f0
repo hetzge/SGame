@@ -1,0 +1,17 @@
+package de.hetzge.sgame.entity.message;
+
+import de.hetzge.sgame.entity.Entity;
+import de.hetzge.sgame.entity.EntityConfig;
+import de.hetzge.sgame.message.IF_MessageHandler;
+
+public class SyncAllEntitiesMessageHandler implements IF_MessageHandler<SyncAllEntitiesMessage> {
+
+	@Override
+	public void handle(SyncAllEntitiesMessage message) {
+
+		for (Entity entity : message.entities) {
+			EntityConfig.INSTANCE.entityPool.addEntity(entity);
+		}
+
+	}
+}

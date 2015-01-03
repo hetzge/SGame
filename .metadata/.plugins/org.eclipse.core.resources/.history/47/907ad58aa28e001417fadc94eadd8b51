@@ -1,0 +1,20 @@
+package de.hetzge.sgame.network.message;
+
+import java.util.LinkedList;
+import java.util.List;
+
+public class MessagePool {
+
+	private final List<Object> buffer = new LinkedList<>();
+
+	public synchronized List<Object> flush() {
+		LinkedList<Object> result = new LinkedList<>(this.buffer);
+		this.buffer.clear();
+		return result;
+	}
+
+	public synchronized addMessage(Object message) {
+
+	}
+
+}

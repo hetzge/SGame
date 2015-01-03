@@ -1,0 +1,16 @@
+package de.hetzge.sgame.map;
+
+import de.hetzge.sgame.common.IF_Module;
+
+public class MapModule implements IF_Module {
+
+	@Override
+	public void init() {
+
+	}
+
+	@Override
+	public void update() {
+	}
+
+}

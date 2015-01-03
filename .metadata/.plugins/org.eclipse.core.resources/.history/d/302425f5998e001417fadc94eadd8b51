@@ -1,0 +1,20 @@
+package de.hetzge.sgame.network;
+
+import org.nustaq.serialization.FSTConfiguration;
+
+import de.hetzge.sgame.network.message.MessageHandlerPool;
+
+public class NetworkConfig {
+
+	public IF_ServerLifecycle SERVER_LIFECYCLE = null;
+	public IF_ClientLifecycle CLIENT_LIFECYCLE = null;
+
+	public final MessageHandlerPool messageHandlerPool = new MessageHandlerPool();
+	public int port = 4321;
+
+	public final FSTConfiguration fst;
+
+	private NetworkConfig() {
+		fst = FSTConfiguration.createDefaultConfiguration();
+	}
+}

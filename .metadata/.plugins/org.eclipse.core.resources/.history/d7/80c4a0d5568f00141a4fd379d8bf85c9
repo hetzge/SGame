@@ -1,0 +1,9 @@
+package de.hetzge.sgame.common.renderable;
+
+import de.hetzge.sgame.common.Orientation;
+
+public class RenderableKey {
+	public IF_AnimationKey animationKey;
+	public IF_EntityKey entityKey;
+	public Orientation orientation;
+}

@@ -1,0 +1,16 @@
+package de.hetzge.sgame.sync;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Consumer;
+
+public class SyncPool {
+
+	private final List<SyncMessage> messageBuffer = new LinkedList<>();
+
+	public void flush(Consumer<List<SyncMessage>> consumer) {
+		consumer.accept(messageBuffer);
+		messageBuffer.clear();
+	}	
+
+}

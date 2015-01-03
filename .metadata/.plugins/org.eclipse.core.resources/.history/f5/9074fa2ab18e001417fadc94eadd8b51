@@ -1,0 +1,7 @@
+package de.hetzge.sgame.sync.message;
+
+import de.hetzge.sgame.common.message.IF_MessageHandler;
+
+public class SyncMessageHandler implements IF_MessageHandler<SyncMessage> {
+
+}

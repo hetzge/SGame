@@ -1,0 +1,9 @@
+package de.hetzge.sgame.message;
+
+import java.util.List;
+
+public class BatchMessage {
+
+	public final List<Object> messages;
+
+}

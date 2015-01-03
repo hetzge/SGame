@@ -1,0 +1,24 @@
+package de.hetzge.sgame.map;
+
+import java.util.LinkedList;
+import java.util.List;
+
+public class TileDefinition {
+
+	private final List<TileLayer> tileLayers = new LinkedList<>();
+
+	public void addTileLayer(TileLayer tileLayer) {
+
+	}
+
+	public void setTileLayer(int layer, TileLayer tileLayer) {
+
+	}
+
+	public void fillTillLayer(int layer) {
+		while (this.tileLayers.size() < layer) {
+			this.tileLayers.add(null);
+		}
+	}
+
+}

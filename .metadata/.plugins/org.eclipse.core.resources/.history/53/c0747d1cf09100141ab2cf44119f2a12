@@ -1,0 +1,14 @@
+package de.hetzge.sgame.common;
+
+import java.util.logging.Logger;
+
+public final class LogUtil {
+
+	private LogUtil() {
+	}
+
+	public static Logger createFileLogger(String name) {
+
+	}
+
+}

@@ -1,0 +1,11 @@
+package de.hetzge.sgame.sync;
+
+import de.hetzge.sgame.common.IF_OnScreen;
+import de.hetzge.sgame.common.geometry.Rectangle;
+
+public class SyncViewport extends Rectangle {
+
+	public boolean isVisible(IF_OnScreen rendered) {
+		return this.doesOverlapWith(rendered.getRenderedRectangle());
+	}
+}

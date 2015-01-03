@@ -1,0 +1,40 @@
+package de.hetzge.sgame.network;
+
+import java.util.List;
+
+import de.hetzge.sgame.common.IF_Module;
+
+public class NetworkModule implements IF_Module {
+
+	private final PeerRole peerRole;
+	private Peer peer;
+
+	public NetworkModule(PeerRole peerRole) {
+		this.peerRole = peerRole;
+	}
+
+	@Override
+	public void init() {
+		switch (this.peerRole) {
+		case CLIENT:
+			this.peer = new Client();
+			break;
+		case SERVER:
+			this.peer = new Server();
+			break;
+		default:
+			throw new IllegalStateException();
+		}
+	}
+
+	@Override
+	public void update() {
+		List<Object> messages = NetworkConfig.INSTANCE.messagePool.flush();
+		for (Object object : messages) {
+			
+		}
+		this.peer.sendMessage(message);
+
+	}
+
+}

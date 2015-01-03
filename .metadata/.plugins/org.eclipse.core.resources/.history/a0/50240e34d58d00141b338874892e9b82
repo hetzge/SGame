@@ -1,0 +1,41 @@
+package de.hetzge.sgame.sync;
+
+public class SyncProperty<TYPE> {
+
+	private final long id;
+	private TYPE value;
+	private transient boolean changed;
+	private Spread spread = Spread.NONE;
+	private boolean registered;
+
+	public SyncProperty(long id, TYPE value) {
+		this.id = id;
+		this.value = value;
+	}
+
+	public SyncProperty(long id) {
+		this(id, null);
+	}
+
+	public SyncProperty<TYPE> setSpread(Spread spread) {
+		this.spread = spread;
+	}
+
+	public TYPE getValue() {
+		return this.value;
+	}
+
+	public void setValue(TYPE value) {
+		this.value = value;
+		this.changed = true;
+	}
+
+	public boolean isChanged() {
+		return this.changed;
+	}
+
+	public long getId() {
+		return this.id;
+	}
+
+}

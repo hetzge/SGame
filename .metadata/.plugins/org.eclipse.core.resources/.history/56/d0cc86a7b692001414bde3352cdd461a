@@ -1,0 +1,14 @@
+package de.hetzge.sgame.libgdx;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
+
+public class PixmapWrapper {
+
+	private final Pixmap pixmap;
+
+	public PixmapWrapper(String internalPathToFile) {
+		this.pixmap = new Pixmap(Gdx.files.internal(internalPathToFile));
+	}
+
+}

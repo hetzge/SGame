@@ -1,0 +1,23 @@
+package de.hetzge.sgame.libgdx.renderable;
+
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+import de.hetzge.sgame.common.IF_OnScreen;
+import de.hetzge.sgame.common.renderable.Renderable;
+import de.hetzge.sgame.libgdx.LibGdxConfig;
+
+public class LibGdxRenderableAnimation implements Renderable<LibGdxRenderableContext> {
+
+	private final Animation animation;
+
+	public LibGdxRenderableAnimation(Animation animation) {
+		this.animation = animation;
+	}
+
+	@Override
+	public void render(LibGdxRenderableContext context, IF_OnScreen onScreen) {
+		TextureRegion keyFrame = this.animation.getKeyFrame(LibGdxConfig.INSTANCE.stateTime);
+		LibGdxRenderableTextureRegion.render(keyFrame, context, onScreen);
+	}
+}

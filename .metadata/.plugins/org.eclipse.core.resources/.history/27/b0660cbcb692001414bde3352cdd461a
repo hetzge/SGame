@@ -1,0 +1,34 @@
+package de.hetzge.sgame.libgdx;
+
+import java.awt.Color;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
+
+import de.hetzge.sgame.render.IF_PixelAccess;
+
+public class PixmapWrapper implements IF_PixelAccess {
+
+	private final Pixmap pixmap;
+
+	public PixmapWrapper(String internalPathToFile) {
+		this.pixmap = new Pixmap(Gdx.files.internal(internalPathToFile));
+	}
+
+	@Override
+	public Color getColor(int x, int y) {
+		return this.pixmap.getPixel(x, y);
+	}
+
+	@Override
+	public int getWidth() {
+		return this.pixmap.getWidth();
+	}
+
+	@Override
+	public int getHeight() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

@@ -1,0 +1,51 @@
+package de.hetzge.sgame.common.renderable;
+
+import de.hetzge.sgame.common.Orientation;
+
+public abstract class RenderableKey {
+
+	public abstract IF_AnimationKey getAnimationKey();
+
+	public abstract IF_EntityType getEntityType();
+
+	public abstract Orientation getOrientation();
+
+	@Override
+	public int hashCode() {
+		IF_AnimationKey animationKey = this.getAnimationKey();
+		IF_EntityType entityType = this.getEntityType();
+		Orientation orientation = this.getOrientation();
+
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((animationKey == null) ? 0 : this.animationKey.hashCode());
+		result = prime * result + ((entityType == null) ? 0 : this.entityType.hashCode());
+		result = prime * result + ((orientation == null) ? 0 : this.orientation.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (this.getClass() != obj.getClass())
+			return false;
+		RenderableKey other = (RenderableKey) obj;
+		if (this.animationKey == null) {
+			if (other.animationKey != null)
+				return false;
+		} else if (!this.animationKey.equals(other.animationKey))
+			return false;
+		if (this.entityType == null) {
+			if (other.entityType != null)
+				return false;
+		} else if (!this.entityType.equals(other.entityType))
+			return false;
+		if (this.orientation != other.orientation)
+			return false;
+		return true;
+	}
+
+}

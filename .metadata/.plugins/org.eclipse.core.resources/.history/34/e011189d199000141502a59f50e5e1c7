@@ -1,0 +1,36 @@
+package de.hetzge.sgame.entity.module;
+
+import de.hetzge.sgame.common.Orientation;
+import de.hetzge.sgame.common.geometry.Dimension;
+import de.hetzge.sgame.common.geometry.Position;
+import de.hetzge.sgame.common.geometry.Rectangle;
+import de.hetzge.sgame.entity.EntityModule;
+import de.hetzge.sgame.sync.SyncProperty;
+
+public class PositionAndDimensionModule extends EntityModule {
+
+	private final SyncProperty<Rectangle> dimensionSyncProperty = new SyncProperty<Rectangle>(new Rectangle());
+
+	public PositionAndDimensionModule(Rectangle rectangle) {
+		this.dimensionSyncProperty.setValue(rectangle);
+	}
+
+	public PositionAndDimensionModule() {
+	}
+
+	public void setPosition(Position position) {
+		this.dimensionSyncProperty.getValue().getStartPosition().setX(position.getX());
+		this.dimensionSyncProperty.getValue().getStartPosition().setY(position.getY());
+		this.dimensionSyncProperty.setChanged();
+	}
+
+	public void setDimension(Dimension dimension) {
+		this.dimensionSyncProperty.getValue().setDimension(dimension);
+		this.dimensionSyncProperty.setChanged();
+	}
+	
+	public void move(Orientation orientation, float speed){
+		
+	}
+
+}

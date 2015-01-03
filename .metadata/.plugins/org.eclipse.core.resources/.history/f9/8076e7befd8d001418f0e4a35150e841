@@ -1,0 +1,7 @@
+package de.hetzge.sgame.common.renderable;
+
+import de.hetzge.sgame.common.IF_OnScreen;
+
+public interface Renderable<TYPE extends IF_RenderableContext> {
+	public void render(TYPE context, IF_OnScreen rendered);
+}

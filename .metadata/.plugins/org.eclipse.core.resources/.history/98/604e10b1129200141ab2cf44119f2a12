@@ -1,0 +1,36 @@
+package de.hetzge.sgame.network;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+
+import de.hetzge.sgame.common.serializer.Serializer;
+
+public class Connection {
+
+	private final TCPObjectSocket tcpObjectSocket;
+	private final DataOutputStream dataOutputStream;
+	private final DataInputStream dataInputStream;
+
+	public Connection(Socket socket) throws IOException {
+		this.socket = socket;
+		this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
+		this.dataInputStream = new DataInputStream(socket.getInputStream());
+	}
+
+	public Object read() throws IOException, ClassNotFoundException {
+		int length = this.dataInputStream.readInt();
+		byte[] byteArray = new byte[length];
+		this.dataInputStream.read(byteArray);
+		return Serializer.deserialize(byteArray);
+	}
+
+	public void write(Object message) throws IOException {
+		byte[] serialized = Serializer.serialize(message);
+		this.dataOutputStream.writeInt(serialized.length);
+		this.dataOutputStream.write(serialized);
+		this.dataOutputStream.flush();
+	}
+
+}

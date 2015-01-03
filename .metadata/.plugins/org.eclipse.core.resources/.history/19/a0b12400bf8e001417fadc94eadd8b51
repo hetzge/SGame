@@ -1,0 +1,14 @@
+package de.hetzge.sgame.sync;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class SyncPool {
+
+	private final Map<String, SyncProperty<?>> syncProperties = new HashMap<>();
+
+	public void registerSyncProperty(SyncProperty<?> syncProperty) {
+		this.syncProperties.put(syncProperty.getKey(), syncProperty);
+	}
+
+}

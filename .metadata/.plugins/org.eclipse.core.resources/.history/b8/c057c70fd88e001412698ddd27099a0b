@@ -1,0 +1,18 @@
+package de.hetzge.sgame.message;
+
+import de.hetzge.sgame.common.IF_Module;
+
+public class MessageModule implements IF_Module {
+
+	public final MessagePool messagePool = new MessagePool();
+	public final MessageHandlerPool MessageHandlerPool = new MessageHandlerPool()
+
+	@Override
+	public void init() {
+	}
+
+	@Override
+	public void update() {
+	}
+
+}

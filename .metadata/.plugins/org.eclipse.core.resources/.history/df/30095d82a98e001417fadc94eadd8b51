@@ -1,0 +1,32 @@
+package de.hetzge.sgame.application;
+
+import de.hetzge.sgame.common.Util;
+import de.hetzge.sgame.common.timer.Timer;
+
+public class Application {
+
+	private final Timer updateTimer = new Timer(ApplicationConfig.FPS);
+
+	public Application() {
+	}
+
+	public void start() {
+		this.init();
+
+		while (true) {
+			this.update();
+		}
+	}
+
+	private void init() {
+		ApplicationConfig.MODULE_POOL.init();
+	}
+
+	private void update() {
+		if (this.updateTimer.isTime()) {
+			ApplicationConfig.MODULE_POOL.update();
+		}
+		Util.sleep(1000 / ApplicationConfig.FPS);
+	}
+
+}

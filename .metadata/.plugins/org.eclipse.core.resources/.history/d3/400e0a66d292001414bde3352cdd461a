@@ -1,0 +1,10 @@
+package de.hetzge.sgame.common;
+
+public interface IF_Module extends IF_Renderable {
+
+	public void init();
+
+	public void update();
+
+
+}

@@ -1,0 +1,7 @@
+1420149422633	Rename type 'RenderableFactory'
+1420152943921	Extract method 'extractTexture'
+1420153428148	Rename local variable 'maxTemplateWidth'
+1420153433187	Rename local variable 'maxTemplateHeight'
+1420208108704	Convert local variable 'renderable' to field
+1420208119728	Convert local variable 'spriteBatch' to field
+1420225757112	Rename method 'smoothEdges'

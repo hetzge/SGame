@@ -1,0 +1,74 @@
+package de.hetzge.sgame.network;
+
+import java.io.IOException;
+import java.net.Socket;
+
+import de.hetzge.sgame.common.Log;
+import de.hetzge.sgame.common.exception.DefaultUncaughtExceptionHandler;
+import de.hetzge.sgame.common.exception.NetworkException;
+
+public class Client {
+
+	private Connection connection;
+
+	public Client() {
+	}
+
+	public void connect(NetworkData networkData, Object registerMessage) {
+		try (Socket socket = new Socket(networkData.ipAddress, networkData.port)) {
+
+			connection = new Connection(socket);
+			
+			Log.NETWORK.info("Client connected");
+
+			
+
+			Log.NETWORK.info("Client created output");
+
+			// InputStream inputStream = socket.getInputStream();
+			// FSTObjectInput objectInput =
+			// NetworkConfig.FST.getObjectInput(inputStream);
+
+			Log.NETWORK.info("Client created input");
+
+			this.write(socket.getOutputStream(), registerMessage);
+
+			Log.NETWORK.info("Client wrote register object");
+
+			Object registerAnswer = this.read(socket.getInputStream());
+			NetworkConfig.CLIENT_LIFECYCLE.onClientRegisterSuccess(registerAnswer);
+
+			Log.NETWORK.info("Client handled register answer");
+
+			Thread acceptMessageThread = new Thread(() -> {
+				while (true) {
+					try {
+						Object message = this.read(socket.getInputStream());
+						NetworkConfig.CLIENT_LIFECYCLE.handleMessage(message);
+					} catch (Exception e) {
+						throw new NetworkException(e);
+					}
+				}
+			});
+			Thread.setDefaultUncaughtExceptionHandler(DefaultUncaughtExceptionHandler.INSTANCE);
+			acceptMessageThread.start();
+
+			Log.NETWORK.info("Client message receive thread startet");
+
+		} catch (IOException | ClassNotFoundException e) {
+			throw new NetworkException(e);
+		}
+	}
+
+	public void sendMessage(Object message) {
+		if (this.socket == null)
+			throw new IllegalStateException();
+
+		try {
+			this.write(this.socket.getOutputStream(), message);
+		} catch (IOException e) {
+			throw new NetworkException(e);
+		}
+
+	}
+}

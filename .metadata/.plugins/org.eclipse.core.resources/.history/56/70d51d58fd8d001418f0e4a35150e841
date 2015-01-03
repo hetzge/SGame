@@ -1,0 +1,19 @@
+package de.hetzge.sgame.libgdx.renderable;
+
+import com.badlogic.gdx.graphics.g2d.Animation;
+
+import de.hetzge.sgame.common.renderable.Renderable;
+
+public class LibGdxRenderableAnimation implements Renderable<LibGdxRenderableContext> {
+
+	private final Animation animation;
+
+	public LibGdxRenderableAnimation(Animation animation) {
+		this.animation = animation;
+	}
+
+	@Override
+	public void render(LibGdxRenderableContext context) {
+		this.animation.getKeyFrame()
+	}
+}

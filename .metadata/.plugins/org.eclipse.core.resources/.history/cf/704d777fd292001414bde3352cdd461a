@@ -1,0 +1,40 @@
+package de.hetzge.sgame.entity;
+
+import de.hetzge.sgame.common.FstUtil;
+import de.hetzge.sgame.common.IF_Callback;
+import de.hetzge.sgame.common.IF_Module;
+import de.hetzge.sgame.entity.message.AddEntitiesMessage;
+import de.hetzge.sgame.entity.message.AddEntitiesMessageHandler;
+import de.hetzge.sgame.entity.message.NewEntityMessage;
+import de.hetzge.sgame.entity.message.NewEntityMessageHandler;
+import de.hetzge.sgame.entity.message.RemoveEntityMessage;
+import de.hetzge.sgame.entity.message.RemoveEntityMessageHandler;
+import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
+import de.hetzge.sgame.entity.module.RenderableModule;
+import de.hetzge.sgame.message.MessageConfig;
+
+public class EntityModule implements IF_Module {
+
+	@Override
+	public void init() {
+		FstUtil.registerClass(Entity.class, EntityReference.class);
+		FstUtil.registerClass(PositionAndDimensionModule.class, RenderableModule.class);
+		FstUtil.registerClass(AddEntitiesMessage.class, NewEntityMessage.class, RemoveEntityMessage.class);
+
+		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(NewEntityMessage.class, new NewEntityMessageHandler());
+		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(RemoveEntityMessage.class, new RemoveEntityMessageHandler());
+		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(AddEntitiesMessage.class, new AddEntitiesMessageHandler());
+
+		MessageConfig.INSTANCE.serverToNewClientMessages.add((IF_Callback<Object>) () -> {
+			return new AddEntitiesMessage(EntityConfig.INSTANCE.entityPool.getEntitiesCopy());
+		});
+
+		EntityConfig.INSTANCE.entityPool.init();
+	}
+
+	@Override
+	public void update() {
+		EntityConfig.INSTANCE.entityPool.update();
+	}
+
+}

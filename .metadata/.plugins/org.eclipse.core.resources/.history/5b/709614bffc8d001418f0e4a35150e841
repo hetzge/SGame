@@ -1,0 +1,11 @@
+package de.hetzge.sgame.libgdx.renderable;
+
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import de.hetzge.sgame.common.renderable.IF_RenderableContext;
+
+public class LibGdxRenderableContext implements IF_RenderableContext {
+
+	public final SpriteBatch spriteBatch;
+	
+}

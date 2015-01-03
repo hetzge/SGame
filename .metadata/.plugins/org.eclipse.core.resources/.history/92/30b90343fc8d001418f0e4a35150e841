@@ -1,0 +1,9 @@
+package de.hetzge.sgame.common.renderable;
+
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+public interface Renderable {
+
+	public void render(IF_RenderableContext<?> context);
+
+}

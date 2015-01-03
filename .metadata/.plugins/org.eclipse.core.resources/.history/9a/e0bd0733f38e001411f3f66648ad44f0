@@ -1,0 +1,10 @@
+package de.hetzge.sgame.common;
+
+public class CommonConfig {
+
+	public static final CommonConfig INSTANCE = new CommonConfig();
+
+	private CommonConfig() {
+	}
+
+}

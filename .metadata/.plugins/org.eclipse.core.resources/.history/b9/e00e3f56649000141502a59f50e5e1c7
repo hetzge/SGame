@@ -1,0 +1,15 @@
+package de.hetzge.sgame.message;
+
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
+
+public class BatchMessage implements Serializable {
+
+	public final List<Object> messages = new LinkedList<>();
+
+	public BatchMessage() {
+		this.messages = this.messages;
+	}
+
+}

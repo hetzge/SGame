@@ -1,0 +1,14 @@
+package de.hetzge.sgame.entity.message;
+
+import de.hetzge.sgame.common.IF_Module;
+import de.hetzge.sgame.message.IF_MessageHandler;
+
+public class NewEntityMessageHandler implements IF_MessageHandler<NewEntityMessage> {
+
+	@Override
+	public void handle(NewEntityMessage message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

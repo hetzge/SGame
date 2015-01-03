@@ -1,0 +1,50 @@
+package de.hetzge.sgame.common.serializer;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Date;
+
+import org.nustaq.serialization.FSTObjectInput;
+import org.nustaq.serialization.FSTObjectOutput;
+
+import de.hetzge.sgame.common.CommonConfig;
+import de.hetzge.sgame.common.IF_Callback;
+import de.hetzge.sgame.message.CallbackMessage;
+
+public final class Serializer {
+	private Serializer() {
+	}
+
+	public static byte[] serialize(Object object) throws IOException {
+		if(object instanceof IF_Callback){
+			IF_Callback callback = (IF_Callback) object;
+			object = callback.callback();
+		}
+		
+		
+		FSTObjectOutput objectOutput = CommonConfig.INSTANCE.fst.getObjectOutput();
+		objectOutput.writeObject(object);
+
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		byteArrayOutputStream.write(objectOutput.getBuffer(), 0, objectOutput.getWritten());
+
+		return byteArrayOutputStream.toByteArray();
+	}
+
+	public static Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
+		FSTObjectInput objectInput = CommonConfig.INSTANCE.fst.getObjectInput(new ByteArrayInputStream(bytes));
+		return objectInput.readObject();
+	}
+
+	public static void main(String[] args) {
+		try {
+			byte[] serialized = Serializer.serialize(new Date());
+			Object deserialize = Serializer.deserialize(serialized);
+			System.out.println(deserialize);
+		} catch (IOException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

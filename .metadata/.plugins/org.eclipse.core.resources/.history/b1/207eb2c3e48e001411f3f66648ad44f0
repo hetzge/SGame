@@ -1,0 +1,25 @@
+package de.hetzge.sgame.entity;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Entity {
+
+	private final Map<Class<? extends IF_EntityModule>, IF_EntityModule> modules = new HashMap<>();
+
+	public void registerModule(IF_EntityModule entityModule) {
+		this.modules.put(entityModule.getClass(), entityModule);
+	}
+
+	public boolean hasModule(Class<? extends IF_EntityModule> moduleClass) {
+		return this.modules.containsKey(moduleClass);
+	}
+
+	public boolean hasModules(Class<? extends IF_EntityModule>... moduleClasses) {
+		for (Class<? extends IF_EntityModule> clazz : moduleClasses) {
+			if(!hasModule(clazz)) return false;
+		}
+	
+	}
+
+}

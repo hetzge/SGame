@@ -1,0 +1,18 @@
+package de.hetzge.sgame.entity;
+
+public class EntityReference {
+
+	private final String entityId;
+	private Entity entity;
+
+	public EntityReference(String entityId) {
+		this.entityId = entityId;
+	}
+
+	public Entity get() {
+		if (this.entity == null) {
+			this.entity = EntityConfig.INSTANCE.entityPool.getEntityById(this.entityId);
+		}
+		return this.entity,
+	}
+}

@@ -1,0 +1,55 @@
+package de.hetzge.sgame.sync;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
+
+import org.nustaq.serialization.FSTConfiguration;
+import org.nustaq.serialization.FSTObjectInput;
+import org.nustaq.serialization.FSTObjectOutput;
+
+import de.hetzge.sgame.sync.serializer.FSTSyncPropertySerializer;
+
+public class Test {
+
+	public static class XYZ implements Serializable {
+
+		private String x;
+
+		public XYZ(String x) {
+			super();
+			this.x = x;
+
+			System.out.println("Call");
+		}
+
+		public String getX() {
+			return this.x;
+		}
+
+		public void setX(String x) {
+			System.out.println("call");
+			this.x = x;
+		}
+
+	}
+
+	public static void main(String[] args) throws IOException, ClassNotFoundException {
+		FSTConfiguration fst = FSTConfiguration.createDefaultConfiguration();
+		fst.registerSerializer(SyncProperty.class, new FSTSyncPropertySerializer(), true);
+
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		FSTObjectOutput out = fst.getObjectOutput(byteArrayOutputStream);
+		out.writeObject(new SyncProperty<Long>(10));
+		out.close(); // required !
+
+		byte[] byteArray = byteArrayOutputStream.toByteArray();
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArray);
+		FSTObjectInput in = fst.getObjectInput(byteArrayInputStream);
+		SyncProperty result = (SyncProperty) in.readObject();
+		in.close(); // required !
+
+	}
+
+}

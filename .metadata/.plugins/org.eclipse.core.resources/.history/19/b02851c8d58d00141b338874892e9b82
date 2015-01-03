@@ -1,0 +1,10 @@
+package de.hetzge.sgame.sync;
+
+import java.util.LinkedList;
+import java.util.List;
+
+public class SyncPool {
+
+	private final List<SyncMessage> messageBuffer = new LinkedList<>();
+
+}

@@ -1,0 +1,23 @@
+package de.hetzge.sgame.application;
+
+import de.hetzge.sgame.libgdx.LibGdxConfig;
+import de.hetzge.sgame.network.NetworkConfig;
+import de.hetzge.sgame.sync.SyncConfig;
+
+public final class ApplicationConfig {
+
+	public static final int FPS = 30;
+
+	public static final ModulePool MODULE_POOL = new ModulePool();
+
+	public static final SyncConfig SYNC_CONFIG = SyncConfig.INSTANCE;
+	public static final NetworkConfig NETWORK_CONFIG = NetworkConfig.INSTANCE;
+	public static final LibGdxConfig LIB_GDX_CONFIG = LibGdxConfig.INSTANCE;
+
+	static {
+
+	}
+
+	private ApplicationConfig() {
+	}
+}

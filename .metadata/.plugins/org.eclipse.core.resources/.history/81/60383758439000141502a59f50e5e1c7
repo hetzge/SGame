@@ -1,0 +1,7 @@
+package de.hetzge.sgame.common;
+
+public interface IF_Callback<TYPE> {
+
+	public TYPE callback();
+
+}

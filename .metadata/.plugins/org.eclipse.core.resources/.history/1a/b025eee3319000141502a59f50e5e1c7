@@ -1,0 +1,10 @@
+package de.hetzge.sgame.common;
+
+import de.hetzge.sgame.common.geometry.Rectangle;
+import de.hetzge.sgame.common.renderable.RenderableKey;
+
+public interface IF_OnScreen {
+	public Rectangle getRenderedRectangle();
+
+	public RenderableKey getRenderableKey();
+}

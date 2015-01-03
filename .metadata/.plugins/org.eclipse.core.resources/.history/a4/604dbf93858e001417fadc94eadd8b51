@@ -1,0 +1,43 @@
+package de.hetzge.sgame.network;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Date;
+
+import org.nustaq.serialization.FSTObjectInput;
+import org.nustaq.serialization.FSTObjectOutput;
+
+public final class Serializer {
+
+	private Serializer() {
+	}
+
+	public static byte[] serialize(Object object) throws IOException {
+		FSTObjectOutput objectOutput = NetworkConfig.FST.getObjectOutput();
+		objectOutput.writeObject(object);
+
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		byteArrayOutputStream.write(objectOutput.getWritten());
+		byteArrayOutputStream.write(objectOutput.getBuffer(), 0, objectOutput.getWritten());
+
+		return byteArrayOutputStream.toByteArray();
+	}
+
+	public static Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
+		FSTObjectInput objectInput = NetworkConfig.FST.getObjectInput(new ByteArrayInputStream(bytes));
+		int length = objectInput.readInt();
+		return objectInput.readObject();
+	}
+
+	public static void main(String[] args) {
+		try {
+			byte[] serialized = Serializer.serialize(new Date());
+			Object deserialize = Serializer.deserialize(serialized);
+			System.out.println(deserialize);
+		} catch (IOException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

@@ -1,0 +1,28 @@
+package de.hetzge.sgame.render;
+
+import de.hetzge.sgame.common.Orientation;
+
+public class RenderableKeyBuilder {
+
+	private final RenderableKey renderableKey = new RenderableKey();
+
+	public void orientation(Orientation orientation){
+		this.renderableKey.orientation = orientation;
+	}
+	
+	public RenderableKeyBuilder animationKey(){
+		
+	}
+	
+	public RenderableKeyBuilder entityType(IF_EntityType entityType){
+		
+		return this;
+	}
+	
+	
+	public RenderableKey build(){
+		return renderableKey;
+	}
+	
+	
+}

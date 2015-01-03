@@ -1,0 +1,9 @@
+package de.hetzge.sgame.network;
+
+public class AcceptMessageThread extends Thread {
+
+	public AcceptMessageThread() {
+		super();
+	}
+
+}

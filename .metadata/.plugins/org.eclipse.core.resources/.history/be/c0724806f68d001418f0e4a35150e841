@@ -1,0 +1,9 @@
+package de.hetzge.sgame.common;
+
+public final class UUID {
+
+	public static String generateKey() {
+
+	}
+
+}

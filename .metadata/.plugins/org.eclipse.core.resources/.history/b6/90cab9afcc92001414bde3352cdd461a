@@ -1,0 +1,15 @@
+package de.hetzge.sgame.render;
+
+public final class RenderUtil {
+
+	private RenderUtil() {
+	}
+
+	public static <CONTEXT extends IF_RenderableContext> void render(CONTEXT context, IF_OnScreen onScreen) {
+		Renderable<?> renderable = RenderConfig.INSTANCE.renderablePool.getRenderable(onScreen.getRenderableKey());
+		renderable.render(context, onScreen);
+		
+		
+	}
+
+}

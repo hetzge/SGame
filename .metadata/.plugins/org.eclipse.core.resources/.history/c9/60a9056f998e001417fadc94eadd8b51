@@ -1,0 +1,16 @@
+package de.hetzge.sgame.sync;
+
+import org.nustaq.serialization.FSTConfiguration;
+
+import de.hetzge.sgame.sync.serializer.FSTSyncPropertySerializer;
+
+public final class SyncConfig {
+
+	public SyncPool SYNC_POOL = new SyncPool();
+	public final FSTConfiguration FST = FSTConfiguration.createDefaultConfiguration();
+
+	private SyncConfig() {
+		FST.registerSerializer(SyncProperty.class, new FSTSyncPropertySerializer(), true);
+	}
+
+}

@@ -1,0 +1,9 @@
+package de.hetzge.sgame.common.renderable;
+
+public class RenderablePool {
+
+	public RenderablePool() {
+
+	}
+
+}

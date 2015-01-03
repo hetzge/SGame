@@ -1,0 +1,58 @@
+package de.hetzge.sgame.map;
+
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
+
+import de.hetzge.sgame.common.BaseCollisionImpl;
+
+public class TileDefinition extends BaseCollisionImpl implements Serializable {
+
+	private final List<TileLayer> tileLayers = new LinkedList<>();
+	private String cachedKey = null;
+
+	public TileDefinition() {
+		super(MapConfig.INSTANCE.collisionTileFacor, MapConfig.INSTANCE.collisionTileFacor);
+	}
+	
+	public void addTileLayer(TileLayer tileLayer) {
+		this.tileLayers.add(tileLayer);
+		this.resetCache();
+	}
+
+	public void setTileLayer(int layer, TileLayer tileLayer) {
+		this.fillTillLayer(layer);
+		this.tileLayers.set(layer, tileLayer);
+		this.resetCache();
+	}
+
+	private void resetCache() {
+		this.cachedKey = null;
+	}
+
+	private void fillTillLayer(int layer) {
+		while (this.tileLayers.size() < layer) {
+			this.tileLayers.add(null);
+		}
+	}
+
+	public List<TileLayer> getTileLayers() {
+		return this.tileLayers;
+	}
+
+	String calculateKey() {
+		String key = "";
+		for (TileLayer tileLayer : this.tileLayers) {
+			key += "_" + tileLayer.calculateKey();
+		}
+		return key;
+	}
+
+	public String getKey() {
+		if (this.cachedKey == null) {
+			this.cachedKey = this.calculateKey();
+		}
+		return this.cachedKey;
+	}
+
+}

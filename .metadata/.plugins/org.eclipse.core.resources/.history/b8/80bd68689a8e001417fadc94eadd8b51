@@ -1,0 +1,41 @@
+package de.hetzge.sgame.network;
+
+public class Test {
+
+	public static void main(String[] args) throws InterruptedException {
+
+		NetworkConfig.CLIENT_LIFECYCLE = new IF_ClientLifecycle() {
+			@Override
+			public void onClientRegisterSuccess(Object registerAnswer) {
+				System.out.println(registerAnswer);
+			}
+		};
+
+		NetworkConfig.SERVER_LIFECYCLE = new IF_ServerLifecycle() {
+
+			@Override
+			public Object onClientRegister(Object message) {
+				System.out.println(message);
+				return new Object();
+			}
+
+			@Override
+			public void onClientConnected() {
+			}
+		};
+
+		new Thread(() -> {
+			Server server = new Server();
+			server.start();
+		}).start();
+
+		Thread.sleep(100);
+
+		new Thread(() -> {
+			Client client = new Client();
+			client.connect(new NetworkData("127.0.0.1", NetworkConfig.PORT), new Object());
+			client.sendMessage("Hello");
+		}).start();
+
+	}
+}
