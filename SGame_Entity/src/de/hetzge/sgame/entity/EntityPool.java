@@ -107,9 +107,7 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 	}
 
 	public void init() {
-		for (Entity entity : this.entities) {
-			entity.init();
-		}
+		// entities are init when added
 	}
 
 	public void update() {

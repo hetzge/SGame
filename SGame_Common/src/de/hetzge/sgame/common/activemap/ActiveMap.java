@@ -1,14 +1,16 @@
 package de.hetzge.sgame.common.activemap;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
+
+import javolution.util.FastCollection;
+import javolution.util.FastSet;
 
 public class ActiveMap<TYPE> implements Serializable {
 
 	private class ActiveNode<TYPE> implements Serializable {
 
-		private transient Set<ActiveNode> connectors = new HashSet<>();
+		private transient FastCollection<ActiveNode> connectors = new FastSet<ActiveNode>().parallel();
 		private transient ActiveNode connectedWith;
 
 		private TYPE object;
@@ -33,8 +35,8 @@ public class ActiveMap<TYPE> implements Serializable {
 			return this.object;
 		}
 
-		public Set<TYPE> getConnectedObjects() {
-			Set<TYPE> result = new HashSet<>();
+		public FastCollection<TYPE> getConnectedObjects() {
+			FastCollection<TYPE> result = new FastSet<TYPE>().parallel();
 			for (ActiveNode<TYPE> activeNode : this.getLazyConnectors()) {
 				result.add(activeNode.getObject());
 			}
@@ -45,9 +47,9 @@ public class ActiveMap<TYPE> implements Serializable {
 		 * method is needed because after serialization the connectors set is
 		 * null
 		 */
-		public Set<ActiveNode> getLazyConnectors() {
+		public FastCollection<ActiveNode> getLazyConnectors() {
 			if (this.connectors == null) {
-				this.connectors = new HashSet<>();
+				this.connectors = new FastSet<ActiveNode>().parallel();
 			}
 			return this.connectors;
 		}
@@ -99,19 +101,21 @@ public class ActiveMap<TYPE> implements Serializable {
 		}
 	}
 
-	public void setObject(int x, int y, TYPE object) {
+	public ActiveMap<TYPE> setObject(int x, int y, TYPE object) {
 		this.nodes[x][y].object = object;
+		return this;
 	}
 
-	public void setObject(TYPE object) {
+	public ActiveMap<TYPE> setObject(TYPE object) {
 		for (int x = 0; x < this.widthInTiles; x++) {
 			for (int y = 0; y < this.heightInTiles; y++) {
 				this.nodes[x][y].object = object;
 			}
 		}
+		return this;
 	}
 
-	public Set<TYPE> getConnectedObjects(int x, int y) {
+	public Collection<TYPE> getConnectedObjects(int x, int y) {
 		return this.nodes[x][y].getConnectedObjects();
 	}
 
@@ -129,13 +133,13 @@ public class ActiveMap<TYPE> implements Serializable {
 		activeMap2.setObject(true);
 
 		activeMap.connect(3, 3, activeMap2);
-		Set<Boolean> connectedObjects = activeMap.getConnectedObjects(4, 4);
+		Collection<Boolean> connectedObjects = activeMap.getConnectedObjects(4, 4);
 		for (Boolean boolean1 : connectedObjects) {
 			System.out.println(boolean1);
 		}
 
 		activeMap.connect(2, 2, activeMap2);
-		Set<Boolean> connectedObjects2 = activeMap.getConnectedObjects(4, 4);
+		Collection<Boolean> connectedObjects2 = activeMap.getConnectedObjects(4, 4);
 		for (Boolean boolean1 : connectedObjects2) {
 			System.out.println(boolean1);
 		}

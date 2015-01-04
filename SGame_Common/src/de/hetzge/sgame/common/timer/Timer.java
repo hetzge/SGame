@@ -1,6 +1,8 @@
 package de.hetzge.sgame.common.timer;
 
-public class Timer {
+import java.io.Serializable;
+
+public class Timer implements Serializable {
 
 	private final long timespanInMs;
 	private long lastCall = 0;

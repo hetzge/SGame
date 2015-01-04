@@ -2,7 +2,7 @@ package de.hetzge.sgame.common.geometry;
 
 import java.io.Serializable;
 
-public class Position implements Serializable {
+public class Position implements Serializable, IF_ImmutablePosition {
 
 	private float x = 0;
 	private float y = 0;
@@ -39,20 +39,23 @@ public class Position implements Serializable {
 		return this;
 	}
 
+	@Override
 	public Position copy() {
 		return new Position(this.x, this.y);
 	}
 
+	@Override
 	public float getX() {
 		return this.x;
 	}
 
-	public void setX(float x) {
-		this.x = x;
-	}
-
+	@Override
 	public float getY() {
 		return this.y;
+	}
+
+	public void setX(float x) {
+		this.x = x;
 	}
 
 	public void setY(float y) {

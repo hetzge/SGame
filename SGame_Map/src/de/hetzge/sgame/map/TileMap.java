@@ -1,7 +1,7 @@
 package de.hetzge.sgame.map;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 import de.hetzge.sgame.common.activemap.ActiveMap;
@@ -73,7 +73,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 			if (isMapCollision)
 				return true;
 
-			Set<Boolean> connectedObjects = TileMap.this.entityCollisionMap.getConnectedObjects(x, y);
+			Collection<Boolean> connectedObjects = TileMap.this.entityCollisionMap.getConnectedObjects(x, y);
 			for (Boolean aBoolean : connectedObjects) {
 				if (aBoolean)
 					return true;
@@ -134,7 +134,8 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 						RenderUtil.render(context, new IF_RenderInformation() {
 							@Override
 							public Rectangle getRenderedRectangle() {
-								return tile.renderedRectangle;
+								return new Rectangle(new Position(x * TileMap.this.collisionTileSize, y * TileMap.this.collisionTileSize), new Dimension(TileMap.this.collisionTileSize,
+										TileMap.this.collisionTileSize));
 							}
 
 							@Override

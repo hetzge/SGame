@@ -2,7 +2,7 @@ package de.hetzge.sgame.libgdx.renderable;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import de.hetzge.sgame.common.geometry.Rectangle;
+import de.hetzge.sgame.common.geometry.IF_ImmutableRectangle;
 import de.hetzge.sgame.render.IF_RenderInformation;
 import de.hetzge.sgame.render.IF_RenderableWrapper;
 
@@ -20,7 +20,7 @@ public class LibGdxRenderableTextureRegion implements IF_RenderableWrapper<LibGd
 	}
 
 	public static void render(TextureRegion textureRegion, LibGdxRenderableContext context, IF_RenderInformation onScreen) {
-		Rectangle rectangle = onScreen.getRenderedRectangle();
+		IF_ImmutableRectangle rectangle = onScreen.getRenderedRectangle();
 		context.spriteBatch.draw(textureRegion, rectangle.getStartPosition().getX(), rectangle.getStartPosition().getY(), rectangle.getDimension().getWidth(), rectangle.getDimension().getHeight());
 	}
 

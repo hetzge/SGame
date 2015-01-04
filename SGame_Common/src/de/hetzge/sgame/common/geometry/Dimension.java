@@ -2,7 +2,7 @@ package de.hetzge.sgame.common.geometry;
 
 import java.io.Serializable;
 
-public class Dimension implements Serializable {
+public class Dimension implements Serializable, IF_ImmutableDimension {
 
 	private float width;
 	private float height;
@@ -15,22 +15,22 @@ public class Dimension implements Serializable {
 	public Dimension() {
 	}
 
+	@Override
 	public float getWidth() {
 		return this.width;
 	}
 
-	public float calculateHalfWidth() {
-		return this.width / 2;
-	}
-
-	public void setWidth(float width) {
-		this.width = width;
-	}
-
+	@Override
 	public float getHeight() {
 		return this.height;
 	}
 
+	@Override
+	public float calculateHalfWidth() {
+		return this.width / 2;
+	}
+
+	@Override
 	public float calculateHalfHeight() {
 		return this.height / 2;
 	}
@@ -39,4 +39,7 @@ public class Dimension implements Serializable {
 		this.height = height;
 	}
 
+	public void setWidth(float width) {
+		this.width = width;
+	}
 }

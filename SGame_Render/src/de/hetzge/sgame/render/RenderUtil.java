@@ -1,6 +1,6 @@
 package de.hetzge.sgame.render;
 
-import de.hetzge.sgame.common.geometry.Rectangle;
+import de.hetzge.sgame.common.geometry.IF_ImmutableRectangle;
 
 public final class RenderUtil {
 
@@ -8,7 +8,7 @@ public final class RenderUtil {
 	}
 
 	public static <CONTEXT extends IF_RenderableContext> void render(CONTEXT context, IF_RenderInformation onScreen) {
-		Rectangle renderedRectangle = onScreen.getRenderedRectangle();
+		IF_ImmutableRectangle renderedRectangle = onScreen.getRenderedRectangle();
 		if (RenderConfig.INSTANCE.viewport.doesOverlapWith(renderedRectangle)) {
 			IF_RenderableWrapper<CONTEXT> renderable = (IF_RenderableWrapper<CONTEXT>) RenderConfig.INSTANCE.renderablePool.getRenderableRessource(onScreen.getRenderableKey());
 			if (renderable == null) {

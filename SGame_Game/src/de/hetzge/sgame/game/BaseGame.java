@@ -1,16 +1,12 @@
 package de.hetzge.sgame.game;
 
-import java.io.IOException;
-import java.util.LinkedList;
-
 import de.hetzge.sgame.application.Application;
 import de.hetzge.sgame.application.ApplicationConfig;
 import de.hetzge.sgame.common.definition.IF_EntityType;
 import de.hetzge.sgame.common.geometry.Dimension;
-import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.entity.EntityConfig;
 import de.hetzge.sgame.entity.EntityModule;
-import de.hetzge.sgame.entity.message.AddEntitiesMessage;
+import de.hetzge.sgame.entity.module.CollisionModule;
 import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 import de.hetzge.sgame.entity.module.RenderableModule;
 import de.hetzge.sgame.game.Client.AnimationKey;
@@ -76,28 +72,9 @@ public class BaseGame extends Application {
 			PositionAndDimensionModule positionAndDimensionModule = new PositionAndDimensionModule(entity);
 			positionAndDimensionModule.setDimension(new Dimension(5, 5));
 
-			entity.registerModules(renderableModule, positionAndDimensionModule);
+			CollisionModule collisionModule = new CollisionModule(entity);
+			entity.registerModules(renderableModule, positionAndDimensionModule, collisionModule);
 		});
-
-	}
-
-	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		EntityConfig.INSTANCE.entityFactory.registerFactory(EntityType.SILLY_BLOCK, (entity) -> {
-			RenderableModule renderableModule = new RenderableModule(entity);
-			renderableModule.setAnimationKey(AnimationKey.TEST);
-
-			PositionAndDimensionModule positionAndDimensionModule = new PositionAndDimensionModule(entity);
-			positionAndDimensionModule.setDimension(new Dimension(25, 25));
-
-			entity.registerModules(renderableModule, positionAndDimensionModule);
-
-			LinkedList<Entity> linkedList = new LinkedList<Entity>();
-			linkedList.add(entity);
-
-			AddEntitiesMessage addEntitiesMessage = new AddEntitiesMessage(linkedList);
-		});
-
-		EntityConfig.INSTANCE.entityFactory.build(EntityType.SILLY_BLOCK);
 
 	}
 }

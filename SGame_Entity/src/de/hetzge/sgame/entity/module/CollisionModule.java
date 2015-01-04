@@ -2,14 +2,15 @@ package de.hetzge.sgame.entity.module;
 
 import de.hetzge.sgame.common.CommonConfig;
 import de.hetzge.sgame.common.activemap.ActiveMap;
-import de.hetzge.sgame.common.geometry.Rectangle;
+import de.hetzge.sgame.common.geometry.IF_ImmutableRectangle;
+import de.hetzge.sgame.common.timer.Timer;
 import de.hetzge.sgame.entity.BaseEntityModule;
 import de.hetzge.sgame.entity.Entity;
-import de.hetzge.sgame.sync.SyncProperty;
 
 public class CollisionModule extends BaseEntityModule {
 
-	private final SyncProperty<ActiveMap<Boolean>> activeCollisionMap = new SyncProperty<ActiveMap<Boolean>>(new ActiveMap<>(0, 0));
+	private ActiveMap<Boolean> activeCollisionMap = new ActiveMap<Boolean>(1, 1).setObject(true);
+	private final Timer updateCollisionTimer = new Timer(100);
 
 	public CollisionModule(Entity entity) {
 		super(entity);
@@ -22,6 +23,10 @@ public class CollisionModule extends BaseEntityModule {
 
 	@Override
 	public void update() {
+		if (this.updateCollisionTimer.isTime() && this.entity.hasModule(CollisionModule.class)) {
+			CollisionModule module = this.entity.getModule(CollisionModule.class);
+			module.updateCollisionOnMap();
+		}
 	}
 
 	/**
@@ -30,12 +35,12 @@ public class CollisionModule extends BaseEntityModule {
 	public void updateCollisionOnMap() {
 		if (this.entity.hasModule(PositionAndDimensionModule.class)) {
 			PositionAndDimensionModule module = this.entity.getModule(PositionAndDimensionModule.class);
-			Rectangle positionAndDimensionRectangle = module.dimensionSyncProperty.getValue();
+			IF_ImmutableRectangle positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
 
-			int startCollisionTileX = (int) Math.floor(positionAndDimensionRectangle.getStartPosition().getX() / CommonConfig.INSTANCE.map.getCollisionTileSize());
-			int startCollisionTileY = (int) Math.floor(positionAndDimensionRectangle.getStartPosition().getY() / CommonConfig.INSTANCE.map.getCollisionTileSize());
+			int startCollisionTileX = Math.round(positionAndDimensionRectangle.getStartPosition().getX() / CommonConfig.INSTANCE.map.getCollisionTileSize());
+			int startCollisionTileY = Math.round(positionAndDimensionRectangle.getStartPosition().getY() / CommonConfig.INSTANCE.map.getCollisionTileSize());
 
-			CommonConfig.INSTANCE.map.getEntityCollisionActiveMap().connect(startCollisionTileX, startCollisionTileY, this.activeCollisionMap.getOldValue());
+			CommonConfig.INSTANCE.map.getEntityCollisionActiveMap().connect(startCollisionTileX, startCollisionTileY, this.activeCollisionMap);
 		}
 	}
 
@@ -46,12 +51,12 @@ public class CollisionModule extends BaseEntityModule {
 	public void setCollision(boolean collision) {
 		if (this.entity.hasModule(PositionAndDimensionModule.class)) {
 			PositionAndDimensionModule module = this.entity.getModule(PositionAndDimensionModule.class);
-			Rectangle positionAndDimensionRectangle = module.dimensionSyncProperty.getValue();
+			IF_ImmutableRectangle positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
 			int widthInCollisionTiles = (int) Math.ceil(positionAndDimensionRectangle.getDimension().getWidth() / CommonConfig.INSTANCE.map.getCollisionTileSize());
 			int heightInCollisionTiles = (int) Math.ceil(positionAndDimensionRectangle.getDimension().getHeight() / CommonConfig.INSTANCE.map.getCollisionTileSize());
 			ActiveMap<Boolean> activeMap = new ActiveMap<>(widthInCollisionTiles, heightInCollisionTiles);
 			activeMap.setObject(true);
-			this.activeCollisionMap.setValue(activeMap);
+			this.activeCollisionMap = activeMap;
 		}
 	}
 

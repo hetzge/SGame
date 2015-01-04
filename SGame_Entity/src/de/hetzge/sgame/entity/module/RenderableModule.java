@@ -2,6 +2,7 @@ package de.hetzge.sgame.entity.module;
 
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.definition.IF_EntityType;
+import de.hetzge.sgame.common.geometry.IF_ImmutableRectangle;
 import de.hetzge.sgame.common.geometry.Rectangle;
 import de.hetzge.sgame.entity.BaseEntityModule;
 import de.hetzge.sgame.entity.Entity;
@@ -55,10 +56,10 @@ public class RenderableModule extends BaseEntityModule implements IF_RenderInfor
 	}
 
 	@Override
-	public Rectangle getRenderedRectangle() {
+	public IF_ImmutableRectangle getRenderedRectangle() {
 		PositionAndDimensionModule positionAndDimensionModule = this.entity.getModule(PositionAndDimensionModule.class);
 		if (positionAndDimensionModule != null) {
-			return positionAndDimensionModule.dimensionSyncProperty.getValue();
+			return positionAndDimensionModule.getPositionAndDimensionRectangle();
 		} else {
 			return new Rectangle();
 		}
