@@ -1,8 +1,8 @@
 package de.hetzge.sgame.entity.module;
 
-import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.geometry.Dimension;
 import de.hetzge.sgame.common.geometry.IF_ImmutableRectangle;
+import de.hetzge.sgame.common.geometry.IF_SetupPositionInterpolate;
 import de.hetzge.sgame.common.geometry.InterpolatePosition;
 import de.hetzge.sgame.common.geometry.InterpolateRectangle;
 import de.hetzge.sgame.common.geometry.Position;
@@ -10,7 +10,7 @@ import de.hetzge.sgame.entity.BaseEntityModule;
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.sync.SyncProperty;
 
-public class PositionAndDimensionModule extends BaseEntityModule {
+public class PositionAndDimensionModule extends BaseEntityModule implements IF_SetupPositionInterpolate {
 
 	private final SyncProperty<InterpolateRectangle> dimensionSyncProperty = new SyncProperty<InterpolateRectangle>(new InterpolateRectangle());
 
@@ -37,23 +37,29 @@ public class PositionAndDimensionModule extends BaseEntityModule {
 		return this.dimensionSyncProperty.getValue().immutable();
 	}
 
-	public void move(Orientation orientation, float speed) {
-		synchronized (this.movePosition) {
-			// this.movePosition.setX(speed);
-			// this.movePosition.setY(speed);
-			// Position move =
-			// this.movePosition.multiply(orientation.orientationFactorOptimized);
-			// this.dimensionSyncProperty.getValue().getPosition().mutable().add(move);
-			// this.dimensionSyncProperty.getValue().recalculateRectangle();
-			// this.dimensionSyncProperty.setChanged();
-		}
-	}
-
 	@Override
 	public void init() {
 	}
 
 	@Override
 	public void update() {
+	}
+
+	@Override
+	public void set(Position startValue, Position endValue, long timeSpanInMs) {
+		this.dimensionSyncProperty.getValue().set(startValue, endValue, timeSpanInMs);
+		this.dimensionSyncProperty.setChanged();
+	}
+
+	@Override
+	public void set(Position endValue, long timeSpanInMs) {
+		this.dimensionSyncProperty.getValue().set(endValue, timeSpanInMs);
+		this.dimensionSyncProperty.setChanged();
+	}
+
+	@Override
+	public void set(Position startValue, Position endValue, long startTimeInMs, long endTimeInMs) {
+		this.dimensionSyncProperty.getValue().set(startValue, endValue, startTimeInMs, endTimeInMs);
+		this.dimensionSyncProperty.setChanged();
 	}
 }

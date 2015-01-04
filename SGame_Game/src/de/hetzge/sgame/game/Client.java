@@ -1,6 +1,12 @@
 package de.hetzge.sgame.game;
 
+import java.util.Set;
+
 import de.hetzge.sgame.application.ApplicationConfig;
+import de.hetzge.sgame.common.geometry.InterpolatePosition;
+import de.hetzge.sgame.entity.Entity;
+import de.hetzge.sgame.entity.EntityConfig;
+import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 import de.hetzge.sgame.libgdx.LibGdxModule;
 import de.hetzge.sgame.libgdx.PixmapWrapper;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableTexture;
@@ -43,6 +49,21 @@ public class Client extends BaseGame {
 			renderablePool.registerRenderableRessource(Client.GROUND_GRASS_RENDERABLE_KEY, new PixmapWrapper("assets/ground/grass.png"));
 			renderablePool.registerRenderableRessource(Client.GROUND_DESERT_RENDERABLE_KEY, new PixmapWrapper("assets/ground/desert.png"));
 		});
+	}
+
+	@Override
+	public void update() {
+		super.update();
+
+		Set<Entity> entitiesByType = EntityConfig.INSTANCE.entityPool.getEntitiesByType(EntityType.SILLY_BLOCK);
+		for (Entity entity : entitiesByType) {
+			PositionAndDimensionModule module = entity.getModule(PositionAndDimensionModule.class);
+			InterpolatePosition position = module.getPositionAndDimensionRectangle().getPosition();
+			// System.out.println(position.getStartValue() + " " +
+			// position.getStartTime() + "  <" + position.getX() + " | " +
+			// position.getY() + "> " + position.getEndTime() + " "
+			// + position.getEndValue());
+		}
 	}
 
 	public static void main(String[] args) {

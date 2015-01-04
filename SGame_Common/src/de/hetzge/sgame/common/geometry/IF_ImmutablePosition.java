@@ -1,6 +1,8 @@
 package de.hetzge.sgame.common.geometry;
 
-public interface IF_ImmutablePosition<POSITION extends IF_Position> {
+import java.io.Serializable;
+
+public interface IF_ImmutablePosition<POSITION extends IF_Position> extends Serializable {
 
 	public float getX();
 

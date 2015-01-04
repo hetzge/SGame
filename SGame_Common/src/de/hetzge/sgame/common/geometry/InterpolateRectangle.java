@@ -24,6 +24,7 @@ public class InterpolateRectangle implements IF_Rectangle<InterpolatePosition, D
 		return this.dimension;
 	}
 
+	// TODO Optimierung (viele Objekterzeugungen)
 	@Override
 	public InterpolatePosition getStartPosition() {
 		Position startValue = this.interpolatePosition.getStartValue().copy().subtract(new Position(this.dimension.calculateHalfWidth(), this.dimension.calculateHalfHeight()));

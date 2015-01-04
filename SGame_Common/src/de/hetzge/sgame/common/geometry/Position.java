@@ -64,6 +64,6 @@ public class Position implements Serializable, IF_Position<Position> {
 
 	@Override
 	public String toString() {
-		return "[" + this.x + "|" + this.y + "]";
+		return "[" + this.getX() + "|" + this.getY() + "]";
 	}
 }

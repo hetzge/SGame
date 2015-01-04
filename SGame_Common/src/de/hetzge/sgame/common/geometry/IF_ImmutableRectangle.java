@@ -1,6 +1,8 @@
 package de.hetzge.sgame.common.geometry;
 
-public interface IF_ImmutableRectangle<POSITION extends IF_Position, DIMENSION extends IF_Dimension> {
+import java.io.Serializable;
+
+public interface IF_ImmutableRectangle<POSITION extends IF_Position, DIMENSION extends IF_Dimension> extends Serializable {
 
 	public POSITION getPosition();
 

@@ -17,6 +17,7 @@ import de.hetzge.sgame.common.geometry.Dimension;
 import de.hetzge.sgame.common.geometry.Position;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableContext;
 import de.hetzge.sgame.render.RenderConfig;
+import de.hetzge.sgame.render.RenderUtil;
 import de.hetzge.sgame.render.RenderablePool;
 
 public class LibGdxApplication implements ApplicationListener {
@@ -97,6 +98,8 @@ public class LibGdxApplication implements ApplicationListener {
 			this.camera.translate(0f, 1f);
 
 		this.fpsLogger.log();
+		// System.out.println(RenderUtil.renderCount);
+		RenderUtil.renderCount = 0;
 	}
 
 	@Override

@@ -9,11 +9,15 @@ public class InterpolatePosition implements IF_Position<InterpolatePosition>, IF
 
 	private Position startValue;
 	private Position endValue;
-	private long startTime = 0;
-	private long endTime = 0;
+	private long startTimeInMs = 0;
+	private long endTimeInMs = 0;
 
 	public InterpolatePosition() {
 		this(new InterpolateFloat(0f, 0L, 0f, 0L), new InterpolateFloat(0f, 0L, 0f, 0L));
+	}
+
+	public InterpolatePosition(IF_ImmutablePosition<?> position) {
+		this(new InterpolateFloat(position.getX(), 0L, position.getX(), 0L), new InterpolateFloat(position.getY(), 0L, position.getY(), 0L));
 	}
 
 	private InterpolatePosition(InterpolateFloat positionXInterpolate, InterpolateFloat positionYInterpolate) {
@@ -51,6 +55,8 @@ public class InterpolatePosition implements IF_Position<InterpolatePosition>, IF
 		this.positionYInterpolate = new InterpolateFloat(startValue.getY(), startTimeInMs, endValue.getY(), endTimeInMs);
 		this.startValue = startValue;
 		this.endValue = endValue;
+		this.startTimeInMs = startTimeInMs;
+		this.endTimeInMs = endTimeInMs;
 	}
 
 	@Override
@@ -72,16 +78,21 @@ public class InterpolatePosition implements IF_Position<InterpolatePosition>, IF
 	}
 
 	public long getStartTime() {
-		return this.startTime;
+		return this.startTimeInMs;
 	}
 
 	public long getEndTime() {
-		return this.endTime;
+		return this.endTimeInMs;
 	}
 
 	@Override
 	public InterpolatePosition copy() {
 		return new InterpolatePosition(new InterpolateFloat(this.positionXInterpolate), new InterpolateFloat(this.positionYInterpolate));
+	}
+
+	@Override
+	public String toString() {
+		return "[" + this.getX() + "|" + this.getY() + "]";
 	}
 
 }

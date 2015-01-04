@@ -1,6 +1,8 @@
 package de.hetzge.sgame.common.geometry;
 
-public interface IF_ImmutableDimension<DIMENSION extends IF_Dimension<?>> {
+import java.io.Serializable;
+
+public interface IF_ImmutableDimension<DIMENSION extends IF_Dimension<?>> extends Serializable {
 
 	public float getWidth();
 

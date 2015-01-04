@@ -1,6 +1,8 @@
 package de.hetzge.sgame.common;
 
-public class InterpolateDouble {
+import java.io.Serializable;
+
+public class InterpolateDouble implements Serializable {
 
 	private final double startValue;
 	private final long startTimeInMs;
@@ -16,10 +18,14 @@ public class InterpolateDouble {
 	}
 
 	public double calculateCurrentNumber() {
-		long currentMs = System.currentTimeMillis();
 		long interpolationTimeSpan = this.endTimeInMs - this.startTimeInMs;
-		long interpolationTimeSpanDoneInPercent = currentMs / interpolationTimeSpan;
+		if (interpolationTimeSpan == 0)
+			return this.endValue;
+		long currentMs = System.currentTimeMillis() - this.startTimeInMs;
+		double interpolationTimeSpanDoneInPercent = (double) currentMs / interpolationTimeSpan;
+		if (interpolationTimeSpanDoneInPercent > 1f)
+			return this.endValue;
 		double valueSpan = this.endValue - this.startValue;
-		return valueSpan * interpolationTimeSpanDoneInPercent;
+		return this.startValue + valueSpan * interpolationTimeSpanDoneInPercent;
 	}
 }

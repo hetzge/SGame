@@ -1,6 +1,8 @@
 package de.hetzge.sgame.common;
 
-public class InterpolateFloat {
+import java.io.Serializable;
+
+public class InterpolateFloat implements Serializable {
 	private final float startValue;
 	private final long startTimeInMs;
 
@@ -22,11 +24,15 @@ public class InterpolateFloat {
 	}
 
 	public float calculateCurrentNumber() {
-		long currentMs = System.currentTimeMillis();
 		long interpolationTimeSpan = this.endTimeInMs - this.startTimeInMs;
-		long interpolationTimeSpanDoneInPercent = currentMs / interpolationTimeSpan;
+		if (interpolationTimeSpan == 0)
+			return this.endValue;
+		long currentMs = System.currentTimeMillis() - this.startTimeInMs;
+		float interpolationTimeSpanDoneInPercent = (float) currentMs / interpolationTimeSpan;
+		if (interpolationTimeSpanDoneInPercent > 1f)
+			return this.endValue;
 		float valueSpan = this.endValue - this.startValue;
-		return valueSpan * interpolationTimeSpanDoneInPercent;
+		return this.startValue + valueSpan * interpolationTimeSpanDoneInPercent;
 	}
 
 	public float getStartValue() {
