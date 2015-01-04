@@ -1,8 +1,12 @@
 package de.hetzge.sgame.entity.module;
 
+import java.util.LinkedList;
+
+import de.hetzge.sgame.common.AStarUtil;
 import de.hetzge.sgame.common.CommonConfig;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.geometry.IF_ImmutablePosition;
+import de.hetzge.sgame.common.geometry.Position;
 import de.hetzge.sgame.entity.BaseEntityModule;
 import de.hetzge.sgame.entity.Entity;
 
@@ -45,7 +49,7 @@ public class PathfinderModule extends BaseEntityModule {
 			rating[x] = new int[mapCollisionHeight];
 		}
 
-		this.rate(rating, 0, goalX, goalY, entityPositionX, entityPositionY, entityCollision);
+		LinkedList<Position> path = AStarUtil.findPath(rating, entityPositionX, entityPositionY, goalX, goalY, entityCollision);
 
 	}
 

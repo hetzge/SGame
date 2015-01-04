@@ -133,16 +133,22 @@ public final class AStarUtil {
 		return result;
 	}
 
+	public static LinkedList<Position> findPath(int[][] rating, int startX, int startY, int goalX, int goalY, boolean[][] collision) {
+		LinkedList<Position> path = new LinkedList<>();
+		if (AStarUtil.rate(rating, 1, goalX, goalY, startX, startY, collision)) {
+			path = AStarUtil.evaluatePath(rating, startX, startY, goalX, goalY);
+		}
+		return path;
+	}
+
 	public static void main(String[] args) {
 		int[][] rating = new int[100][];
 		for (int x = 0; x < 100; x++) {
 			rating[x] = new int[100];
 		}
-		if (AStarUtil.rate(rating, 1, 90, 90, 10, 10, new boolean[0][])) {
-			LinkedList<Position> path = AStarUtil.evaluatePath(rating, 10, 10, 90, 90);
-			for (Position position : path) {
-				System.out.println(position);
-			}
+		LinkedList<Position> findPath = AStarUtil.findPath(rating, 10, 10, 100, 100, new boolean[0][]);
+		for (Position position : findPath) {
+			System.out.println(position);
 		}
 	}
 

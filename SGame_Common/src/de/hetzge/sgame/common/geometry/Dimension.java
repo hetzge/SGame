@@ -2,17 +2,17 @@ package de.hetzge.sgame.common.geometry;
 
 import java.io.Serializable;
 
-public class Dimension implements Serializable, IF_ImmutableDimension {
+public class Dimension implements Serializable, IF_Dimension<Dimension> {
 
 	private float width;
 	private float height;
 
+	public Dimension() {
+	}
+
 	public Dimension(float width, float height) {
 		this.width = width;
 		this.height = height;
-	}
-
-	public Dimension() {
 	}
 
 	@Override

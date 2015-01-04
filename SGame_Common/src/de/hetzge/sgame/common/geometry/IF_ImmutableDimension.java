@@ -1,6 +1,6 @@
 package de.hetzge.sgame.common.geometry;
 
-public interface IF_ImmutableDimension {
+public interface IF_ImmutableDimension<DIMENSION extends IF_Dimension<?>> {
 
 	public float getWidth();
 
@@ -14,8 +14,9 @@ public interface IF_ImmutableDimension {
 		return this;
 	}
 
-	public default Dimension mutable() {
-		return (Dimension) this;
+	@SuppressWarnings("unchecked")
+	public default DIMENSION mutable() {
+		return (DIMENSION) this;
 	}
 
 }

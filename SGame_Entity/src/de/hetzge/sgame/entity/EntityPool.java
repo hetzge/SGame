@@ -18,8 +18,6 @@ import de.hetzge.sgame.render.RenderUtil;
 
 public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 
-	// TODO use concurrent javolution collections
-
 	private final FastCollection<Entity> entities = new FastTable<Entity>().parallel();
 	private final FastMap<String, Entity> entitiesById = new FastMap<String, Entity>().parallel();
 	private final FastMap<Class<? extends BaseEntityModule>, FastSet<Entity>> entitiesByModule = new FastMap<Class<? extends BaseEntityModule>, FastSet<Entity>>().parallel();

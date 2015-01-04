@@ -2,7 +2,7 @@ package de.hetzge.sgame.common.geometry;
 
 import java.io.Serializable;
 
-public class Position implements Serializable, IF_ImmutablePosition {
+public class Position implements Serializable, IF_Position<Position> {
 
 	private float x = 0;
 	private float y = 0;

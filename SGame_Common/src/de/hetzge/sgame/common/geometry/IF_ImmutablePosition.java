@@ -1,18 +1,19 @@
 package de.hetzge.sgame.common.geometry;
 
-public interface IF_ImmutablePosition {
+public interface IF_ImmutablePosition<POSITION extends IF_Position> {
 
 	public float getX();
 
 	public float getY();
 
-	public Position copy();
+	public POSITION copy();
 
-	public default IF_ImmutablePosition immutable() {
+	public default IF_ImmutablePosition<POSITION> immutable() {
 		return this;
 	}
 
-	public default Position mutable() {
-		return (Position) this;
+	@SuppressWarnings("unchecked")
+	public default POSITION mutable() {
+		return (POSITION) this;
 	}
 }
