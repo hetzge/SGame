@@ -119,6 +119,10 @@ public class ActiveMap<TYPE> implements Serializable {
 		return this.nodes[x][y].getConnectedObjects();
 	}
 
+	public TYPE getNodeObject(int x, int y) {
+		return this.nodes[x][y].getObject();
+	}
+
 	public int getWidthInTiles() {
 		return this.widthInTiles;
 	}

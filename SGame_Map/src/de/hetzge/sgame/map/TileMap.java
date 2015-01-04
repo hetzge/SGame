@@ -92,7 +92,6 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	private final Tile[][] tiles;
 	private final float tileSize;
 	private final int collisionTileFactor;
-	private final float collisionTileSize;
 	private final int widthInTiles;
 	private final int heightInTiles;
 	private final MapCollision mapCollision;
@@ -101,7 +100,6 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	public TileMap(int widthInTiles, int heightInTiles, float tileSize, int collisionTileFactor) {
 		this.tileSize = tileSize;
 		this.collisionTileFactor = collisionTileFactor;
-		this.collisionTileSize = tileSize / collisionTileFactor;
 		this.widthInTiles = widthInTiles;
 		this.heightInTiles = heightInTiles;
 		this.tiles = new TileMap.Tile[widthInTiles][];
@@ -134,8 +132,8 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 						RenderUtil.render(context, new IF_RenderInformation() {
 							@Override
 							public Rectangle getRenderedRectangle() {
-								return new Rectangle(new Position(x * TileMap.this.collisionTileSize, y * TileMap.this.collisionTileSize), new Dimension(TileMap.this.collisionTileSize,
-										TileMap.this.collisionTileSize));
+								return new Rectangle(new Position(x * TileMap.this.getCollisionTileSize(), y * TileMap.this.getCollisionTileSize()), new Dimension(TileMap.this.getCollisionTileSize(),
+										TileMap.this.getCollisionTileSize()));
 							}
 
 							@Override
@@ -214,11 +212,6 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	@Override
 	public float getTileSize() {
 		return this.tileSize;
-	}
-
-	@Override
-	public float getCollisionTileSize() {
-		return this.collisionTileSize;
 	}
 
 }

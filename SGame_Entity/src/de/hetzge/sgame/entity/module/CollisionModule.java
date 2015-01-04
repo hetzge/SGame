@@ -79,4 +79,17 @@ public class CollisionModule extends BaseEntityModule {
 		}
 	}
 
+	public boolean[][] getCollisionTileArray() {
+		int widthInTiles = this.activeCollisionMap.getWidthInTiles();
+		int heightInTiles = this.activeCollisionMap.getHeightInTiles();
+		boolean[][] result = new boolean[widthInTiles][];
+		for (int x = 0; x < widthInTiles; x++) {
+			result[x] = new boolean[heightInTiles];
+			for (int y = 0; y < heightInTiles; y++) {
+				result[x][y] = this.activeCollisionMap.getNodeObject(x, y);
+			}
+		}
+		return result;
+	}
+
 }

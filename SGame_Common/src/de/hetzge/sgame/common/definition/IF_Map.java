@@ -10,8 +10,6 @@ public interface IF_Map {
 
 	public float getTileSize();
 
-	public float getCollisionTileSize();
-
 	public int getWidthInTiles();
 
 	public int getHeightInTiles();
@@ -22,4 +20,23 @@ public interface IF_Map {
 
 	public ActiveMap<Boolean> getEntityCollisionActiveMap();
 
+	public default float getCollisionTileSize() {
+		return this.getTileSize() / this.getCollisionTileFactor();
+	}
+
+	public default int convertPxInTile(float pixel) {
+		return (int) Math.floor(pixel / this.getTileSize());
+	}
+
+	public default int convertPxInCollisionTile(float pixel) {
+		return (int) Math.floor(pixel / this.getCollisionTileSize());
+	}
+
+	public default float convertTileInPx(int tile) {
+		return tile * this.getTileSize();
+	}
+
+	public default float convertCollisionTileInPx(int collisionTile) {
+		return collisionTile * this.getCollisionTileSize();
+	}
 }
