@@ -26,10 +26,15 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		private final Rectangle renderedRectangle;
 		private final DynamicRenderableKey dynamicRenderableKey; // for reuse
 
+		private final int x;
+		private final int y;
+
 		public Tile(int x, int y) {
 			this.tileDefinition = new TileDefinition();
 			this.renderedRectangle = new Rectangle(new Position(x * TileMap.this.tileSize, y * TileMap.this.tileSize), new Dimension(TileMap.this.tileSize, TileMap.this.tileSize));
 			this.dynamicRenderableKey = DynamicRenderableKey.DEFAULT_DYNAMIC_RENDERABLE_KEY;
+			this.x = x;
+			this.y = y;
 		}
 
 		public TileDefinition getTileDefinition() {
@@ -119,18 +124,28 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 
 	@Override
 	public void renderShapes(IF_RenderableContext context) {
-		this.iterateVisibleTiles((tile) -> {
-			RenderUtil.render(context, new IF_RenderInformation() {
-				@Override
-				public Rectangle getRenderedRectangle() {
-					return tile.renderedRectangle;
-				}
 
-				@Override
-				public IF_RenderableKey getRenderableKey() {
-					return IF_RenderableKey.DEFAULT_RECTANGLE_KEY;
+		this.iterateVisibleTiles((tile) -> {
+			for (int cx = 0; cx < this.collisionTileFactor; cx++) {
+				for (int cy = 0; cy < this.collisionTileFactor; cy++) {
+					int x = tile.x * this.collisionTileFactor + cx;
+					int y = tile.y * this.collisionTileFactor + cy;
+					if (this.mapCollision.isCollision(x, y)) {
+						RenderUtil.render(context, new IF_RenderInformation() {
+							@Override
+							public Rectangle getRenderedRectangle() {
+								return tile.renderedRectangle;
+							}
+
+							@Override
+							public IF_RenderableKey getRenderableKey() {
+								return IF_RenderableKey.DEFAULT_RECTANGLE_KEY;
+							}
+						});
+					}
 				}
-			});
+			}
+
 		});
 	}
 

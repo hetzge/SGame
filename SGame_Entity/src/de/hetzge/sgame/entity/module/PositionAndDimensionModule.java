@@ -37,19 +37,16 @@ public class PositionAndDimensionModule extends BaseEntityModule {
 			this.movePosition.setY(speed);
 			Position move = this.movePosition.multiply(orientation.orientationFactorOptimized);
 			this.dimensionSyncProperty.getValue().getPosition().add(move);
+			this.dimensionSyncProperty.getValue().recalculateRectangle();
 			this.dimensionSyncProperty.setChanged();
 		}
 	}
 
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
-
 	}
 }

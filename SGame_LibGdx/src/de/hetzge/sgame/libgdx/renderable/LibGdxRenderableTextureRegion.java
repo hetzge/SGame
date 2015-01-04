@@ -21,7 +21,7 @@ public class LibGdxRenderableTextureRegion implements IF_RenderableWrapper<LibGd
 
 	public static void render(TextureRegion textureRegion, LibGdxRenderableContext context, IF_RenderInformation onScreen) {
 		Rectangle rectangle = onScreen.getRenderedRectangle();
-		context.spriteBatch.draw(textureRegion, rectangle.getPosition().getX(), rectangle.getPosition().getY(), rectangle.getDimension().getWidth(), rectangle.getDimension().getHeight());
+		context.spriteBatch.draw(textureRegion, rectangle.getStartPosition().getX(), rectangle.getStartPosition().getY(), rectangle.getDimension().getWidth(), rectangle.getDimension().getHeight());
 	}
 
 	@Override

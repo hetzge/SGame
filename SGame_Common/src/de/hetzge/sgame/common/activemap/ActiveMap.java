@@ -8,7 +8,7 @@ public class ActiveMap<TYPE> implements Serializable {
 
 	private class ActiveNode<TYPE> implements Serializable {
 
-		private transient final Set<ActiveNode> connectors = new HashSet<>();
+		private transient Set<ActiveNode> connectors = new HashSet<>();
 		private transient ActiveNode connectedWith;
 
 		private TYPE object;
@@ -23,9 +23,9 @@ public class ActiveMap<TYPE> implements Serializable {
 
 		public void connectTo(ActiveNode activeNode) {
 			if (this.connectedWith != null) {
-				this.connectedWith.connectors.remove(this);
+				this.connectedWith.getLazyConnectors().remove(this);
 			}
-			activeNode.connectors.add(this);
+			activeNode.getLazyConnectors().add(this);
 			this.connectedWith = activeNode;
 		}
 
@@ -35,10 +35,21 @@ public class ActiveMap<TYPE> implements Serializable {
 
 		public Set<TYPE> getConnectedObjects() {
 			Set<TYPE> result = new HashSet<>();
-			for (ActiveNode<TYPE> activeNode : this.connectors) {
+			for (ActiveNode<TYPE> activeNode : this.getLazyConnectors()) {
 				result.add(activeNode.getObject());
 			}
 			return result;
+		}
+
+		/**
+		 * method is needed because after serialization the connectors set is
+		 * null
+		 */
+		public Set<ActiveNode> getLazyConnectors() {
+			if (this.connectors == null) {
+				this.connectors = new HashSet<>();
+			}
+			return this.connectors;
 		}
 	}
 

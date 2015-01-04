@@ -26,7 +26,7 @@ public class Rectangle implements Serializable {
 		this(new Position(), new Dimension());
 	}
 
-	private void recalculateRectangle() {
+	public void recalculateRectangle() {
 		this.startPosition = this.position.copy().subtract(new Position(this.dimension.calculateHalfWidth(), this.dimension.calculateHalfHeight()));
 		this.endPosition = this.startPosition.copy().add(new Position(this.dimension.getWidth(), this.dimension.getHeight()));
 		this.rightTopNode = this.startPosition.copy().add(new Position(this.dimension.getWidth(), 0));

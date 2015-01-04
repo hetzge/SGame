@@ -59,16 +59,18 @@ public class LibGdxApplication implements ApplicationListener {
 		Gdx.gl.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
 		this.camera.update();
-		this.batch.setProjectionMatrix(this.camera.combined);
 
+		this.batch.setProjectionMatrix(this.camera.combined);
 		this.batch.begin();
 		RenderConfig.INSTANCE.renderablePool.render(this.libGdxRenderableContext);
 		this.batch.end();
 
+		this.filledShapeRenderer.setProjectionMatrix(this.camera.combined);
 		this.filledShapeRenderer.begin(ShapeType.Filled);
 		RenderConfig.INSTANCE.renderablePool.renderFilledShapes(this.libGdxRenderableContext);
 		this.filledShapeRenderer.end();
 
+		this.shapeRenderer.setProjectionMatrix(this.camera.combined);
 		this.shapeRenderer.begin(ShapeType.Line);
 		RenderConfig.INSTANCE.renderablePool.renderShapes(this.libGdxRenderableContext);
 		this.shapeRenderer.end();
