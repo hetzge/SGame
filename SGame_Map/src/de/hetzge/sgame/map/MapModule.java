@@ -24,6 +24,10 @@ public class MapModule implements IF_Module, IF_Renderable<IF_RenderableContext>
 	}
 
 	@Override
+	public void postInit() {
+	}
+
+	@Override
 	public void update() {
 	}
 

@@ -28,6 +28,10 @@ public class EntityModule implements IF_Module, IF_Renderable<IF_RenderableConte
 	}
 
 	@Override
+	public void postInit() {
+	}
+
+	@Override
 	public void update() {
 		EntityConfig.INSTANCE.entityPool.update();
 	}

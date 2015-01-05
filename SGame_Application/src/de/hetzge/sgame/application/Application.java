@@ -12,7 +12,7 @@ public class Application {
 
 	public void start() {
 		this.init();
-
+		this.postInit();
 		while (true) {
 			this.update();
 		}
@@ -20,6 +20,10 @@ public class Application {
 
 	public void init() {
 		ApplicationConfig.INSTANCE.modulePool.init();
+	}
+
+	public void postInit() {
+		ApplicationConfig.INSTANCE.modulePool.postInit();
 	}
 
 	public void update() {

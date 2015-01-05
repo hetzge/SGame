@@ -1,15 +1,15 @@
 package de.hetzge.sgame.sync;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javolution.util.FastMap;
 import de.hetzge.sgame.sync.message.SyncMessage;
 
 public class SyncPool {
 
-	private final Map<String, SyncProperty<?>> syncProperties = new HashMap<>();
+	private final Map<String, SyncProperty<?>> syncProperties = new FastMap<String, SyncProperty<?>>().parallel();
 
 	public void registerSyncProperty(SyncProperty<?> syncProperty) {
 		this.syncProperties.put(syncProperty.getKey(), syncProperty);

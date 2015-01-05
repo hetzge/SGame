@@ -10,6 +10,10 @@ public class MessageModule implements IF_Module {
 	}
 
 	@Override
+	public void postInit() {
+	}
+
+	@Override
 	public void update() {
 	}
 

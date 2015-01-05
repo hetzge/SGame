@@ -24,6 +24,10 @@ public class LibGdxModule implements IF_Module {
 	}
 
 	@Override
+	public void postInit() {
+	}
+
+	@Override
 	public void update() {
 		if (this.lwjglApplication == null) {
 			LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();

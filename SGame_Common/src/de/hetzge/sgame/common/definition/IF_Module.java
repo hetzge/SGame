@@ -4,6 +4,8 @@ public interface IF_Module {
 
 	public void init();
 
+	public void postInit();
+
 	public void update();
 
 }

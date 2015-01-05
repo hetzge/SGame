@@ -3,6 +3,7 @@ package de.hetzge.sgame.game;
 import java.util.Set;
 
 import de.hetzge.sgame.application.ApplicationConfig;
+import de.hetzge.sgame.common.geometry.IF_ImmutablePosition;
 import de.hetzge.sgame.common.geometry.InterpolatePosition;
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.entity.EntityConfig;
@@ -58,7 +59,7 @@ public class Client extends BaseGame {
 		Set<Entity> entitiesByType = EntityConfig.INSTANCE.entityPool.getEntitiesByType(EntityType.SILLY_BLOCK);
 		for (Entity entity : entitiesByType) {
 			PositionAndDimensionModule module = entity.getModule(PositionAndDimensionModule.class);
-			InterpolatePosition position = module.getPositionAndDimensionRectangle().getPosition();
+			IF_ImmutablePosition<InterpolatePosition> position = module.getPositionAndDimensionRectangle().getPosition();
 			// System.out.println(position.getStartValue() + " " +
 			// position.getStartTime() + "  <" + position.getX() + " | " +
 			// position.getY() + "> " + position.getEndTime() + " "

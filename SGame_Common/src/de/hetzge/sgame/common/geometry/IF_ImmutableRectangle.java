@@ -4,17 +4,17 @@ import java.io.Serializable;
 
 public interface IF_ImmutableRectangle<POSITION extends IF_Position, DIMENSION extends IF_Dimension> extends Serializable {
 
-	public POSITION getPosition();
+	public IF_ImmutablePosition<POSITION> getPosition();
 
-	public DIMENSION getDimension();
+	public IF_ImmutableDimension<DIMENSION> getDimension();
 
-	public POSITION getStartPosition();
+	public IF_ImmutablePosition<POSITION> getStartPosition();
 
-	public POSITION getEndPosition();
+	public IF_ImmutablePosition<POSITION> getEndPosition();
 
-	public POSITION getLeftBottomNode();
+	public IF_ImmutablePosition<POSITION> getLeftBottomNode();
 
-	public POSITION getRightTopNode();
+	public IF_ImmutablePosition<POSITION> getRightTopNode();
 
 	public default IF_ImmutableRectangle<POSITION, DIMENSION> immutable() {
 		return this;

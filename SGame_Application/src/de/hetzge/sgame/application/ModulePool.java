@@ -25,6 +25,12 @@ public class ModulePool {
 		}
 	}
 
+	public void postInit() {
+		for (IF_Module if_Module : this.modules) {
+			if_Module.postInit();
+		}
+	}
+
 	public void update() {
 		for (IF_Module if_Module : this.modules) {
 			if_Module.update();

@@ -2,7 +2,9 @@ package de.hetzge.sgame.entity.module;
 
 import de.hetzge.sgame.common.CommonConfig;
 import de.hetzge.sgame.common.activemap.ActiveMap;
+import de.hetzge.sgame.common.geometry.Dimension;
 import de.hetzge.sgame.common.geometry.IF_ImmutableRectangle;
+import de.hetzge.sgame.common.geometry.InterpolatePosition;
 import de.hetzge.sgame.common.timer.Timer;
 import de.hetzge.sgame.entity.BaseEntityModule;
 import de.hetzge.sgame.entity.Entity;
@@ -35,7 +37,7 @@ public class CollisionModule extends BaseEntityModule {
 	public void updateCollisionOnMap() {
 		if (this.entity.hasModule(PositionAndDimensionModule.class)) {
 			PositionAndDimensionModule module = this.entity.getModule(PositionAndDimensionModule.class);
-			IF_ImmutableRectangle positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
+			IF_ImmutableRectangle<InterpolatePosition, Dimension> positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
 
 			int startCollisionTileX = Math.round(positionAndDimensionRectangle.getStartPosition().getX() / CommonConfig.INSTANCE.map.getCollisionTileSize());
 			int startCollisionTileY = Math.round(positionAndDimensionRectangle.getStartPosition().getY() / CommonConfig.INSTANCE.map.getCollisionTileSize());
