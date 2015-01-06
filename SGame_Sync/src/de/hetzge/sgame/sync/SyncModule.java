@@ -14,16 +14,21 @@ import de.hetzge.sgame.sync.serializer.FSTSyncPropertySerializer;
 public class SyncModule implements IF_Module {
 
 	private class SyncThread extends Thread {
+
+		public SyncThread() {
+			super("sync_thread");
+		}
+
 		@Override
 		public void run() {
 			while (true) {
-				Util.sleep(100);
 				List<SyncMessage> syncMessages = SyncConfig.INSTANCE.syncPool.collectSyncMessages();
 				if (!syncMessages.isEmpty()) {
 					BatchMessage batchMessage = new BatchMessage();
 					batchMessage.addCollection(syncMessages);
 					MessageConfig.INSTANCE.messagePool.addMessage(batchMessage);
 				}
+				Util.sleep(100);
 			}
 		}
 	}

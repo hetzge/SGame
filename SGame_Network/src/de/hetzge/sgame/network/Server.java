@@ -56,7 +56,7 @@ public class Server implements Peer {
 			} catch (Exception e) {
 				throw new SomeException(e);
 			}
-		});
+		}, "accept_clients_thread");
 		acceptClientsThread.setUncaughtExceptionHandler(DefaultUncaughtExceptionHandler.INSTANCE);
 		acceptClientsThread.start();
 	}

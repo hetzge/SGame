@@ -21,4 +21,13 @@ public class Timer implements Serializable {
 		return false;
 	}
 
+	public long restTime() {
+		long restTime = this.lastCall + this.timespanInMs - System.currentTimeMillis();
+		if (restTime > 0) {
+			return restTime;
+		} else {
+			return 0;
+		}
+	}
+
 }

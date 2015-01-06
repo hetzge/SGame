@@ -1,5 +1,6 @@
 package de.hetzge.sgame.entity;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -22,6 +23,8 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 	private final FastMap<String, Entity> entitiesById = new FastMap<String, Entity>().parallel();
 	private final FastMap<Class<? extends BaseEntityModule>, FastSet<Entity>> entitiesByModule = new FastMap<Class<? extends BaseEntityModule>, FastSet<Entity>>().parallel();
 	private final FastMap<IF_EntityType, Set<Entity>> entitiesByType = new FastMap<IF_EntityType, Set<Entity>>().parallel();
+	private final FastMap<Class<? extends BaseEntityModule>, FastSet<BaseEntityModule>> entityModulesByModuleClass = new FastMap<Class<? extends BaseEntityModule>, FastSet<BaseEntityModule>>()
+			.parallel();
 
 	public void addEntity(Entity entity) {
 		entity.init();
@@ -33,14 +36,25 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 		this.entitiesById.put(entity.getId(), entity);
 
 		// add by modules
-		List<Class<? extends BaseEntityModule>> allRegisteredModules = entity.getAllRegisteredModules();
-		for (Class<? extends BaseEntityModule> moduleClazz : allRegisteredModules) {
+		Collection<Class<? extends BaseEntityModule>> allModuleClasses = entity.getAllModuleClasses();
+		for (Class<? extends BaseEntityModule> moduleClazz : allModuleClasses) {
 			FastSet<Entity> set = this.entitiesByModule.get(moduleClazz);
 			if (set == null) {
 				set = new FastSet<>();
 				this.entitiesByModule.put(moduleClazz, set);
 			}
 			set.add(entity);
+		}
+
+		// add modules
+		Collection<BaseEntityModule> allModules = entity.getAllModules();
+		for (BaseEntityModule baseEntityModule : allModules) {
+			FastSet<BaseEntityModule> set = this.entityModulesByModuleClass.get(baseEntityModule.getClass());
+			if (set == null) {
+				set = new FastSet<>();
+				this.entityModulesByModuleClass.put(baseEntityModule.getClass(), set);
+			}
+			set.add(baseEntityModule);
 		}
 
 		// add by type
@@ -60,11 +74,20 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 		this.entitiesById.remove(entity.getId());
 
 		// remove from by modules
-		List<Class<? extends BaseEntityModule>> allRegisteredModules = entity.getAllRegisteredModules();
-		for (Class<? extends BaseEntityModule> moduleClazz : allRegisteredModules) {
+		Collection<Class<? extends BaseEntityModule>> allModuleClasses = entity.getAllModuleClasses();
+		for (Class<? extends BaseEntityModule> moduleClazz : allModuleClasses) {
 			Set<Entity> set = this.entitiesByModule.get(moduleClazz);
 			if (set != null) {
 				set.remove(entity);
+			}
+		}
+
+		// remove modules
+		Collection<BaseEntityModule> allModules = entity.getAllModules();
+		for (BaseEntityModule baseEntityModule : allModules) {
+			FastSet<BaseEntityModule> set = this.entityModulesByModuleClass.get(baseEntityModule.getClass());
+			if (set != null) {
+				set.remove(baseEntityModule);
 			}
 		}
 
@@ -97,6 +120,16 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 			return Collections.emptySet();
 		} else {
 			return set;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends BaseEntityModule> Set<T> getEntityModulesByModuleClass(Class<T> entityModuleClazz) {
+		FastSet<BaseEntityModule> set = this.entityModulesByModuleClass.get(entityModuleClazz);
+		if (set == null) {
+			return Collections.emptySet();
+		} else {
+			return (Set<T>) set;
 		}
 	}
 

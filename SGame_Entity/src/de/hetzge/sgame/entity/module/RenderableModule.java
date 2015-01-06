@@ -21,11 +21,11 @@ public class RenderableModule extends BaseEntityModule implements IF_RenderInfor
 	}
 
 	@Override
-	public void init() {
+	public void initImpl() {
 	}
 
 	@Override
-	public void update() {
+	public void updateImpl() {
 	}
 
 	public void setOrientation(Orientation orientation) {

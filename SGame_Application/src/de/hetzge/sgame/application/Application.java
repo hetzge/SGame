@@ -30,7 +30,7 @@ public class Application {
 		if (this.updateTimer.isTime()) {
 			ApplicationConfig.INSTANCE.modulePool.update();
 		}
-		Util.sleep(1000 / ApplicationConfig.INSTANCE.FPS / 2);
+		Util.sleep(this.updateTimer.restTime());
 	}
 
 }

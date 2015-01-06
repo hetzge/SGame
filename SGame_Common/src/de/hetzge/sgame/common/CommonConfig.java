@@ -35,17 +35,22 @@ public class CommonConfig {
 		}
 
 		@Override
-		public ActiveMap<Boolean> getEntityCollisionActiveMap() {
-			return null;
-		}
-
-		@Override
 		public int getCollisionTileFactor() {
 			return 3;
 		}
 
 		@Override
 		public IF_Collision getCollision() {
+			return null;
+		}
+
+		@Override
+		public ActiveMap<Boolean> getFixEntityCollisionMap() {
+			return null;
+		}
+
+		@Override
+		public ActiveMap<Boolean> getFlexibleEntityCollisionMap() {
 			return null;
 		}
 	}

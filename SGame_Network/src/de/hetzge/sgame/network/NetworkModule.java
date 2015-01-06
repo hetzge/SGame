@@ -9,14 +9,19 @@ import de.hetzge.sgame.message.MessageConfig;
 public class NetworkModule implements IF_Module {
 
 	private class NetworkThread extends Thread {
+
+		public NetworkThread() {
+			super("network_thread");
+		}
+
 		@Override
 		public void run() {
 			while (true) {
-				Util.sleep(100);
 				List<Object> messages = MessageConfig.INSTANCE.messagePool.flush();
 				for (Object message : messages) {
 					NetworkConfig.INSTANCE.peer.sendMessage(message);
 				}
+				Util.sleep(100);
 			}
 		}
 	}

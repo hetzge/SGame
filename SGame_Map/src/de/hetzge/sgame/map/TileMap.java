@@ -67,14 +67,28 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 
 		@Override
 		public boolean isCollision(int x, int y) {
+			return this.isFixedCollision(x, y) || this.isFlexibleCollision(x, y);
+
+		}
+
+		public boolean isFixedCollision(int x, int y) {
 			int tileX = (x - (x % TileMap.this.collisionTileFactor)) / TileMap.this.collisionTileFactor;
 			int tileY = (y - (y % TileMap.this.collisionTileFactor)) / TileMap.this.collisionTileFactor;
 			boolean isMapCollision = TileMap.this.tiles[tileX][tileY].tileDefinition.getCollision().isCollision(x % TileMap.this.collisionTileFactor, y % TileMap.this.collisionTileFactor);
 			if (isMapCollision)
 				return true;
 
-			Collection<Boolean> connectedObjects = TileMap.this.entityCollisionMap.getConnectedObjects(x, y);
-			for (Boolean aBoolean : connectedObjects) {
+			Collection<Boolean> flexibleConnectedObjects = TileMap.this.flexibleEntityCollisionMap.getConnectedObjects(x, y);
+			for (Boolean aBoolean : flexibleConnectedObjects) {
+				if (aBoolean)
+					return true;
+			}
+			return false;
+		}
+
+		public boolean isFlexibleCollision(int x, int y) {
+			Collection<Boolean> fixedConnectedObjects = TileMap.this.fixEntityCollisionMap.getConnectedObjects(x, y);
+			for (Boolean aBoolean : fixedConnectedObjects) {
 				if (aBoolean)
 					return true;
 			}
@@ -95,7 +109,8 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	private final int widthInTiles;
 	private final int heightInTiles;
 	private final MapCollision mapCollision;
-	private final ActiveMap<Boolean> entityCollisionMap;
+	private final ActiveMap<Boolean> fixEntityCollisionMap;
+	private final ActiveMap<Boolean> flexibleEntityCollisionMap;
 
 	public TileMap(int widthInTiles, int heightInTiles, float tileSize, int collisionTileFactor) {
 		this.tileSize = tileSize;
@@ -110,7 +125,9 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 			}
 		}
 		this.mapCollision = new MapCollision();
-		this.entityCollisionMap = new ActiveMap<>(widthInTiles * collisionTileFactor, heightInTiles * collisionTileFactor);
+
+		this.fixEntityCollisionMap = new ActiveMap<>(widthInTiles * collisionTileFactor, heightInTiles * collisionTileFactor);
+		this.flexibleEntityCollisionMap = new ActiveMap<>(widthInTiles * collisionTileFactor, heightInTiles * collisionTileFactor);
 	}
 
 	@Override
@@ -205,8 +222,13 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	}
 
 	@Override
-	public ActiveMap<Boolean> getEntityCollisionActiveMap() {
-		return this.entityCollisionMap;
+	public ActiveMap<Boolean> getFixEntityCollisionMap() {
+		return this.fixEntityCollisionMap;
+	}
+
+	@Override
+	public ActiveMap<Boolean> getFlexibleEntityCollisionMap() {
+		return this.flexibleEntityCollisionMap;
 	}
 
 	@Override

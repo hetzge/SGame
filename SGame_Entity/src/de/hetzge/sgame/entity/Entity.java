@@ -1,9 +1,7 @@
 package de.hetzge.sgame.entity;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
 
 import javolution.util.FastMap;
 import de.hetzge.sgame.common.UUID;
@@ -11,7 +9,7 @@ import de.hetzge.sgame.common.definition.IF_EntityType;
 
 public class Entity implements Serializable {
 
-	private final Map<Class<? extends BaseEntityModule>, BaseEntityModule> modules = new FastMap<>();
+	private final FastMap<Class<? extends BaseEntityModule>, BaseEntityModule> modules = new FastMap<>();
 	private final IF_EntityType type;
 	private final String id = UUID.generateKey();
 
@@ -50,8 +48,12 @@ public class Entity implements Serializable {
 		return (MODULE_TYPE) this.modules.get(moduleClazz);
 	}
 
-	public List<Class<? extends BaseEntityModule>> getAllRegisteredModules() {
-		return new LinkedList<Class<? extends BaseEntityModule>>(this.modules.keySet());
+	public Collection<Class<? extends BaseEntityModule>> getAllModuleClasses() {
+		return this.modules.keySet().unmodifiable();
+	}
+
+	public Collection<BaseEntityModule> getAllModules() {
+		return this.modules.values().unmodifiable();
 	}
 
 	public IF_EntityType getType() {

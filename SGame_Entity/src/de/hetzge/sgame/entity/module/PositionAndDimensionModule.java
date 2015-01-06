@@ -13,6 +13,7 @@ import de.hetzge.sgame.sync.SyncProperty;
 public class PositionAndDimensionModule extends BaseEntityModule implements IF_SetupPositionInterpolate {
 
 	private final SyncProperty<InterpolateRectangle> dimensionSyncProperty = new SyncProperty<InterpolateRectangle>(new InterpolateRectangle());
+	private boolean fixed = false;
 
 	/*
 	 * for reuse to avoid positon object creation
@@ -38,11 +39,11 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 	}
 
 	@Override
-	public void init() {
+	public void initImpl() {
 	}
 
 	@Override
-	public void update() {
+	public void updateImpl() {
 	}
 
 	@Override
@@ -62,4 +63,9 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 		this.dimensionSyncProperty.getValue().set(startValue, endValue, startTimeInMs, endTimeInMs);
 		this.dimensionSyncProperty.setChanged();
 	}
+
+	public boolean isFixed() {
+		return this.fixed;
+	}
+
 }

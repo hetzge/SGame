@@ -17,11 +17,11 @@ public class PathfinderModule extends BaseEntityModule {
 	}
 
 	@Override
-	public void init() {
+	public void initImpl() {
 	}
 
 	@Override
-	public void update() {
+	public void updateImpl() {
 	}
 
 	public void goToGoal(int goalX, int goalY, IF_Collision collision) {

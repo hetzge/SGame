@@ -18,7 +18,9 @@ public interface IF_Map {
 
 	public IF_Collision getCollision();
 
-	public ActiveMap<Boolean> getEntityCollisionActiveMap();
+	public ActiveMap<Boolean> getFixEntityCollisionMap();
+
+	public ActiveMap<Boolean> getFlexibleEntityCollisionMap();
 
 	public default float getCollisionTileSize() {
 		return this.getTileSize() / this.getCollisionTileFactor();
