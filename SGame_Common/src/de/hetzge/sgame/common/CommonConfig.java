@@ -2,7 +2,7 @@ package de.hetzge.sgame.common;
 
 import org.nustaq.serialization.FSTConfiguration;
 
-import de.hetzge.sgame.common.activemap.ActiveMap;
+import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
 
@@ -45,12 +45,12 @@ public class CommonConfig {
 		}
 
 		@Override
-		public ActiveMap<Boolean> getFixEntityCollisionMap() {
+		public ActiveCollisionMap getFixEntityCollisionMap() {
 			return null;
 		}
 
 		@Override
-		public ActiveMap<Boolean> getFlexibleEntityCollisionMap() {
+		public ActiveCollisionMap getFlexibleEntityCollisionMap() {
 			return null;
 		}
 	}

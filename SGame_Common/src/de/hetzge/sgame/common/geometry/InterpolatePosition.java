@@ -1,6 +1,7 @@
 package de.hetzge.sgame.common.geometry;
 
 import de.hetzge.sgame.common.InterpolateFloat;
+import de.hetzge.sgame.common.Util;
 
 public class InterpolatePosition implements IF_Position<InterpolatePosition>, IF_SetupPositionInterpolate {
 
@@ -88,6 +89,11 @@ public class InterpolatePosition implements IF_Position<InterpolatePosition>, IF
 	@Override
 	public InterpolatePosition copy() {
 		return new InterpolatePosition(new InterpolateFloat(this.positionXInterpolate), new InterpolateFloat(this.positionYInterpolate));
+	}
+
+	@Override
+	public float distance(IF_ImmutablePosition<?> otherPosition) {
+		return Util.calculateDistance(this, otherPosition);
 	}
 
 	@Override

@@ -6,8 +6,35 @@ import java.util.Collection;
 import javolution.util.FastMap;
 import de.hetzge.sgame.common.UUID;
 import de.hetzge.sgame.common.definition.IF_EntityType;
+import de.hetzge.sgame.entity.module.CollisionModule;
+import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
+import de.hetzge.sgame.entity.module.RenderableModule;
 
 public class Entity implements Serializable {
+
+	public class EntityModuleCache<ENTITY_MODULE extends BaseEntityModule> {
+		private ENTITY_MODULE module;
+		private boolean available = false;
+
+		public EntityModuleCache(Class<ENTITY_MODULE> entityModuleClazz) {
+			if (Entity.this.hasModule(entityModuleClazz)) {
+				this.available = true;
+				this.module = Entity.this.getModule(entityModuleClazz);
+			}
+		}
+
+		public ENTITY_MODULE get() {
+			return this.module;
+		}
+
+		public boolean isAvailable() {
+			return this.available;
+		}
+
+		public boolean isNotAvailable() {
+			return !this.isAvailable();
+		}
+	}
 
 	private final FastMap<Class<? extends BaseEntityModule>, BaseEntityModule> modules = new FastMap<>();
 	private final IF_EntityType type;
@@ -71,6 +98,7 @@ public class Entity implements Serializable {
 		for (BaseEntityModule baseEntityModule : this.modules.values()) {
 			baseEntityModule.init();
 		}
+		this.initModuleCaches();
 	}
 
 	/**
@@ -105,6 +133,18 @@ public class Entity implements Serializable {
 		} else if (!this.id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	// optimized module access
+
+	public transient EntityModuleCache<CollisionModule> collisionModuleCache;
+	public transient EntityModuleCache<PositionAndDimensionModule> positionAndDimensionModuleCache;
+	public transient EntityModuleCache<RenderableModule> renderableModuleCache;
+
+	private void initModuleCaches() {
+		this.collisionModuleCache = new EntityModuleCache<>(CollisionModule.class);
+		this.positionAndDimensionModuleCache = new EntityModuleCache<>(PositionAndDimensionModule.class);
+		this.renderableModuleCache = new EntityModuleCache<>(RenderableModule.class);
 	}
 
 }

@@ -35,8 +35,8 @@ public class BaseCollisionImpl implements IF_Collision, Serializable {
 	}
 
 	@Override
-	public boolean setCollision(int x, int y, boolean collision) {
-		return this.collision[x][y] = collision;
+	public void setCollision(int x, int y, boolean collision) {
+		this.collision[x][y] = collision;
 	}
 
 }

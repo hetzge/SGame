@@ -29,8 +29,8 @@ public class CollisionModule extends BaseEntityModule {
 	 * registers the collision on the map
 	 */
 	public void updateCollisionOnMap() {
-		if (this.positionAndDimensionModuleCache.isAvailable()) {
-			PositionAndDimensionModule module = this.positionAndDimensionModuleCache.get();
+		if (this.entity.positionAndDimensionModuleCache.isAvailable()) {
+			PositionAndDimensionModule module = this.entity.positionAndDimensionModuleCache.get();
 			IF_ImmutableRectangle<InterpolatePosition, Dimension> positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
 
 			int startCollisionTileX = Math.round(positionAndDimensionRectangle.getStartPosition().getX() / CommonConfig.INSTANCE.map.getCollisionTileSize());

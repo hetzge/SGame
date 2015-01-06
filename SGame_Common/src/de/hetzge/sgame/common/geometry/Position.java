@@ -2,17 +2,23 @@ package de.hetzge.sgame.common.geometry;
 
 import java.io.Serializable;
 
+import de.hetzge.sgame.common.Util;
+
 public class Position implements Serializable, IF_Position<Position> {
 
 	private float x = 0;
 	private float y = 0;
+
+	public Position() {
+	}
 
 	public Position(float x, float y) {
 		this.x = x;
 		this.y = y;
 	}
 
-	public Position() {
+	public Position(IF_ImmutablePosition<?> otherPosition) {
+		this(otherPosition.getX(), otherPosition.getY());
 	}
 
 	public Position add(Position otherPosition) {
@@ -45,6 +51,11 @@ public class Position implements Serializable, IF_Position<Position> {
 	}
 
 	@Override
+	public float distance(IF_ImmutablePosition<?> otherPosition) {
+		return Util.calculateDistance(this, otherPosition);
+	}
+
+	@Override
 	public float getX() {
 		return this.x;
 	}
@@ -66,4 +77,30 @@ public class Position implements Serializable, IF_Position<Position> {
 	public String toString() {
 		return "[" + this.getX() + "|" + this.getY() + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Float.floatToIntBits(this.x);
+		result = prime * result + Float.floatToIntBits(this.y);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (this.getClass() != obj.getClass())
+			return false;
+		Position other = (Position) obj;
+		if (Float.floatToIntBits(this.x) != Float.floatToIntBits(other.x))
+			return false;
+		if (Float.floatToIntBits(this.y) != Float.floatToIntBits(other.y))
+			return false;
+		return true;
+	}
+
 }

@@ -8,7 +8,7 @@ public interface IF_Collision {
 
 	public boolean isCollision(int x, int y);
 
-	public boolean setCollision(int x, int y, boolean collision);
+	public void setCollision(int x, int y, boolean collision);
 
 	public default void setCollision(int startX, int startY, IF_Collision collision) {
 		int endX = startX + collision.getWidthInTiles();

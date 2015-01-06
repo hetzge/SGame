@@ -1,6 +1,6 @@
 package de.hetzge.sgame.common.definition;
 
-import de.hetzge.sgame.common.activemap.ActiveMap;
+import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 
 public interface IF_Map {
 
@@ -18,9 +18,9 @@ public interface IF_Map {
 
 	public IF_Collision getCollision();
 
-	public ActiveMap<Boolean> getFixEntityCollisionMap();
+	public ActiveCollisionMap getFixEntityCollisionMap();
 
-	public ActiveMap<Boolean> getFlexibleEntityCollisionMap();
+	public ActiveCollisionMap getFlexibleEntityCollisionMap();
 
 	public default float getCollisionTileSize() {
 		return this.getTileSize() / this.getCollisionTileFactor();

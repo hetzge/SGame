@@ -10,6 +10,8 @@ public interface IF_ImmutablePosition<POSITION extends IF_Position> extends Seri
 
 	public POSITION copy();
 
+	public float distance(IF_ImmutablePosition<?> otherPosition);
+
 	public default IF_ImmutablePosition<POSITION> immutable() {
 		return this;
 	}

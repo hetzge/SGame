@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-import de.hetzge.sgame.common.activemap.ActiveMap;
+import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.geometry.Dimension;
@@ -97,7 +97,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		}
 
 		@Override
-		public boolean setCollision(int x, int y, boolean collision) {
+		public void setCollision(int x, int y, boolean collision) {
 			throw new IllegalAccessError("Don't set collision direct on map");
 		}
 
@@ -109,8 +109,8 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	private final int widthInTiles;
 	private final int heightInTiles;
 	private final MapCollision mapCollision;
-	private final ActiveMap<Boolean> fixEntityCollisionMap;
-	private final ActiveMap<Boolean> flexibleEntityCollisionMap;
+	private final ActiveCollisionMap fixEntityCollisionMap;
+	private final ActiveCollisionMap flexibleEntityCollisionMap;
 
 	public TileMap(int widthInTiles, int heightInTiles, float tileSize, int collisionTileFactor) {
 		this.tileSize = tileSize;
@@ -126,8 +126,8 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		}
 		this.mapCollision = new MapCollision();
 
-		this.fixEntityCollisionMap = new ActiveMap<>(widthInTiles * collisionTileFactor, heightInTiles * collisionTileFactor);
-		this.flexibleEntityCollisionMap = new ActiveMap<>(widthInTiles * collisionTileFactor, heightInTiles * collisionTileFactor);
+		this.fixEntityCollisionMap = new ActiveCollisionMap(widthInTiles * collisionTileFactor, heightInTiles * collisionTileFactor);
+		this.flexibleEntityCollisionMap = new ActiveCollisionMap(widthInTiles * collisionTileFactor, heightInTiles * collisionTileFactor);
 	}
 
 	@Override
@@ -222,12 +222,12 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	}
 
 	@Override
-	public ActiveMap<Boolean> getFixEntityCollisionMap() {
+	public ActiveCollisionMap getFixEntityCollisionMap() {
 		return this.fixEntityCollisionMap;
 	}
 
 	@Override
-	public ActiveMap<Boolean> getFlexibleEntityCollisionMap() {
+	public ActiveCollisionMap getFlexibleEntityCollisionMap() {
 		return this.flexibleEntityCollisionMap;
 	}
 

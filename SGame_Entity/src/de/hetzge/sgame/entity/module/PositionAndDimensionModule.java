@@ -1,5 +1,7 @@
 package de.hetzge.sgame.entity.module;
 
+import de.hetzge.sgame.common.Path;
+import de.hetzge.sgame.common.PathPosition;
 import de.hetzge.sgame.common.geometry.Dimension;
 import de.hetzge.sgame.common.geometry.IF_ImmutableRectangle;
 import de.hetzge.sgame.common.geometry.IF_SetupPositionInterpolate;
@@ -13,15 +15,46 @@ import de.hetzge.sgame.sync.SyncProperty;
 public class PositionAndDimensionModule extends BaseEntityModule implements IF_SetupPositionInterpolate {
 
 	private final SyncProperty<InterpolateRectangle> dimensionSyncProperty = new SyncProperty<InterpolateRectangle>(new InterpolateRectangle());
+	private final SyncProperty<Float> speedPerMsSyncProperty = new SyncProperty<Float>(0.2f);
 	private boolean fixed = false;
 
-	/*
-	 * for reuse to avoid positon object creation
-	 */
-	private final Position movePosition = new Position();
+	private Path path;
+	private PathPosition pathPosition;
 
 	public PositionAndDimensionModule(Entity entity) {
 		super(entity);
+	}
+
+	@Override
+	public void initImpl() {
+	}
+
+	@Override
+	public void updateImpl() {
+	}
+
+	public void setPath(Path path) {
+		this.path = path;
+		this.pathPosition = new PathPosition(path, 0);
+	}
+
+	public void unsetPath() {
+		this.path = null;
+		this.pathPosition = null;
+		this.stopMoving();
+	}
+
+	public void stopMoving() {
+		Position currentPosition = new Position(this.getPositionAndDimensionRectangle().getPosition());
+		this.set(currentPosition, currentPosition, 0);
+	}
+
+	public void continueOnPath() {
+		if (this.pathPosition != null) {
+			if (this.pathPosition.continueOnPath(this.getPositionAndDimensionRectangle().getPosition())) {
+				this.set(this.pathPosition.getCurrentWaypoint(), (long) (this.pathPosition.getDistanceToWaypointBefore() / this.speedPerMsSyncProperty.getValue()));
+			}
+		}
 	}
 
 	public void setPosition(InterpolatePosition position) {
@@ -36,14 +69,6 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 
 	public IF_ImmutableRectangle<InterpolatePosition, Dimension> getPositionAndDimensionRectangle() {
 		return this.dimensionSyncProperty.getValue().immutable();
-	}
-
-	@Override
-	public void initImpl() {
-	}
-
-	@Override
-	public void updateImpl() {
 	}
 
 	@Override
@@ -66,6 +91,10 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 
 	public boolean isFixed() {
 		return this.fixed;
+	}
+
+	public boolean hasPath() {
+		return this.path != null && this.pathPosition != null;
 	}
 
 }
