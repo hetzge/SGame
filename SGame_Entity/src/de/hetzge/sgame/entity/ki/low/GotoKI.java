@@ -4,34 +4,43 @@ import de.hetzge.sgame.common.AStarUtil;
 import de.hetzge.sgame.common.CommonConfig;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.entity.Entity;
-import de.hetzge.sgame.entity.ki.IF_LowLevelKI;
+import de.hetzge.sgame.entity.ki.BaseKI;
 import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 
-public class GotoKI implements IF_LowLevelKI {
+public class GotoKI extends BaseKI {
 
 	private final int collisionTileGoalX;
 	private final int collisionTileGoalY;
 
-	public GotoKI(int collisionTileGoalX, int collisionTileGoalY) {
+	public GotoKI(Entity entity, int collisionTileGoalX, int collisionTileGoalY) {
+		super(entity);
 		this.collisionTileGoalX = collisionTileGoalX;
 		this.collisionTileGoalY = collisionTileGoalY;
 	}
 
 	@Override
-	public boolean condition(Entity entity) {
-		if (entity.positionAndDimensionModuleCache.isNotAvailable()) {
-			return false;
-		}
-		return true;
+	protected boolean condition() {
+		return this.entity.positionAndDimensionModuleCache.isAvailable();
 	}
 
 	@Override
-	public boolean init(Entity entity) {
-		PositionAndDimensionModule positionAndDimensionModule = entity.positionAndDimensionModuleCache.get();
+	protected KIState updateImpl() {
+		PositionAndDimensionModule positionAndDimensionModule = this.entity.positionAndDimensionModuleCache.get();
+		if (!positionAndDimensionModule.hasPath()) {
+			return KIState.FAILURE;
+		}
+
+		positionAndDimensionModule.continueOnPath();
+		return KIState.ACTIVE;
+	}
+
+	@Override
+	protected KIState initImpl() {
+		PositionAndDimensionModule positionAndDimensionModule = this.entity.positionAndDimensionModuleCache.get();
 
 		// test if goal is empty
 		if (CommonConfig.INSTANCE.map.getFixEntityCollisionMap().isCollision(this.collisionTileGoalX, this.collisionTileGoalY)) {
-			return false;
+			return KIState.INIT_FAILURE;
 		}
 
 		int startX = CommonConfig.INSTANCE.map.convertPxInCollisionTile(positionAndDimensionModule.getPositionAndDimensionRectangle().getPosition().getX());
@@ -42,28 +51,17 @@ public class GotoKI implements IF_LowLevelKI {
 		Path path = AStarUtil.findPath(CommonConfig.INSTANCE.map.getFixEntityCollisionMap(), startX, startY, this.collisionTileGoalX, this.collisionTileGoalY, new boolean[0][]);
 
 		if (path.isPathNotPossible()) {
-			return false;
+			return KIState.INIT_FAILURE;
 		}
 
 		positionAndDimensionModule.setPath(path);
 
-		return true;
+		return KIState.ACTIVE;
 	}
 
 	@Override
-	public boolean call(Entity entity) {
-		PositionAndDimensionModule positionAndDimensionModule = entity.positionAndDimensionModuleCache.get();
-		if (!positionAndDimensionModule.hasPath()) {
-			return false;
-		}
-
-		positionAndDimensionModule.continueOnPath();
-		return true;
-	}
-
-	@Override
-	public void finish(Entity entity) {
-		PositionAndDimensionModule positionAndDimensionModule = entity.positionAndDimensionModuleCache.get();
+	protected void finishImpl() {
+		PositionAndDimensionModule positionAndDimensionModule = this.entity.positionAndDimensionModuleCache.get();
 		positionAndDimensionModule.unsetPath();
 	}
 }
