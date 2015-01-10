@@ -215,10 +215,10 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	}
 
 	private void iterateVisibleTiles(Consumer<Tile> consumer) {
-		int startX = (int) Math.floor(RenderConfig.INSTANCE.viewport.getStartPosition().getX() / this.tileSize);
-		int startY = (int) Math.floor(RenderConfig.INSTANCE.viewport.getStartPosition().getY() / this.tileSize);
-		int endX = startX + (int) Math.ceil(RenderConfig.INSTANCE.viewport.getDimension().getWidth() / this.tileSize) + 1;
-		int endY = startY + (int) Math.ceil(RenderConfig.INSTANCE.viewport.getDimension().getHeight() / this.tileSize) + 1;
+		int startX = (int) Math.floor(RenderConfig.INSTANCE.viewport.getAX() / this.tileSize);
+		int startY = (int) Math.floor(RenderConfig.INSTANCE.viewport.getAY() / this.tileSize);
+		int endX = startX + (int) Math.ceil(RenderConfig.INSTANCE.viewport.getWidth() / this.tileSize) + 1;
+		int endY = startY + (int) Math.ceil(RenderConfig.INSTANCE.viewport.getHeight() / this.tileSize) + 1;
 		if (startX < 0)
 			startX = 0;
 		if (startY < 0)

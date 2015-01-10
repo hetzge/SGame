@@ -4,9 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import de.hetzge.sgame.common.geometry.ComplexRectangle;
-import de.hetzge.sgame.common.geometry.Dimension;
-import de.hetzge.sgame.common.geometry.Position;
+import de.hetzge.sgame.common.geometry.PrimitivRectangle;
 
 public class RenderConfig {
 
@@ -18,7 +16,7 @@ public class RenderConfig {
 
 	public final RenderPool renderPool = new RenderPool();
 
-	public final ComplexRectangle viewport = new ComplexRectangle(new Position(0f, 0f), new Dimension(0f, 0f));
+	public final PrimitivRectangle viewport = new PrimitivRectangle();
 
 	public final List<Consumer<RenderableRessourcePool>> initRenderableConsumers = new LinkedList<>();
 

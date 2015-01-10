@@ -19,7 +19,7 @@ public interface IF_ImmutablePrimitivRectangle {
 	}
 
 	public default float getBX() {
-		return this.getX() + this.getHalfHeight();
+		return this.getX() + this.getHalfWidth();
 	}
 
 	public default float getBY() {
@@ -27,7 +27,7 @@ public interface IF_ImmutablePrimitivRectangle {
 	}
 
 	public default float getCX() {
-		return this.getX() - this.getHalfHeight();
+		return this.getX() - this.getHalfWidth();
 	}
 
 	public default float getCY() {
@@ -35,7 +35,7 @@ public interface IF_ImmutablePrimitivRectangle {
 	}
 
 	public default float getDX() {
-		return this.getX() + this.getHalfHeight();
+		return this.getX() + this.getHalfWidth();
 	}
 
 	public default float getDY() {

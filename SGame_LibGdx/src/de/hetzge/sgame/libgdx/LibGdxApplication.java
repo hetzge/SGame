@@ -13,8 +13,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
-import de.hetzge.sgame.common.geometry.Dimension;
-import de.hetzge.sgame.common.geometry.Position;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableContext;
 import de.hetzge.sgame.render.RenderConfig;
 import de.hetzge.sgame.render.RenderUtil;
@@ -27,10 +25,6 @@ public class LibGdxApplication implements ApplicationListener {
 	private OrthographicCamera camera;
 	private LibGdxRenderableContext libGdxRenderableContext;
 	private final FPSLogger fpsLogger;
-
-	// for reuse
-	private Position viewportPosition = new Position();
-	private Dimension viewportDimension = new Dimension();
 
 	public LibGdxApplication() {
 		this.fpsLogger = new FPSLogger();
@@ -78,24 +72,21 @@ public class LibGdxApplication implements ApplicationListener {
 
 		// sync viewport with camera
 
-		this.viewportPosition.setX(this.camera.position.x);
-		this.viewportPosition.setY(this.camera.position.y);
+		RenderConfig.INSTANCE.viewport.setX(this.camera.position.x);
+		RenderConfig.INSTANCE.viewport.setY(this.camera.position.y);
 
-		this.viewportDimension.setWidth(this.camera.viewportWidth);
-		this.viewportDimension.setHeight(this.camera.viewportHeight);
-
-		RenderConfig.INSTANCE.viewport.setPosition(this.viewportPosition);
-		RenderConfig.INSTANCE.viewport.setDimension(this.viewportDimension);
+		RenderConfig.INSTANCE.viewport.setWidth(this.camera.viewportWidth);
+		RenderConfig.INSTANCE.viewport.setHeight(this.camera.viewportHeight);
 
 		// TEMP
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-			this.camera.translate(1f, 0f);
+			this.camera.translate(3f, 0f);
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
-			this.camera.translate(-1f, 0f);
+			this.camera.translate(-3f, 0f);
 		if (Gdx.input.isKeyPressed(Input.Keys.UP))
-			this.camera.translate(0f, -1f);
+			this.camera.translate(0f, -3f);
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
-			this.camera.translate(0f, 1f);
+			this.camera.translate(0f, 3f);
 
 		this.fpsLogger.log();
 		// System.out.println(RenderUtil.renderCount);

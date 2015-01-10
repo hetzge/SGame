@@ -42,4 +42,9 @@ public class Dimension implements Serializable, IF_Dimension<Dimension> {
 	public void setWidth(float width) {
 		this.width = width;
 	}
+
+	@Override
+	public String toString() {
+		return "[" + this.getWidth() + "|" + this.getHeight() + "]";
+	}
 }

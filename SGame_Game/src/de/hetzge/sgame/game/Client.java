@@ -11,6 +11,7 @@ import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 import de.hetzge.sgame.libgdx.LibGdxModule;
 import de.hetzge.sgame.libgdx.PixmapWrapper;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableTexture;
+import de.hetzge.sgame.map.MapConfig;
 import de.hetzge.sgame.network.NetworkConfig;
 import de.hetzge.sgame.network.PeerRole;
 import de.hetzge.sgame.render.IF_AnimationKey;
@@ -46,6 +47,8 @@ public class Client extends BaseGame {
 				renderablePool.registerRenderableRessource(RenderId.GRASS_RENDERABLE_ID, new PixmapWrapper("assets/ground/grass.png"));
 				renderablePool.registerRenderableRessource(RenderId.DESERT_RENDERABLE_ID, new PixmapWrapper("assets/ground/desert.png"));
 			});
+
+		MapConfig.INSTANCE.tilePool.map(0, RenderId.GRASS_RENDERABLE_ID);
 	}
 
 	@Override

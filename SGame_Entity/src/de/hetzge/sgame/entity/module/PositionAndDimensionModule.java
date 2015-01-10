@@ -36,7 +36,7 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 	public void setPath(Path path) {
 		this.path = path;
 		this.pathPosition = new PathPosition(path, 0);
-		this.set(this.pathPosition.getCurrentWaypoint(), 5000);
+		this.set(this.pathPosition.getCurrentWaypoint(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore()));
 	}
 
 	public void unsetPath() {
@@ -53,9 +53,13 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 	public void continueOnPath() {
 		if (this.pathPosition != null) {
 			if (this.pathPosition.continueOnPath(this.getPositionAndDimensionRectangle().getPosition())) {
-				this.set(this.pathPosition.getCurrentWaypoint(), (long) (this.pathPosition.getDistanceToWaypointBefore() / this.speedPerMsSyncProperty.getValue()));
+				this.set(this.pathPosition.getCurrentWaypoint(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore()));
 			}
 		}
+	}
+
+	private long calculateDurationForDistance(float distance) {
+		return (long) (distance / this.speedPerMsSyncProperty.getValue());
 	}
 
 	public boolean reachedEndOfPath() {
