@@ -10,70 +10,95 @@ import de.hetzge.sgame.common.geometry.Position;
 
 public final class AStarUtil {
 
+	private static class XY {
+		public int x;
+		public int y;
+
+		public XY(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+	}
+
+	private static final XY[] EMPTY_TRAMPOLINE = new XY[0];
+	private static final XY[] DONE_TRAMPOLINE = new XY[0];
+
 	private AStarUtil() {
 	}
 
 	/**
 	 * call with current rating 1 and changed start goal coordinates
 	 */
-	public static boolean rate(int[][] rating, IF_Collision mapCollision, int currentRating, int x, int y, int goalX, int goalY, boolean[][] entityCollision) {
+	private static XY[] rate(int[][] rating, IF_Collision mapCollision, int currentRating, XY startRatePosition, XY goalRatePosition, boolean[][] entityCollision) {
 		// TODO entityCollision
 
-		if (rating.length == 0) {
-			throw new IllegalStateException("map has no size");
-		}
+		int x = startRatePosition.x;
+		int y = startRatePosition.y;
 
-		if (mapCollision.isCollision(x, y)) {
-			return false;
-		}
+		int goalX = goalRatePosition.x;
+		int goalY = goalRatePosition.y;
 
-		if (rating[x][y] > 0) {
-			return false;
-		}
+		XY[] next = new XY[4];
 
-		if (x == goalX && y == goalY) {
-			return true;
-		}
+		try {
 
-		rating[x][y] = currentRating;
-		System.out.println("rate " + x + "/" + y + " -> " + currentRating);
-
-		int mapWidthInCollisionTiles = rating.length;
-		int mapHeightInCollisionTiles = rating[0].length;
-
-		int nextX;
-		int nextY;
-
-		nextX = x - 1;
-		nextY = y;
-		if (nextX > 0) {
-			if (AStarUtil.rate(rating, mapCollision, ++currentRating, nextX, nextY, goalX, goalY, entityCollision)) {
-				return true;
+			if (rating.length == 0) {
+				throw new IllegalStateException("map has no size");
 			}
-		}
 
-		nextX = x;
-		nextY = y - 1;
-		if (nextY > 0) {
-			if (AStarUtil.rate(rating, mapCollision, ++currentRating, nextX, nextY, goalX, goalY, entityCollision))
-				return true;
-		}
+			if (x < 0 || x >= rating.length || y < 0 || y >= rating[0].length) {
+				return AStarUtil.EMPTY_TRAMPOLINE;
+			}
 
-		nextX = x + 1;
-		nextY = y;
-		if (nextX < mapWidthInCollisionTiles) {
-			if (AStarUtil.rate(rating, mapCollision, ++currentRating, nextX, nextY, goalX, goalY, entityCollision))
-				return true;
-		}
+			if (mapCollision.isCollision(x, y)) {
+				return AStarUtil.EMPTY_TRAMPOLINE;
+			}
 
-		nextX = x;
-		nextY = y + 1;
-		if (nextY < mapHeightInCollisionTiles) {
-			if (AStarUtil.rate(rating, mapCollision, ++currentRating, nextX, nextY, goalX, goalY, entityCollision))
-				return true;
-		}
+			if (rating[x][y] > 0) {
+				return AStarUtil.EMPTY_TRAMPOLINE;
+			}
 
-		return false;
+			if (x == goalX && y == goalY) {
+				return AStarUtil.DONE_TRAMPOLINE;
+			}
+
+			rating[x][y] = currentRating;
+
+			int mapWidthInCollisionTiles = rating.length;
+			int mapHeightInCollisionTiles = rating[0].length;
+
+			int nextX;
+			int nextY;
+
+			nextX = x - 1;
+			nextY = y;
+			if (nextX > 0) {
+				next[0] = new XY(nextX, nextY);
+			}
+
+			nextX = x;
+			nextY = y - 1;
+			if (nextY > 0) {
+				next[1] = new XY(nextX, nextY);
+			}
+
+			nextX = x + 1;
+			nextY = y;
+			if (nextX < mapWidthInCollisionTiles) {
+				next[2] = new XY(nextX, nextY);
+			}
+
+			nextX = x;
+			nextY = y + 1;
+			if (nextY < mapHeightInCollisionTiles) {
+				next[3] = new XY(nextX, nextY);
+			}
+
+			return next;
+
+		} catch (Exception ex) {
+			throw new IllegalStateException("Exception while pathfinding at (" + x + "|" + y + ") with goal (" + goalX + "|" + goalY + ") on size (" + rating.length + "|" + rating[0].length + ")", ex);
+		}
 	}
 
 	public static List<Position> evaluatePath(int[][] rating, int x, int y, int goalX, int goalY) {
@@ -83,7 +108,7 @@ public final class AStarUtil {
 		int mapWidthInCollisionTiles = rating.length;
 		int mapHeightInCollisionTiles = rating[0].length;
 
-		int maxValue = 0;
+		int maxValue = Integer.MAX_VALUE;
 		int nextSelectionX = x;
 		int nextSelectionY = y;
 		int nextX;
@@ -93,8 +118,8 @@ public final class AStarUtil {
 
 			nextX = x - 1;
 			nextY = y;
-			if (nextX > 0) {
-				if (rating[nextX][nextY] <= maxValue) {
+			if (nextX > 0 && rating[nextX][nextY] > 0) {
+				if (rating[nextX][nextY] < maxValue) {
 					maxValue = rating[nextX][nextY];
 					nextSelectionX = nextX;
 					nextSelectionY = nextY;
@@ -103,8 +128,8 @@ public final class AStarUtil {
 
 			nextX = x;
 			nextY = y - 1;
-			if (nextY > 0) {
-				if (rating[nextX][nextY] <= maxValue) {
+			if (nextY > 0 && rating[nextX][nextY] > 0) {
+				if (rating[nextX][nextY] < maxValue) {
 					maxValue = rating[nextX][nextY];
 					nextSelectionX = nextX;
 					nextSelectionY = nextY;
@@ -113,8 +138,8 @@ public final class AStarUtil {
 
 			nextX = x + 1;
 			nextY = y;
-			if (nextX < mapWidthInCollisionTiles) {
-				if (rating[nextX][nextY] <= maxValue) {
+			if (nextX < mapWidthInCollisionTiles && rating[nextX][nextY] > 0) {
+				if (rating[nextX][nextY] < maxValue) {
 					maxValue = rating[nextX][nextY];
 					nextSelectionX = nextX;
 					nextSelectionY = nextY;
@@ -123,12 +148,17 @@ public final class AStarUtil {
 
 			nextX = x;
 			nextY = y + 1;
-			if (nextY < mapHeightInCollisionTiles) {
-				if (rating[nextX][nextY] <= maxValue) {
+			if (nextY < mapHeightInCollisionTiles && rating[nextX][nextY] > 0) {
+				if (rating[nextX][nextY] < maxValue) {
 					maxValue = rating[nextX][nextY];
 					nextSelectionX = nextX;
 					nextSelectionY = nextY;
 				}
+			}
+
+			if (nextSelectionX == x && nextSelectionY == y) {
+				throw new IllegalStateException("Path not possible from (" + x + "|" + y + ") with goal (" + goalX + "|" + goalY + ") on size (" + rating.length + "|" + rating[0].length + ")\n"
+						+ Util.toMapString(rating, x, y));
 			}
 
 			x = nextSelectionX;
@@ -144,13 +174,55 @@ public final class AStarUtil {
 	}
 
 	public static Path findPath(IF_Collision mapCollision, int startX, int startY, int goalX, int goalY, boolean[][] collision) {
+
+		long startTime = System.currentTimeMillis();
+
 		int[][] rating = new int[mapCollision.getWidthInTiles()][];
-		for (int x = 0; x < 100; x++) {
+		for (int x = 0; x < rating.length; x++) {
 			rating[x] = new int[mapCollision.getHeightInTiles()];
 		}
 
+		int step = 1;
+
+		XY start = new XY(startX, startY);
+		XY goal = new XY(goalX, goalY);
+
+		List<XY[]> trampolines;
+		List<XY[]> nextTramponlines = new LinkedList<>();
+
+		XY[] firstTrampoline = AStarUtil.rate(rating, mapCollision, step, goal, start, collision);
+		nextTramponlines.add(firstTrampoline);
+
 		List<Position> path = new LinkedList<>();
-		if (AStarUtil.rate(rating, mapCollision, 1, goalX, goalY, startX, startY, collision)) {
+
+		boolean found = false;
+		loop: while (!found) {
+			trampolines = nextTramponlines;
+			nextTramponlines = new LinkedList<>();
+
+			if (trampolines.isEmpty()) {
+				break loop;
+			}
+			for (XY[] trampoline : trampolines) {
+				for (int i = 0; i < trampoline.length; i++) {
+					XY nextXY = trampoline[i];
+					if (nextXY == null) {
+						continue;
+					}
+					XY[] rate = AStarUtil.rate(rating, mapCollision, step, nextXY, start, collision);
+					if (rate == AStarUtil.EMPTY_TRAMPOLINE) {
+					} else if (rate == AStarUtil.DONE_TRAMPOLINE) {
+						found = true;
+						break loop;
+					} else {
+						nextTramponlines.add(rate);
+					}
+				}
+				step++;
+			}
+		}
+		System.out.println("find path (" + startX + "|" + startY + ") to (" + goalX + "|" + goalY + "): " + found + " " + (System.currentTimeMillis() - startTime));
+		if (found) {
 			path = AStarUtil.evaluatePath(rating, startX, startY, goalX, goalY);
 
 			IF_Map map = CommonConfig.INSTANCE.map;
@@ -160,6 +232,7 @@ public final class AStarUtil {
 
 			return new Path(startPositionInPx, goalPositionInPx, path);
 		} else {
+
 			return new Path(null, null, null);
 		}
 
@@ -180,12 +253,12 @@ public final class AStarUtil {
 
 			@Override
 			public int getWidthInTiles() {
-				return 100;
+				return 102;
 			}
 
 			@Override
 			public int getHeightInTiles() {
-				return 100;
+				return 102;
 			}
 		}, 10, 10, 100, 100, new boolean[0][]);
 		for (Position position : path.getPath()) {

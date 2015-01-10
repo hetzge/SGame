@@ -35,7 +35,7 @@ public class Path implements Serializable {
 	}
 
 	public boolean isPathNotPossible() {
-		return this.start == null || this.goal == null || this.path == null;
+		return this.start == null || this.goal == null || this.path == null || this.getPathLength() <= 0;
 	}
 
 }

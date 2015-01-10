@@ -3,7 +3,7 @@ package de.hetzge.sgame.entity.module;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.PathPosition;
 import de.hetzge.sgame.common.geometry.Dimension;
-import de.hetzge.sgame.common.geometry.IF_ImmutableRectangle;
+import de.hetzge.sgame.common.geometry.IF_ImmutableComplexRectangle;
 import de.hetzge.sgame.common.geometry.IF_SetupPositionInterpolate;
 import de.hetzge.sgame.common.geometry.InterpolatePosition;
 import de.hetzge.sgame.common.geometry.InterpolateRectangle;
@@ -15,7 +15,7 @@ import de.hetzge.sgame.sync.SyncProperty;
 public class PositionAndDimensionModule extends BaseEntityModule implements IF_SetupPositionInterpolate {
 
 	private final SyncProperty<InterpolateRectangle> dimensionSyncProperty = new SyncProperty<InterpolateRectangle>(new InterpolateRectangle());
-	private final SyncProperty<Float> speedPerMsSyncProperty = new SyncProperty<Float>(0.2f);
+	private final SyncProperty<Float> speedPerMsSyncProperty = new SyncProperty<Float>(0.02f);
 	private boolean fixed = false;
 
 	private Path path;
@@ -36,6 +36,7 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 	public void setPath(Path path) {
 		this.path = path;
 		this.pathPosition = new PathPosition(path, 0);
+		this.set(this.pathPosition.getCurrentWaypoint(), 5000);
 	}
 
 	public void unsetPath() {
@@ -57,6 +58,13 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 		}
 	}
 
+	public boolean reachedEndOfPath() {
+		if (this.pathPosition != null) {
+			return this.pathPosition.reachedEndOfPath(this.getPositionAndDimensionRectangle().getPosition());
+		}
+		return this.getPositionAndDimensionRectangle().getEndPosition().distance(this.getPositionAndDimensionRectangle().getPosition()) < 1f;
+	}
+
 	public void setPosition(InterpolatePosition position) {
 		this.dimensionSyncProperty.getValue().setPosition(position);
 		this.dimensionSyncProperty.setChanged();
@@ -67,7 +75,7 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 		this.dimensionSyncProperty.setChanged();
 	}
 
-	public IF_ImmutableRectangle<InterpolatePosition, Dimension> getPositionAndDimensionRectangle() {
+	public IF_ImmutableComplexRectangle<InterpolatePosition, Dimension> getPositionAndDimensionRectangle() {
 		return this.dimensionSyncProperty.getValue().immutable();
 	}
 

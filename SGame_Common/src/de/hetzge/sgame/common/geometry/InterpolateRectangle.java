@@ -106,4 +106,24 @@ public class InterpolateRectangle implements IF_Rectangle<InterpolatePosition, D
 		this.rightTopNode = null;
 	}
 
+	@Override
+	public float getX() {
+		return this.interpolatePosition.getX();
+	}
+
+	@Override
+	public float getY() {
+		return this.interpolatePosition.getY();
+	}
+
+	@Override
+	public float getWidth() {
+		return this.dimension.getWidth();
+	}
+
+	@Override
+	public float getHeight() {
+		return this.dimension.getHeight();
+	}
+
 }

@@ -17,9 +17,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import de.hetzge.sgame.common.Orientation;
+import de.hetzge.sgame.common.geometry.ComplexRectangle;
 import de.hetzge.sgame.common.geometry.Dimension;
 import de.hetzge.sgame.common.geometry.Position;
-import de.hetzge.sgame.common.geometry.Rectangle;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableContext;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableTexture;
 import de.hetzge.sgame.map.GroundType;
@@ -30,9 +30,7 @@ import de.hetzge.sgame.map.TileOrientation;
 import de.hetzge.sgame.render.IF_PixelAccess;
 import de.hetzge.sgame.render.IF_RenderInformation;
 import de.hetzge.sgame.render.IF_RenderableFactory;
-import de.hetzge.sgame.render.IF_RenderableKey;
 import de.hetzge.sgame.render.IF_RenderableWrapper;
-import de.hetzge.sgame.render.RenderableKey;
 
 public class LibGdxRenderableFactory implements IF_RenderableFactory, ApplicationListener {
 
@@ -301,13 +299,13 @@ public class LibGdxRenderableFactory implements IF_RenderableFactory, Applicatio
 		this.renderable.render(this.libGdxRenderableContext, new IF_RenderInformation() {
 
 			@Override
-			public Rectangle getRenderedRectangle() {
-				return new Rectangle(new Position(100, 100), new Dimension(100, 100));
+			public ComplexRectangle getRenderedRectangle() {
+				return new ComplexRectangle(new Position(100, 100), new Dimension(100, 100));
 			}
 
 			@Override
-			public IF_RenderableKey getRenderableKey() {
-				return new RenderableKey();
+			public int getRenderableKey() {
+				return 0;
 			}
 		});
 		this.spriteBatch.end();

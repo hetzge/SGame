@@ -6,6 +6,7 @@ import java.util.Collection;
 import javolution.util.FastMap;
 import de.hetzge.sgame.common.UUID;
 import de.hetzge.sgame.common.definition.IF_EntityType;
+import de.hetzge.sgame.entity.ki.EntityKI;
 import de.hetzge.sgame.entity.module.CollisionModule;
 import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 import de.hetzge.sgame.entity.module.RenderableModule;
@@ -37,8 +38,9 @@ public class Entity implements Serializable {
 	}
 
 	private final FastMap<Class<? extends BaseEntityModule>, BaseEntityModule> modules = new FastMap<>();
-	private final IF_EntityType type;
 	private final String id = UUID.generateKey();
+	private transient final EntityKI entityKI = new EntityKI(this);
+	private final IF_EntityType type;
 
 	Entity(IF_EntityType type) {
 		this.type = type;
@@ -95,10 +97,10 @@ public class Entity implements Serializable {
 	 * called when the entity is registered in a pool
 	 */
 	public void init() {
+		this.initModuleCaches();
 		for (BaseEntityModule baseEntityModule : this.modules.values()) {
 			baseEntityModule.init();
 		}
-		this.initModuleCaches();
 	}
 
 	/**
@@ -108,6 +110,10 @@ public class Entity implements Serializable {
 		for (BaseEntityModule baseEntityModule : this.modules.values()) {
 			baseEntityModule.update();
 		}
+	}
+
+	public void updateKI() {
+		this.entityKI.update();
 	}
 
 	@Override

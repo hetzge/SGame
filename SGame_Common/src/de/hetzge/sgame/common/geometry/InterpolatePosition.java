@@ -47,7 +47,7 @@ public class InterpolatePosition implements IF_Position<InterpolatePosition>, IF
 
 	@Override
 	public void set(Position endValue, long timeSpanInMs) {
-		this.set(this.startValue, endValue, System.currentTimeMillis(), System.currentTimeMillis() + timeSpanInMs);
+		this.set(new Position(this), endValue, System.currentTimeMillis(), System.currentTimeMillis() + timeSpanInMs);
 	}
 
 	@Override

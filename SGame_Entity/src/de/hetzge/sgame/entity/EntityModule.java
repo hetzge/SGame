@@ -1,5 +1,6 @@
 package de.hetzge.sgame.entity;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import de.hetzge.sgame.common.Util;
@@ -49,7 +50,7 @@ public class EntityModule implements IF_Module, IF_Renderable<IF_RenderableConte
 		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(AddEntitiesMessage.class, new AddEntitiesMessageHandler());
 
 		MessageConfig.INSTANCE.serverToNewClientMessages.add((IF_Callback<Object>) () -> {
-			return new AddEntitiesMessage(EntityConfig.INSTANCE.entityPool.getEntitiesCopy());
+			return new AddEntitiesMessage(new ArrayList<>(EntityConfig.INSTANCE.entityPool.getEntities()));
 		});
 
 		EntityConfig.INSTANCE.entityPool.init();

@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import javolution.util.FastCollection;
 import javolution.util.FastSet;
+import de.hetzge.sgame.common.Stopwatch;
 
 public class ActiveMap<TYPE> implements Serializable {
 
@@ -65,12 +66,14 @@ public class ActiveMap<TYPE> implements Serializable {
 
 		this.nodes = new ActiveNode[widthInTiles][];
 
+		Stopwatch stopwatch = new Stopwatch("init active node array");
 		for (int x = 0; x < widthInTiles; x++) {
 			this.nodes[x] = new ActiveNode[heightInTiles];
 			for (int y = 0; y < heightInTiles; y++) {
 				this.nodes[x][y] = new ActiveNode<>();
 			}
 		}
+		stopwatch.stop();
 	}
 
 	/**

@@ -1,9 +1,11 @@
 package de.hetzge.sgame.common;
 
+import java.io.Serializable;
+
 import de.hetzge.sgame.common.geometry.IF_ImmutablePosition;
 import de.hetzge.sgame.common.geometry.Position;
 
-public class PathPosition {
+public class PathPosition implements Serializable {
 
 	private final Path path;
 	private int positionOnPath;
@@ -22,7 +24,7 @@ public class PathPosition {
 	}
 
 	public boolean isOnEndOfPath() {
-		return this.positionOnPath >= this.path.getPathLength();
+		return this.positionOnPath >= this.path.getPathLength() - 1;
 	}
 
 	public boolean isOnStartOfPath() {
@@ -59,10 +61,15 @@ public class PathPosition {
 	}
 
 	public boolean continueOnPath(IF_ImmutablePosition<?> position) {
-		if (this.getCurrentWaypoint().distance(position) < 1f && !this.isOnEndOfPath()) {
+		if (!this.isOnEndOfPath() && this.getCurrentWaypoint().distance(position) < 1F) {
 			this.moveForward();
 			return true;
 		}
 		return false;
 	}
+
+	public boolean reachedEndOfPath(IF_ImmutablePosition<?> position) {
+		return this.isOnEndOfPath() && this.getCurrentWaypoint().distance(position) < 1F;
+	}
+
 }

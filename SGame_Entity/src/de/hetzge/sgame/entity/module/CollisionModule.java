@@ -3,7 +3,7 @@ package de.hetzge.sgame.entity.module;
 import de.hetzge.sgame.common.CommonConfig;
 import de.hetzge.sgame.common.activemap.ActiveMap;
 import de.hetzge.sgame.common.geometry.Dimension;
-import de.hetzge.sgame.common.geometry.IF_ImmutableRectangle;
+import de.hetzge.sgame.common.geometry.IF_ImmutableComplexRectangle;
 import de.hetzge.sgame.common.geometry.InterpolatePosition;
 import de.hetzge.sgame.entity.BaseEntityModule;
 import de.hetzge.sgame.entity.Entity;
@@ -31,7 +31,7 @@ public class CollisionModule extends BaseEntityModule {
 	public void updateCollisionOnMap() {
 		if (this.entity.positionAndDimensionModuleCache.isAvailable()) {
 			PositionAndDimensionModule module = this.entity.positionAndDimensionModuleCache.get();
-			IF_ImmutableRectangle<InterpolatePosition, Dimension> positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
+			IF_ImmutableComplexRectangle<InterpolatePosition, Dimension> positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
 
 			int startCollisionTileX = Math.round(positionAndDimensionRectangle.getStartPosition().getX() / CommonConfig.INSTANCE.map.getCollisionTileSize());
 			int startCollisionTileY = Math.round(positionAndDimensionRectangle.getStartPosition().getY() / CommonConfig.INSTANCE.map.getCollisionTileSize());
@@ -51,7 +51,7 @@ public class CollisionModule extends BaseEntityModule {
 	public void setCollision(boolean collision) {
 		if (this.entity.hasModule(PositionAndDimensionModule.class)) {
 			PositionAndDimensionModule module = this.entity.getModule(PositionAndDimensionModule.class);
-			IF_ImmutableRectangle<InterpolatePosition, Dimension> positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
+			IF_ImmutableComplexRectangle<InterpolatePosition, Dimension> positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
 			int widthInCollisionTiles = (int) Math.ceil(positionAndDimensionRectangle.getDimension().getWidth() / CommonConfig.INSTANCE.map.getCollisionTileSize());
 			int heightInCollisionTiles = (int) Math.ceil(positionAndDimensionRectangle.getDimension().getHeight() / CommonConfig.INSTANCE.map.getCollisionTileSize());
 			ActiveMap<Boolean> activeMap = new ActiveMap<>(widthInCollisionTiles, heightInCollisionTiles);

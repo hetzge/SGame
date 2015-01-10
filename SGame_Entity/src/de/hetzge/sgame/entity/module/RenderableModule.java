@@ -2,13 +2,13 @@ package de.hetzge.sgame.entity.module;
 
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.definition.IF_EntityType;
-import de.hetzge.sgame.common.geometry.IF_ImmutableRectangle;
-import de.hetzge.sgame.common.geometry.Rectangle;
+import de.hetzge.sgame.common.geometry.ComplexRectangle;
+import de.hetzge.sgame.common.geometry.IF_ImmutableComplexRectangle;
 import de.hetzge.sgame.entity.BaseEntityModule;
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.render.IF_AnimationKey;
 import de.hetzge.sgame.render.IF_RenderInformation;
-import de.hetzge.sgame.render.IF_RenderableKey;
+import de.hetzge.sgame.render.RenderConfig;
 import de.hetzge.sgame.render.RenderableKey;
 import de.hetzge.sgame.sync.SyncProperty;
 
@@ -56,18 +56,18 @@ public class RenderableModule extends BaseEntityModule implements IF_RenderInfor
 	}
 
 	@Override
-	public IF_ImmutableRectangle getRenderedRectangle() {
+	public IF_ImmutableComplexRectangle getRenderedRectangle() {
 		PositionAndDimensionModule positionAndDimensionModule = this.entity.getModule(PositionAndDimensionModule.class);
 		if (positionAndDimensionModule != null) {
 			return positionAndDimensionModule.getPositionAndDimensionRectangle();
 		} else {
-			return new Rectangle();
+			return new ComplexRectangle();
 		}
 	}
 
 	@Override
-	public IF_RenderableKey getRenderableKey() {
-		return this.renderableKeySyncProperty.getValue();
+	public int getRenderableKey() {
+		return RenderConfig.INSTANCE.renderableIdPool.get(this.renderableKeySyncProperty.getValue());
 	}
 
 }

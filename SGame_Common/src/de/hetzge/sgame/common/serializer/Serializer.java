@@ -16,6 +16,8 @@ public final class Serializer {
 
 	@Deprecated
 	public static byte[] serialize(Object object) throws IOException {
+
+		// TODO callbacks tun die noch ?
 		if (object instanceof IF_Callback) {
 			IF_Callback<?> callback = (IF_Callback<?>) object;
 			object = callback.callback();
@@ -37,6 +39,10 @@ public final class Serializer {
 		Object readObject = objectInput.readObject();
 		byteArrayInputStream.close();
 		return readObject;
+	}
+
+	public static byte[] toByteArray(Object object) {
+		return CommonConfig.INSTANCE.fst.asByteArray(object);
 	}
 
 }

@@ -16,7 +16,6 @@ import de.hetzge.sgame.map.MapModule;
 import de.hetzge.sgame.message.MessageModule;
 import de.hetzge.sgame.network.NetworkModule;
 import de.hetzge.sgame.render.IF_PixelAccess;
-import de.hetzge.sgame.render.IF_RenderableKey;
 import de.hetzge.sgame.render.RenderConfig;
 import de.hetzge.sgame.sync.SyncModule;
 
@@ -28,12 +27,12 @@ public class BaseGame extends Application {
 
 	public static enum Ground implements IF_Ground {
 
-		GRASS(GroundType.SMOOTH, Client.GROUND_GRASS_RENDERABLE_KEY), WATER(GroundType.SMOOTH, Client.GROUND_DESERT_RENDERABLE_KEY);
+		GRASS(GroundType.SMOOTH, RenderId.GRASS_RENDERABLE_ID), WATER(GroundType.SMOOTH, RenderId.DESERT_RENDERABLE_ID);
 
 		public final GroundType groundType;
-		public final IF_RenderableKey renderableKey;
+		public final int renderableKey;
 
-		private Ground(GroundType groundType, IF_RenderableKey renderableKey) {
+		private Ground(GroundType groundType, int renderableKey) {
 			this.groundType = groundType;
 			this.renderableKey = renderableKey;
 		}
@@ -45,7 +44,7 @@ public class BaseGame extends Application {
 
 		@Override
 		public IF_PixelAccess getTemplatePixelAccess() {
-			return (IF_PixelAccess) RenderConfig.INSTANCE.renderablePool.getRenderableRessource(this.renderableKey);
+			return (IF_PixelAccess) RenderConfig.INSTANCE.renderableRessourcePool.getRenderableRessource(this.renderableKey);
 		}
 
 	}

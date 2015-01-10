@@ -2,13 +2,12 @@ package de.hetzge.sgame.render;
 
 import java.io.Serializable;
 
-import de.hetzge.sgame.common.geometry.IF_ImmutableRectangle;
+import de.hetzge.sgame.common.geometry.IF_ImmutablePrimitivRectangle;
 
 public interface IF_RenderInformation extends Serializable {
+	public IF_ImmutablePrimitivRectangle getRenderedRectangle();
 
-	public IF_ImmutableRectangle getRenderedRectangle();
-
-	public default IF_RenderableKey getRenderableKey() {
-		return IF_RenderableKey.DEFAULT_RENDERABLE_KEY;
+	public default int getRenderableKey() {
+		return 0; // TODO new default
 	}
 }

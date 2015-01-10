@@ -8,6 +8,7 @@ public class MapConfig {
 	public static final MapConfig INSTANCE = new MapConfig();
 
 	private TileMap<IF_RenderableContext> tileMap;
+	public final TilePool tilePool = new TilePool();
 
 	public TileMap<IF_RenderableContext> getTileMap() {
 		return this.tileMap;

@@ -30,6 +30,10 @@ public class GotoKI extends BaseKI {
 			return KIState.FAILURE;
 		}
 
+		if (positionAndDimensionModule.reachedEndOfPath()) {
+			return KIState.SUCCESS;
+		}
+
 		positionAndDimensionModule.continueOnPath();
 		return KIState.ACTIVE;
 	}

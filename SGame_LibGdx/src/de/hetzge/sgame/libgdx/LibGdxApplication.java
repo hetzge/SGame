@@ -18,7 +18,7 @@ import de.hetzge.sgame.common.geometry.Position;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableContext;
 import de.hetzge.sgame.render.RenderConfig;
 import de.hetzge.sgame.render.RenderUtil;
-import de.hetzge.sgame.render.RenderablePool;
+import de.hetzge.sgame.render.RenderableRessourcePool;
 
 public class LibGdxApplication implements ApplicationListener {
 	private SpriteBatch batch;
@@ -45,8 +45,8 @@ public class LibGdxApplication implements ApplicationListener {
 		this.libGdxRenderableContext = new LibGdxRenderableContext(this.batch, this.shapeRenderer, this.filledShapeRenderer);
 		this.camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-		for (Consumer<RenderablePool> consumer : RenderConfig.INSTANCE.initRenderableConsumers) {
-			consumer.accept(RenderConfig.INSTANCE.renderablePool);
+		for (Consumer<RenderableRessourcePool> consumer : RenderConfig.INSTANCE.initRenderableConsumers) {
+			consumer.accept(RenderConfig.INSTANCE.renderableRessourcePool);
 		}
 	}
 
@@ -63,17 +63,17 @@ public class LibGdxApplication implements ApplicationListener {
 
 		this.batch.setProjectionMatrix(this.camera.combined);
 		this.batch.begin();
-		RenderConfig.INSTANCE.renderablePool.render(this.libGdxRenderableContext);
+		RenderConfig.INSTANCE.renderPool.render(this.libGdxRenderableContext);
 		this.batch.end();
 
 		this.filledShapeRenderer.setProjectionMatrix(this.camera.combined);
 		this.filledShapeRenderer.begin(ShapeType.Filled);
-		RenderConfig.INSTANCE.renderablePool.renderFilledShapes(this.libGdxRenderableContext);
+		RenderConfig.INSTANCE.renderPool.renderFilledShapes(this.libGdxRenderableContext);
 		this.filledShapeRenderer.end();
 
 		this.shapeRenderer.setProjectionMatrix(this.camera.combined);
 		this.shapeRenderer.begin(ShapeType.Line);
-		RenderConfig.INSTANCE.renderablePool.renderShapes(this.libGdxRenderableContext);
+		RenderConfig.INSTANCE.renderPool.renderShapes(this.libGdxRenderableContext);
 		this.shapeRenderer.end();
 
 		// sync viewport with camera

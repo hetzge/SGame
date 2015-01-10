@@ -3,8 +3,6 @@ package de.hetzge.sgame.entity;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import javolution.util.FastCollection;
@@ -133,8 +131,8 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 		}
 	}
 
-	public List<Entity> getEntitiesCopy() {
-		return new LinkedList<>(this.entities);
+	public Collection<Entity> getEntities() {
+		return this.entities.unmodifiable();
 	}
 
 	public void init() {

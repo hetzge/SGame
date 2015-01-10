@@ -1,55 +1,74 @@
 package de.hetzge.sgame.map;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
+import de.hetzge.sgame.common.Stopwatch;
 import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
+import de.hetzge.sgame.common.geometry.ComplexRectangle;
 import de.hetzge.sgame.common.geometry.Dimension;
+import de.hetzge.sgame.common.geometry.IF_ImmutablePrimitivRectangle;
 import de.hetzge.sgame.common.geometry.Position;
-import de.hetzge.sgame.common.geometry.Rectangle;
-import de.hetzge.sgame.render.DynamicRenderableKey;
+import de.hetzge.sgame.common.serializer.Serializer;
 import de.hetzge.sgame.render.IF_RenderInformation;
 import de.hetzge.sgame.render.IF_Renderable;
 import de.hetzge.sgame.render.IF_RenderableContext;
-import de.hetzge.sgame.render.IF_RenderableKey;
+import de.hetzge.sgame.render.PredefinedRenderId;
 import de.hetzge.sgame.render.RenderConfig;
 import de.hetzge.sgame.render.RenderUtil;
 
 public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF_Renderable<IF_RenderableContext>, Serializable {
 
-	private class Tile implements IF_RenderInformation, Serializable {
+	private class Tile implements IF_RenderInformation, Serializable, IF_ImmutablePrimitivRectangle {
 
-		private final TileDefinition tileDefinition;
-		private final Rectangle renderedRectangle;
-		private final DynamicRenderableKey dynamicRenderableKey; // for reuse
+		// Rectangle interface auch verwenden
+		// Renderable key unter in cachen (static hochzählen)
+
+		private final int tileId;
 
 		private final int x;
 		private final int y;
 
 		public Tile(int x, int y) {
-			this.tileDefinition = new TileDefinition();
-			this.renderedRectangle = new Rectangle(new Position(x * TileMap.this.tileSize, y * TileMap.this.tileSize), new Dimension(TileMap.this.tileSize, TileMap.this.tileSize));
-			this.dynamicRenderableKey = DynamicRenderableKey.DEFAULT_DYNAMIC_RENDERABLE_KEY;
+			this.tileId = 0; // TODO
 			this.x = x;
 			this.y = y;
 		}
 
-		public TileDefinition getTileDefinition() {
-			return this.tileDefinition;
+		@Override
+		public IF_ImmutablePrimitivRectangle getRenderedRectangle() {
+			return this;
 		}
 
 		@Override
-		public Rectangle getRenderedRectangle() {
-			return this.renderedRectangle;
+		public int getRenderableKey() {
+			return MapConfig.INSTANCE.tilePool.getRenderableId(this.tileId);
 		}
 
 		@Override
-		public IF_RenderableKey getRenderableKey() {
-			this.dynamicRenderableKey.setKey(this.tileDefinition.getKey());
-			return this.dynamicRenderableKey;
+		public float getX() {
+			return this.x * TileMap.this.tileSize;
+		}
+
+		@Override
+		public float getY() {
+			return this.y * TileMap.this.tileSize;
+		}
+
+		@Override
+		public float getWidth() {
+			return TileMap.this.tileSize;
+		}
+
+		@Override
+		public float getHeight() {
+			return TileMap.this.tileSize;
 		}
 	}
 
@@ -68,15 +87,19 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		@Override
 		public boolean isCollision(int x, int y) {
 			return this.isFixedCollision(x, y) || this.isFlexibleCollision(x, y);
-
 		}
 
 		public boolean isFixedCollision(int x, int y) {
 			int tileX = (x - (x % TileMap.this.collisionTileFactor)) / TileMap.this.collisionTileFactor;
 			int tileY = (y - (y % TileMap.this.collisionTileFactor)) / TileMap.this.collisionTileFactor;
-			boolean isMapCollision = TileMap.this.tiles[tileX][tileY].tileDefinition.getCollision().isCollision(x % TileMap.this.collisionTileFactor, y % TileMap.this.collisionTileFactor);
-			if (isMapCollision)
-				return true;
+
+			// TODO resolve tile and tile collision
+			// boolean isMapCollision =
+			// TileMap.this.tiles[tileX][tileY].tileDefinition.getCollision().isCollision(x
+			// % TileMap.this.collisionTileFactor, y %
+			// TileMap.this.collisionTileFactor);
+			// if (isMapCollision)
+			// return true;
 
 			Collection<Boolean> flexibleConnectedObjects = TileMap.this.flexibleEntityCollisionMap.getConnectedObjects(x, y);
 			for (Boolean aBoolean : flexibleConnectedObjects) {
@@ -112,18 +135,40 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	private final ActiveCollisionMap fixEntityCollisionMap;
 	private final ActiveCollisionMap flexibleEntityCollisionMap;
 
+	public static void main(String[] args) {
+
+		FileOutputStream fout = null;
+		ObjectOutputStream oos = null;
+		try {
+			for (int i = 0; i < 1000; i++) {
+				TileMap<IF_RenderableContext> tileMap = new TileMap<>(100, 100, 32, 3);
+				fout = new FileOutputStream("cache/" + i + ".map");
+				oos = new ObjectOutputStream(fout);
+				oos.write(Serializer.toByteArray(tileMap));
+
+				oos.close();
+				fout.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public TileMap(int widthInTiles, int heightInTiles, float tileSize, int collisionTileFactor) {
 		this.tileSize = tileSize;
 		this.collisionTileFactor = collisionTileFactor;
 		this.widthInTiles = widthInTiles;
 		this.heightInTiles = heightInTiles;
-		this.tiles = new TileMap.Tile[widthInTiles][];
+		this.tiles = new TileMap.Tile[widthInTiles][heightInTiles];
+
+		Stopwatch stopwatch = new Stopwatch("init tile map tiles array");
 		for (int x = 0; x < widthInTiles; x++) {
 			this.tiles[x] = new TileMap.Tile[heightInTiles];
 			for (int y = 0; y < heightInTiles; y++) {
 				this.tiles[x][y] = new Tile(x, y);
 			}
 		}
+		stopwatch.stop();
 		this.mapCollision = new MapCollision();
 
 		this.fixEntityCollisionMap = new ActiveCollisionMap(widthInTiles * collisionTileFactor, heightInTiles * collisionTileFactor);
@@ -148,14 +193,14 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 					if (this.mapCollision.isCollision(x, y)) {
 						RenderUtil.render(context, new IF_RenderInformation() {
 							@Override
-							public Rectangle getRenderedRectangle() {
-								return new Rectangle(new Position(x * TileMap.this.getCollisionTileSize(), y * TileMap.this.getCollisionTileSize()), new Dimension(TileMap.this.getCollisionTileSize(),
-										TileMap.this.getCollisionTileSize()));
+							public ComplexRectangle getRenderedRectangle() {
+								return new ComplexRectangle(new Position(x * TileMap.this.getCollisionTileSize(), y * TileMap.this.getCollisionTileSize()), new Dimension(TileMap.this
+										.getCollisionTileSize(), TileMap.this.getCollisionTileSize()));
 							}
 
 							@Override
-							public IF_RenderableKey getRenderableKey() {
-								return IF_RenderableKey.DEFAULT_RECTANGLE_KEY;
+							public int getRenderableKey() {
+								return PredefinedRenderId.RECTANGLE;
 							}
 						});
 					}

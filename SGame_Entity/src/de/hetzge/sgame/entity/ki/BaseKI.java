@@ -23,6 +23,9 @@ public abstract class BaseKI {
 		}
 
 		public void call(KIState state) {
+			if (state == null) {
+				return;
+			}
 			Runnable runnable = this.runnables[state.ordinal()];
 			if (runnable != null) {
 				runnable.run();

@@ -5,7 +5,7 @@ import java.io.Serializable;
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.definition.IF_EntityType;
 
-public class RenderableKey implements IF_RenderableKey, Serializable {
+public class RenderableKey implements Serializable {
 
 	private static enum DefaultAnimationKey implements IF_AnimationKey, Serializable {
 		DEFAULT;

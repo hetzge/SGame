@@ -5,8 +5,8 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import de.hetzge.sgame.common.definition.IF_Module;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableRectangle;
-import de.hetzge.sgame.render.IF_RenderableKey;
 import de.hetzge.sgame.render.RenderConfig;
+import de.hetzge.sgame.render.RenderUtil;
 
 public class LibGdxModule implements IF_Module {
 
@@ -18,7 +18,7 @@ public class LibGdxModule implements IF_Module {
 
 		// TODO add other shapes
 		RenderConfig.INSTANCE.initRenderableConsumers.add((renderPool) -> {
-			renderPool.registerRenderableRessource(IF_RenderableKey.DEFAULT_RECTANGLE_KEY, new LibGdxRenderableRectangle());
+			renderPool.registerRenderableRessource(RenderUtil.getNextRenderId(), new LibGdxRenderableRectangle());
 		});
 
 	}
