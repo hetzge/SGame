@@ -226,7 +226,6 @@ public final class AStarUtil {
 			path = AStarUtil.evaluatePath(rating, startX, startY, goalX, goalY);
 
 			IF_Map map = CommonConfig.INSTANCE.map;
-
 			Position startPositionInPx = new Position(map.convertCollisionTileInPx(startX), map.convertCollisionTileInPx(startY));
 			Position goalPositionInPx = new Position(map.convertCollisionTileInPx(goalX), map.convertCollisionTileInPx(goalY));
 

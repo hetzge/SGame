@@ -14,6 +14,7 @@ public class KIModule implements IF_Module {
 
 	@Override
 	public void postInit() {
+		KIConfig.INSTANCE.pathfinderThread.start();
 	}
 
 	@Override
