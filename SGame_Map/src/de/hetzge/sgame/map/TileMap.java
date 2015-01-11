@@ -237,16 +237,6 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	}
 
 	@Override
-	public float getWidthInPx() {
-		return this.widthInTiles * this.tileSize;
-	}
-
-	@Override
-	public float getHeightInPx() {
-		return this.heightInTiles * this.tileSize;
-	}
-
-	@Override
 	public int getWidthInTiles() {
 		return this.widthInTiles;
 	}

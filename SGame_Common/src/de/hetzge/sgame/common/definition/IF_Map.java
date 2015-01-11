@@ -4,10 +4,6 @@ import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 
 public interface IF_Map {
 
-	public float getWidthInPx();
-
-	public float getHeightInPx();
-
 	public float getTileSize();
 
 	public int getWidthInTiles();
@@ -21,6 +17,22 @@ public interface IF_Map {
 	public ActiveCollisionMap getFixEntityCollisionMap();
 
 	public ActiveCollisionMap getFlexibleEntityCollisionMap();
+
+	public default float getWidthInPx() {
+		return this.getWidthInTiles() * this.getTileSize();
+	}
+
+	public default float getHeightInPx() {
+		return this.getHeightInTiles() * this.getTileSize();
+	}
+
+	public default int getWidthInCollisionTiles() {
+		return this.getWidthInTiles() * this.getCollisionTileFactor();
+	}
+
+	public default int getHeightInCollisionTiles() {
+		return this.getHeightInTiles() * this.getCollisionTileFactor();
+	}
 
 	public default float getCollisionTileSize() {
 		return this.getTileSize() / this.getCollisionTileFactor();
