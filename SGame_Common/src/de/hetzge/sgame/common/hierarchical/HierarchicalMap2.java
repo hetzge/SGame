@@ -1,17 +1,28 @@
 package de.hetzge.sgame.common.hierarchical;
 
+import java.io.Serializable;
+
 import javolution.util.FastTable;
+import de.hetzge.sgame.common.Log;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.definition.IF_Map;
 
-public class HierarchicalMap2 {
+public class HierarchicalMap2 implements Serializable {
 
-	private class Area {
+	private class Area implements Serializable {
 
 		private class TransitionPointAnalyzer {
-			private int startX, endX, startY, endY = -1;
+			private int startX, endX, startY, endY;
 
-			public void add(int x, int y) {
+			public TransitionPointAnalyzer() {
+				reset();
+			}
+			
+			private void reset(){
+				startX = endX = startY = endY = -1;
+			}
+
+			private void add(int x, int y) {
 				if (this.startX == -1) {
 					this.startX = x;
 					this.startY = y;
@@ -21,36 +32,48 @@ public class HierarchicalMap2 {
 				}
 			}
 
-			public void end() {
+			private void end() {
 				if (this.startX != -1) {
 					if (this.endX == -1) {
 						this.endX = this.startX;
 						this.endY = this.startY;
 					}
-					Area.this.transitionPoints.add(new TransitionPoint(this.startX, this.endX, this.startY, this.endY));
-					this.startX = this.endX = this.startY = this.endY = -1;
+
+					TransitionPoint transitionPoint = new TransitionPoint(Area.this, this.startX, this.endX, this.startY, this.endY);
+					Area.this.transitionPoints.add(transitionPoint);
+					reset();
 				}
 			}
 		}
 
-		private class TransitionPoint {
+		private class TransitionPoint implements Serializable {
 			private final int startX;
 			private final int endX;
 			private final int startY;
 			private final int endY;
 
-			// private final Area toArea;
-			// private final int toGroup;
+			private final Area area;
+			private TransitionPoint partner;
 
-			public TransitionPoint(int startX, int endX, int startY, int endY) {
+			public TransitionPoint(Area area, int startX, int endX, int startY, int endY) {
 				this.startX = startX;
 				this.endX = endX;
 				this.startY = startY;
 				this.endY = endY;
+				this.area = area;
+			}
+
+			private void connectTo(TransitionPoint to) {
+				partner = to;
+				to.partner = this;
+			}
+
+			private boolean isPositionIn(int x, int y) {
+				return startX <= x && startY <= y && endX >= x && endY >= y;
 			}
 		}
 
-		private class TransitionPointConnection {
+		private class TransitionPointConnection implements Serializable {
 			private final TransitionPoint from;
 			private final TransitionPoint to;
 
@@ -66,75 +89,143 @@ public class HierarchicalMap2 {
 		private final int startX;
 		private final int startY;
 		private final FastTable<TransitionPoint> transitionPoints = new FastTable<TransitionPoint>();
+		private final boolean upToDate = false;
 
 		public Area(int startX, int startY) {
 			this.startX = startX;
 			this.startY = startY;
 		}
 
+		private TransitionPoint findTransitionPoint(int x, int y) {
+			for (TransitionPoint transitionPoint : transitionPoints) {
+				if (transitionPoint.isPositionIn(x, y)) {
+					return transitionPoint;
+				}
+			}
+			return null;
+		}
+
 		private void init() {
+			initSelf();
+
+			Area area;
+			if ((area = getLeft()) != null && !area.upToDate)
+				area.initSelf();
+			if ((area = getRight()) != null && !area.upToDate)
+				area.initSelf();
+			if ((area = getTop()) != null && !area.upToDate)
+				area.initSelf();
+			if ((area = getBottom()) != null && !area.upToDate)
+				area.initSelf();
+
+			initConnections();
+		}
+
+		private void initSelf() {
 			this.transitionPoints.clear();
 			this.initTopLine();
 			this.initBottomLine();
 			this.initLeftLine();
 			this.initRightLine();
-			this.initConnections();
+
+			Log.PATHFINDING.info("init area with " + transitionPoints.size() + " transition points");
 		}
 
 		private void initConnections() {
+			Area left = getLeft();
+			Area right = getRight();
+			Area top = getTop();
+			Area bottom = getBottom();
 
+			for (TransitionPoint transitionPoint : transitionPoints) {
+				if (transitionPoint.startX == 0 && left != null) {
+					TransitionPoint transition = left.findTransitionPoint(areaWidth - 1, transitionPoint.startY);
+					if (transition != null && transition.partner == null) {
+						transition.connectTo(transitionPoint);
+					}
+				}
+				if (startX == areaWidth - 1 && right != null) {
+					TransitionPoint transition = right.findTransitionPoint(0, transitionPoint.startY);
+					if (transition != null && transition.partner == null) {
+						transition.connectTo(transitionPoint);
+					}
+				}
+				if (startY == 0 && top != null) {
+					TransitionPoint transition = top.findTransitionPoint(transitionPoint.startX, areaHeight - 1);
+					if (transition != null && transition.partner == null) {
+						transition.connectTo(transitionPoint);
+					}
+				}
+				if (startY == areaHeight - 1 && bottom != null) {
+					TransitionPoint transition = bottom.findTransitionPoint(transitionPoint.startX, 0);
+					if (transition != null && transition.partner == null) {
+						transition.connectTo(transitionPoint);
+					}
+				}
+			}
+
+			Log.PATHFINDING.info("area " + getAreaX() + " / " + getAreaY() + " has connections: ");
+			for (TransitionPoint transitionPoint : transitionPoints) {
+				if (transitionPoint.partner != null) {
+					Log.PATHFINDING.info(transitionPoint.partner.area.getAreaX() + " / " + transitionPoint.partner.area.getAreaY());
+				}
+			}
 		}
 
 		private void initTopLine() {
 			TransitionPointAnalyzer transitionPointAnalyzer = new TransitionPointAnalyzer();
 
-			int y = this.startY - 1;
-			for (int x = this.startX; x < this.startX + HierarchicalMap2.this.areaWidth - 1; x++) {
+			int y = 0;
+			for (int x = 0; x < HierarchicalMap2.this.areaWidth; x++) {
 				if (!this.isCollision(x, y) && !this.isTopCollision(x)) {
 					transitionPointAnalyzer.add(x, y);
 				} else {
 					transitionPointAnalyzer.end();
 				}
 			}
+			transitionPointAnalyzer.end();
 		}
 
 		private void initBottomLine() {
 			TransitionPointAnalyzer transitionPointAnalyzer = new TransitionPointAnalyzer();
 
-			int y = this.startY + HierarchicalMap2.this.areaHeight - 1;
-			for (int x = this.startX; x < this.startX + HierarchicalMap2.this.areaWidth - 1; x++) {
+			int y = HierarchicalMap2.this.areaHeight - 1;
+			for (int x = 0; x < HierarchicalMap2.this.areaWidth; x++) {
 				if (!this.isCollision(x, y) && !this.isBottomCollision(x)) {
 					transitionPointAnalyzer.add(x, y);
 				} else {
 					transitionPointAnalyzer.end();
 				}
 			}
+			transitionPointAnalyzer.end();
 		}
 
 		private void initLeftLine() {
 			TransitionPointAnalyzer transitionPointAnalyzer = new TransitionPointAnalyzer();
 
-			int x = this.startX - 1;
-			for (int y = this.startY; y < this.startY + HierarchicalMap2.this.areaHeight - 1; y++) {
+			int x = 0;
+			for (int y = 0; y < HierarchicalMap2.this.areaHeight; y++) {
 				if (!this.isCollision(x, y) && !this.isLeftCollision(y)) {
 					transitionPointAnalyzer.add(x, y);
 				} else {
 					transitionPointAnalyzer.end();
 				}
 			}
+			transitionPointAnalyzer.end();
 		}
 
 		private void initRightLine() {
 			TransitionPointAnalyzer transitionPointAnalyzer = new TransitionPointAnalyzer();
 
-			int x = this.startX + HierarchicalMap2.this.areaWidth - 1;
-			for (int y = this.startY; y < this.startY + HierarchicalMap2.this.areaHeight - 1; y++) {
+			int x = HierarchicalMap2.this.areaWidth - 1;
+			for (int y = 0; y < HierarchicalMap2.this.areaHeight; y++) {
 				if (!this.isCollision(x, y) && !this.isRightCollision(y)) {
 					transitionPointAnalyzer.add(x, y);
 				} else {
 					transitionPointAnalyzer.end();
 				}
 			}
+			transitionPointAnalyzer.end();
 		}
 
 		private Area getTop() {
@@ -158,7 +249,7 @@ public class HierarchicalMap2 {
 			if (top == null) {
 				return false;
 			}
-			return top.isCollision(x, top.startY + HierarchicalMap2.this.areaHeight - 1);
+			return top.isCollision(x, HierarchicalMap2.this.areaHeight - 1);
 		}
 
 		private boolean isBottomCollision(int x) {
@@ -166,7 +257,7 @@ public class HierarchicalMap2 {
 			if (bottom == null) {
 				return false;
 			}
-			return bottom.isCollision(x, bottom.startY);
+			return bottom.isCollision(x, 0);
 		}
 
 		private boolean isLeftCollision(int y) {
@@ -174,7 +265,7 @@ public class HierarchicalMap2 {
 			if (left == null) {
 				return false;
 			}
-			return left.isCollision(left.startX + HierarchicalMap2.this.areaWidth - 1, y);
+			return left.isCollision(HierarchicalMap2.this.areaWidth - 1, y);
 		}
 
 		private boolean isRightCollision(int y) {
@@ -182,7 +273,7 @@ public class HierarchicalMap2 {
 			if (right == null) {
 				return false;
 			}
-			return right.isCollision(right.startX, y);
+			return right.isCollision(0, y);
 		}
 
 		private int getAreaX() {
@@ -212,7 +303,12 @@ public class HierarchicalMap2 {
 		this.areaWidth = HierarchicalMap2.evaluateMaxAreaSize(map.getWidthInCollisionTiles());
 		this.areaHeight = HierarchicalMap2.evaluateMaxAreaSize(map.getHeightInCollisionTiles());
 
-		this.areas = new Area[map.getWidthInCollisionTiles() / this.areaWidth][map.getHeightInCollisionTiles() / this.areaHeight];
+		int widthInAreas = map.getWidthInCollisionTiles() / this.areaWidth;
+		int heightInAreas = map.getHeightInCollisionTiles() / this.areaHeight;
+
+		Log.PATHFINDING.info("Create hirarchical map with areas: " + widthInAreas + " * " + heightInAreas);
+
+		this.areas = new Area[widthInAreas][heightInAreas];
 		for (int x = 0; x < this.areas.length; x++) {
 			for (int y = 0; y < this.areas[0].length; y++) {
 				this.areas[x][y] = new Area(x * this.areaWidth, y * this.areaHeight);
@@ -221,6 +317,12 @@ public class HierarchicalMap2 {
 
 		for (int x = 0; x < this.areas.length; x++) {
 			for (int y = 0; y < this.areas[0].length; y++) {
+				this.areas[x][y].initSelf();
+			}
+		}
+
+		for (int x = 0; x < areas.length; x++) {
+			for (int y = 0; y < areas.length; y++) {
 				this.areas[x][y].init();
 			}
 		}

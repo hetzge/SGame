@@ -239,7 +239,7 @@ public class HierarchicalMap implements Serializable {
 		FileOutputStream fout = null;
 		ObjectOutputStream oos = null;
 		try {
-			HierarchicalMap hierarchicalMap = new HierarchicalMap(new DummyMap());
+			HierarchicalMap2 hierarchicalMap = new HierarchicalMap2(new DummyMap());
 			fout = new FileOutputStream("cache/test.map");
 			oos = new ObjectOutputStream(fout);
 			oos.write(Serializer.toByteArray(hierarchicalMap));

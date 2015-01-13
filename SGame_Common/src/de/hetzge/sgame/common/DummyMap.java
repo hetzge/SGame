@@ -5,6 +5,9 @@ import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
 
 public class DummyMap implements IF_Map {
+	
+	private ActiveCollisionMap collisionMap = new ActiveCollisionMap(500 * 3, 500 * 3);
+	
 	@Override
 	public int getWidthInTiles() {
 		return 500;
@@ -27,16 +30,16 @@ public class DummyMap implements IF_Map {
 
 	@Override
 	public IF_Collision getCollision() {
-		return null;
+		return collisionMap;
 	}
 
 	@Override
 	public ActiveCollisionMap getFixEntityCollisionMap() {
-		return null;
+		return collisionMap;
 	}
 
 	@Override
 	public ActiveCollisionMap getFlexibleEntityCollisionMap() {
-		return null;
+		return collisionMap;
 	}
 }

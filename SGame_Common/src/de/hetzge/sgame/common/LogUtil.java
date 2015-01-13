@@ -51,7 +51,8 @@ public final class LogUtil {
 			logger.addHandler(fileHandler);
 			return logger;
 		} catch (SecurityException | IOException e) {
-			throw new IllegalStateException(e);
+			Log.LOG.warning("can't create file logger with name " + name);
 		}
+		return Log.VOID;
 	}
 }
