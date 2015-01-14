@@ -240,6 +240,10 @@ public class HierarchicalMap implements Serializable {
 		ObjectOutputStream oos = null;
 		try {
 			HierarchicalMap2 hierarchicalMap = new HierarchicalMap2(new DummyMap());
+			
+			hierarchicalMap.findPath(35, 35, 100, 100);
+			
+			
 			fout = new FileOutputStream("cache/test.map");
 			oos = new ObjectOutputStream(fout);
 			oos.write(Serializer.toByteArray(hierarchicalMap));
