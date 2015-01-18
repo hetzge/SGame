@@ -8,7 +8,7 @@ import de.hetzge.sgame.common.geometry.Position;
 public class Path implements Serializable {
 
 	private final Position start;
-	private final Position goal;
+	private Position goal;
 
 	private final List<Position> path;
 
@@ -16,6 +16,11 @@ public class Path implements Serializable {
 		this.start = start;
 		this.goal = goal;
 		this.path = path;
+	}
+
+	public void add(Path path) {
+		this.path.addAll(path.path);
+		this.goal = path.goal;
 	}
 
 	public Position getStart() {

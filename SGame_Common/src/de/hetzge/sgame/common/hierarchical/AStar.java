@@ -1,9 +1,14 @@
 package de.hetzge.sgame.common.hierarchical;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import javolution.util.FastSet;
+import de.hetzge.sgame.common.Stopwatch;
 
 public class AStar<WAYPOINT extends IF_AStarWaypoint<WAYPOINT>> {
 
@@ -18,29 +23,39 @@ public class AStar<WAYPOINT extends IF_AStarWaypoint<WAYPOINT>> {
 		}
 
 		private Node eval() {
-			List<WAYPOINT> waypoints = waypoint.getWaypoints();
-			for (WAYPOINT waypoint : waypoints) {
-				if (!doneWaypoints.contains(waypoint)) {
-					Node node = new Node(waypoint);
-					nextLevel.add(node);
-					node.levelBefore.add(this);
-					doneWaypoints.add(waypoint);
-					if (waypoint.equals(end)) {
-						return node;
+
+			Map<Node, List<WAYPOINT>> nexts = new HashMap<>();
+			nexts.put(this, new ArrayList<>(this.waypoint.getWaypoints(this.waypoint)));
+
+			while (!nexts.isEmpty()) {
+
+				Map<Node, List<WAYPOINT>> nextNexts = new HashMap<>();
+
+				for (Map.Entry<Node, List<WAYPOINT>> entry : nexts.entrySet()) {
+					Node currentNode = entry.getKey();
+					List<WAYPOINT> waypoints = entry.getValue();
+
+					for (WAYPOINT waypoint : waypoints) {
+						if (!AStar.this.doneWaypoints.contains(waypoint)) {
+							Node node = new Node(waypoint);
+							currentNode.nextLevel.add(node);
+							node.levelBefore.add(currentNode);
+							AStar.this.doneWaypoints.add(waypoint);
+							if (waypoint.equals(AStar.this.end)) {
+								return node;
+							}
+							nextNexts.put(node, new ArrayList<>(node.waypoint.getWaypoints(waypoint)));
+						}
 					}
 				}
+				nexts = nextNexts;
 			}
-			for (Node next : nextLevel) {
-				Node endNode = next.eval();
-				if(endNode != null){
-					return endNode;
-				}
-			}
+
 			return null;
 		}
 	}
 
-	private final FastSet<WAYPOINT> doneWaypoints = new FastSet<>();
+	private final Set<WAYPOINT> doneWaypoints = new HashSet<>();
 	private final WAYPOINT start;
 	private final WAYPOINT end;
 	private final Node startNode;
@@ -52,23 +67,29 @@ public class AStar<WAYPOINT extends IF_AStarWaypoint<WAYPOINT>> {
 	}
 
 	public List<WAYPOINT> findPath() {
+		Stopwatch stopwatch = new Stopwatch("AStar#findPath");
+
 		List<WAYPOINT> waypoints = new LinkedList<>();
-		
-		if (start.equals(end)) {
+
+		if (this.start.equals(this.end)) {
 			return waypoints;
 		}
 
-		AStar<WAYPOINT>.Node endNode = startNode.eval();
+		AStar<WAYPOINT>.Node endNode = this.startNode.eval();
 		if (endNode == null) {
 			return null;
 		}
+
+		// TODO umkehren ... start -> ziel ?!
 
 		Node node = endNode;
 		do {
 			node = node.levelBefore.get(0);
 			waypoints.add(node.waypoint);
-		} while (node.waypoint != start);
-		
+		} while (!node.waypoint.equals(this.start));
+
+		stopwatch.stop();
+
 		return waypoints;
 	}
 

@@ -7,18 +7,9 @@ import java.util.List;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.geometry.Position;
+import de.hetzge.sgame.common.hierarchical.XY;
 
 public final class AStarUtil {
-
-	private static class XY {
-		public int x;
-		public int y;
-
-		public XY(int x, int y) {
-			this.x = x;
-			this.y = y;
-		}
-	}
 
 	private static final XY[] EMPTY_TRAMPOLINE = new XY[0];
 	private static final XY[] DONE_TRAMPOLINE = new XY[0];

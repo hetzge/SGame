@@ -1,27 +1,76 @@
 package de.hetzge.sgame.common.hierarchical;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import javolution.util.FastTable;
 import de.hetzge.sgame.common.Log;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.definition.IF_Map;
+import de.hetzge.sgame.common.geometry.Position;
 
 public class HierarchicalMap2 implements Serializable {
 
 	private class Area implements Serializable {
 
+		private class AStarWaypoint extends XY implements IF_AStarWaypoint<AStarWaypoint> {
+			public AStarWaypoint(int x, int y) {
+				super(x, y);
+			}
+
+			@Override
+			public List<AStarWaypoint> getWaypoints(AStarWaypoint waypoint) {
+				LinkedList<AStarWaypoint> result = new LinkedList<>();
+
+				int nextX;
+				int nextY;
+
+				nextX = waypoint.x - 1;
+				nextY = waypoint.y;
+				if (Area.this.isAreaPosition(nextX, nextY) && !Area.this.isCollision(nextX, nextY)) {
+					result.add(new AStarWaypoint(nextX, nextY));
+				}
+
+				nextX = waypoint.x;
+				nextY = waypoint.y - 1;
+				if (Area.this.isAreaPosition(nextX, nextY) && !Area.this.isCollision(nextX, nextY)) {
+					result.add(new AStarWaypoint(nextX, nextY));
+				}
+
+				nextX = waypoint.x + 1;
+				nextY = waypoint.y;
+				if (Area.this.isAreaPosition(nextX, nextY) && !Area.this.isCollision(nextX, nextY)) {
+					result.add(new AStarWaypoint(nextX, nextY));
+				}
+
+				nextX = waypoint.x;
+				nextY = waypoint.y + 1;
+				if (Area.this.isAreaPosition(nextX, nextY) && !Area.this.isCollision(nextX, nextY)) {
+					result.add(new AStarWaypoint(nextX, nextY));
+				}
+
+				return result;
+			}
+
+			public Position asGlobalPosition() {
+				return new Position(Area.this.startX + this.x * HierarchicalMap2.this.map.getCollisionTileSize(), Area.this.startY + this.y * HierarchicalMap2.this.map.getCollisionTileSize());
+			}
+
+		}
+
 		private class TransitionPointAnalyzer {
 			private int startX, endX, startY, endY;
 
 			public TransitionPointAnalyzer() {
-				reset();
+				this.reset();
 			}
 
 			private void reset() {
-				startX = endX = startY = endY = -1;
+				this.startX = this.endX = this.startY = this.endY = -1;
 			}
 
 			private void add(int x, int y) {
@@ -43,7 +92,7 @@ public class HierarchicalMap2 implements Serializable {
 
 					TransitionPoint transitionPoint = new TransitionPoint(Area.this, this.startX, this.endX, this.startY, this.endY);
 					Area.this.transitionPoints.add(transitionPoint);
-					reset();
+					this.reset();
 				}
 			}
 		}
@@ -65,13 +114,17 @@ public class HierarchicalMap2 implements Serializable {
 				this.area = area;
 			}
 
+			private AStarWaypoint asAStarWaypoint() {
+				return new AStarWaypoint((int) (this.startX + Math.floor((this.endX - this.startX) / 2f)), (this.startY + (int) Math.floor((this.endY - this.startY) / 2f)));
+			}
+
 			private void connectTo(TransitionPoint to) {
-				partner = to;
+				this.partner = to;
 				to.partner = this;
 			}
 
 			private boolean isPositionIn(int x, int y) {
-				return startX <= x && startY <= y && endX >= x && endY >= y;
+				return this.startX <= x && this.startY <= y && this.endX >= x && this.endY >= y;
 			}
 
 			private boolean match(int startX, int startY, int endX, int endY) {
@@ -79,10 +132,15 @@ public class HierarchicalMap2 implements Serializable {
 			}
 
 			@Override
-			public List<TransitionPoint> getWaypoints() {
+			public List<TransitionPoint> getWaypoints(TransitionPoint transitionPoint) {
 				List<TransitionPoint> transitionPoints = new LinkedList<>();
-				if (partner != null) {
-					transitionPoints = partner.area.transitionPoints;
+				Map<TransitionPoint, Path> connectedTransactionPoints = Area.this.transitionPointConnections.get(this);
+				if (connectedTransactionPoints != null) {
+					if (transitionPoint.partner != null) {
+						transitionPoints.add(transitionPoint.partner);
+					}
+					Set<TransitionPoint> set = connectedTransactionPoints.keySet();
+					transitionPoints.addAll(set);
 				}
 				return transitionPoints;
 			}
@@ -91,59 +149,74 @@ public class HierarchicalMap2 implements Serializable {
 			public int hashCode() {
 				final int prime = 31;
 				int result = 1;
-				result = prime * result + getOuterType().hashCode();
-				result = prime * result + endX;
-				result = prime * result + endY;
-				result = prime * result + startX;
-				result = prime * result + startY;
-				if (partner != null) {
-					result = prime * result + partner.startX;
-					result = prime * result + partner.startY;
-					result = prime * result + partner.endX;
-					result = prime * result + partner.endY;
+				result = prime * result + this.getOuterType().hashCode();
+				result = prime * result + this.endX;
+				result = prime * result + this.endY;
+				result = prime * result + this.startX;
+				result = prime * result + this.startY;
+				if (this.partner != null) {
+					result = prime * result + this.partner.startX;
+					result = prime * result + this.partner.startY;
+					result = prime * result + this.partner.endX;
+					result = prime * result + this.partner.endY;
 				}
-				result = prime * result + area.getAreaX();
-				result = prime * result + area.getAreaY();
+				result = prime * result + this.area.getAreaX();
+				result = prime * result + this.area.getAreaY();
 				return result;
 			}
 
 			@Override
 			public boolean equals(Object obj) {
-				if (this == obj)
+				if (this == obj) {
 					return true;
-				if (obj == null)
+				}
+				if (obj == null) {
 					return false;
-				if (getClass() != obj.getClass())
+				}
+				if (this.getClass() != obj.getClass()) {
 					return false;
+				}
 				TransitionPoint other = (TransitionPoint) obj;
-				if (!getOuterType().equals(other.getOuterType()))
+				if (!this.getOuterType().equals(other.getOuterType())) {
 					return false;
-				if (endX != other.endX)
+				}
+				if (this.endX != other.endX) {
 					return false;
-				if (endY != other.endY)
+				}
+				if (this.endY != other.endY) {
 					return false;
-				if (startX != other.startX)
+				}
+				if (this.startX != other.startX) {
 					return false;
-				if (startY != other.startY)
+				}
+				if (this.startY != other.startY) {
 					return false;
-				if (partner == null && other.partner != partner)
+				}
+				if (this.partner == null && other.partner != this.partner) {
 					return false;
-
-				if (partner != null) {
-					if (partner.startX != other.partner.startX)
-						return false;
-					if (partner.startY != other.partner.startY)
-						return false;
-					if (partner.endX != other.partner.endX)
-						return false;
-					if (partner.endY != other.partner.endY)
-						return false;
 				}
 
-				if (area.getAreaX() != other.area.getAreaX())
+				if (this.partner != null) {
+					if (this.partner.startX != other.partner.startX) {
+						return false;
+					}
+					if (this.partner.startY != other.partner.startY) {
+						return false;
+					}
+					if (this.partner.endX != other.partner.endX) {
+						return false;
+					}
+					if (this.partner.endY != other.partner.endY) {
+						return false;
+					}
+				}
+
+				if (this.area.getAreaX() != other.area.getAreaX()) {
 					return false;
-				if (area.getAreaY() != other.area.getAreaY())
+				}
+				if (this.area.getAreaY() != other.area.getAreaY()) {
 					return false;
+				}
 
 				return true;
 			}
@@ -169,8 +242,9 @@ public class HierarchicalMap2 implements Serializable {
 
 		private final int startX;
 		private final int startY;
-		private final FastTable<TransitionPoint> transitionPoints = new FastTable<TransitionPoint>();
-		private final boolean upToDate = false;
+		private final List<TransitionPoint> transitionPoints = new LinkedList<TransitionPoint>();
+		private final Map<TransitionPoint, Map<TransitionPoint, Path>> transitionPointConnections = new HashMap<>();
+		private boolean upToDate = false;
 
 		public Area(int startX, int startY) {
 			this.startX = startX;
@@ -178,7 +252,7 @@ public class HierarchicalMap2 implements Serializable {
 		}
 
 		private TransitionPoint findTransitionPoint(int startX, int startY, int endX, int endY) {
-			for (TransitionPoint transitionPoint : transitionPoints) {
+			for (TransitionPoint transitionPoint : this.transitionPoints) {
 				if (transitionPoint.match(startX, startY, endX, endY)) {
 					return transitionPoint;
 				}
@@ -187,19 +261,21 @@ public class HierarchicalMap2 implements Serializable {
 		}
 
 		private void init() {
-			initSelf();
-
 			Area area;
-			if ((area = getLeft()) != null && !area.upToDate)
+			if ((area = this.getLeft()) != null && !area.upToDate) {
 				area.initSelf();
-			if ((area = getRight()) != null && !area.upToDate)
+			}
+			if ((area = this.getRight()) != null && !area.upToDate) {
 				area.initSelf();
-			if ((area = getTop()) != null && !area.upToDate)
+			}
+			if ((area = this.getTop()) != null && !area.upToDate) {
 				area.initSelf();
-			if ((area = getBottom()) != null && !area.upToDate)
+			}
+			if ((area = this.getBottom()) != null && !area.upToDate) {
 				area.initSelf();
+			}
 
-			initConnections();
+			this.initSelf();
 		}
 
 		private void initSelf() {
@@ -209,47 +285,85 @@ public class HierarchicalMap2 implements Serializable {
 			this.initLeftLine();
 			this.initRightLine();
 
-			Log.PATHFINDING.info("init area with " + transitionPoints.size() + " transition points");
+			this.initConnections();
+
+			this.upToDate = true;
+			Log.PATHFINDING.info("init area with " + this.transitionPoints.size() + " transition points");
 		}
 
 		private void initConnections() {
-			Area left = getLeft();
-			Area right = getRight();
-			Area top = getTop();
-			Area bottom = getBottom();
+			Area left = this.getLeft();
+			Area right = this.getRight();
+			Area top = this.getTop();
+			Area bottom = this.getBottom();
 
-			for (TransitionPoint transitionPoint : transitionPoints) {
+			for (TransitionPoint transitionPoint : this.transitionPoints) {
 				if (transitionPoint.startX == 0 && left != null) {
-					TransitionPoint transition = left.findTransitionPoint(areaWidth - 1, transitionPoint.startY, areaWidth - 1, transitionPoint.endY);
-					if (transition != null && transition.partner == null) {
+					TransitionPoint transition = left.findTransitionPoint(HierarchicalMap2.this.areaWidth - 1, transitionPoint.startY, HierarchicalMap2.this.areaWidth - 1, transitionPoint.endY);
+					if (transition != null) {
 						transition.connectTo(transitionPoint);
 					}
 				}
-				if (transitionPoint.startX == areaWidth - 1 && right != null) {
+				if (transitionPoint.startX == HierarchicalMap2.this.areaWidth - 1 && right != null) {
 					TransitionPoint transition = right.findTransitionPoint(0, transitionPoint.startY, 0, transitionPoint.endY);
-					if (transition != null && transition.partner == null) {
+					if (transition != null) {
 						transition.connectTo(transitionPoint);
 					}
 				}
 				if (transitionPoint.startY == 0 && top != null) {
-					TransitionPoint transition = top.findTransitionPoint(transitionPoint.startX, areaHeight - 1, transitionPoint.endX, areaHeight - 1);
-					if (transition != null && transition.partner == null) {
+					TransitionPoint transition = top.findTransitionPoint(transitionPoint.startX, HierarchicalMap2.this.areaHeight - 1, transitionPoint.endX, HierarchicalMap2.this.areaHeight - 1);
+					if (transition != null) {
 						transition.connectTo(transitionPoint);
 					}
 				}
-				if (transitionPoint.startY == areaHeight - 1 && bottom != null) {
+				if (transitionPoint.startY == HierarchicalMap2.this.areaHeight - 1 && bottom != null) {
 					TransitionPoint transition = bottom.findTransitionPoint(transitionPoint.startX, 0, transitionPoint.endX, 0);
-					if (transition != null && transition.partner == null) {
+					if (transition != null) {
 						transition.connectTo(transitionPoint);
 					}
 				}
 			}
 
-			Log.PATHFINDING.info("area " + getAreaX() + " / " + getAreaY() + " has connections: ");
-			for (TransitionPoint transitionPoint : transitionPoints) {
+			Log.PATHFINDING.info("area " + this.getAreaX() + " / " + this.getAreaY() + " has connections: ");
+			for (TransitionPoint transitionPoint : this.transitionPoints) {
 				if (transitionPoint.partner != null) {
 					Log.PATHFINDING.info(transitionPoint.partner.area.getAreaX() + " / " + transitionPoint.partner.area.getAreaY());
 				}
+			}
+
+			this.initConnectionConnections();
+
+			// TODO paths und subpaths
+			// TODO pfad zurück = pfad hin nur anderst rum
+
+		}
+
+		private void initConnectionConnections() {
+			Map<TransitionPoint, Map<TransitionPoint, Path>> transitionPointConnectionPaths = new HashMap<>();
+			for (int one = 0; one < this.transitionPoints.size(); one++) {
+				for (int two = 0; two < this.transitionPoints.size(); two++) {
+					TransitionPoint transitionPointOne = this.transitionPoints.get(one);
+					TransitionPoint transitionPointTwo = this.transitionPoints.get(two);
+					if (transitionPointOne != transitionPointTwo) {
+						Map<TransitionPoint, Path> innerMap = transitionPointConnectionPaths.get(transitionPointOne);
+						if (innerMap == null) {
+							innerMap = new HashMap<>();
+							transitionPointConnectionPaths.put(transitionPointOne, innerMap);
+						}
+						AStar<AStarWaypoint> aStar = new AStar<AStarWaypoint>(transitionPointOne.asAStarWaypoint(), transitionPointTwo.asAStarWaypoint());
+						List<AStarWaypoint> foundPath = aStar.findPath();
+						if (foundPath != null) {
+							List<Position> pathPositions = foundPath.stream().map(Area.AStarWaypoint::asGlobalPosition).collect(Collectors.toList());
+							Path path = new Path(pathPositions.get(0), pathPositions.get(pathPositions.size() - 1), pathPositions);
+							innerMap.put(transitionPointTwo, path);
+						}
+					}
+				}
+			}
+
+			synchronized (this.transitionPointConnections) {
+				this.transitionPointConnections.clear();
+				this.transitionPointConnections.putAll(transitionPointConnectionPaths);
 			}
 		}
 
@@ -369,6 +483,14 @@ public class HierarchicalMap2 implements Serializable {
 			return HierarchicalMap2.this.map.getFixEntityCollisionMap().isCollision(this.startX + x, this.startY + y);
 		}
 
+		/**
+		 * Checks if the given coordinates are a valid area position. Valid are
+		 * all local coordinates inside the area.
+		 */
+		private boolean isAreaPosition(int x, int y) {
+			return x >= 0 && x < HierarchicalMap2.this.areaWidth && y >= 0 && y < HierarchicalMap2.this.areaHeight;
+		}
+
 	}
 
 	private static final int MAX_AREA_SIZE = 20;
@@ -402,8 +524,8 @@ public class HierarchicalMap2 implements Serializable {
 			}
 		}
 
-		for (int x = 0; x < areas.length; x++) {
-			for (int y = 0; y < areas.length; y++) {
+		for (int x = 0; x < this.areas.length; x++) {
+			for (int y = 0; y < this.areas.length; y++) {
 				this.areas[x][y].init();
 			}
 		}
@@ -411,8 +533,9 @@ public class HierarchicalMap2 implements Serializable {
 
 	private static int evaluateMaxAreaSize(int size) {
 		for (int i = HierarchicalMap2.MAX_AREA_SIZE; i > 0; i++) {
-			if (size % i == 0)
+			if (size % i == 0) {
 				return i;
+			}
 		}
 		throw new IllegalStateException("This should never happen");
 	}
@@ -425,20 +548,27 @@ public class HierarchicalMap2 implements Serializable {
 	}
 
 	private Area getAreaByCollisionTile(int x, int y) {
-		return getArea((int) Math.floor(x / (float) areaWidth), (int) Math.floor(y / (float) areaHeight));
+		return this.getArea((int) Math.floor(x / (float) this.areaWidth), (int) Math.floor(y / (float) this.areaHeight));
 	}
 
 	public Path findPath(int collisionTileStartX, int collisionTileStartY, int collisionTileEndX, int collisionTileEndY) {
 
-		Area from = getAreaByCollisionTile(collisionTileStartX, collisionTileStartY);
-		Area to = getAreaByCollisionTile(collisionTileEndX, collisionTileEndY);
+		Area from = this.getAreaByCollisionTile(collisionTileStartX, collisionTileStartY);
+		Area to = this.getAreaByCollisionTile(collisionTileEndX, collisionTileEndY);
 
 		AStar<Area.TransitionPoint> aStar = new AStar<>(from.transitionPoints.get(0), to.transitionPoints.get(0));
 		List<HierarchicalMap2.Area.TransitionPoint> path = aStar.findPath();
 
-		for (Area.TransitionPoint transitionPoint : path) {
-			System.out.println(transitionPoint.area.getAreaX() + " " + transitionPoint.area.getAreaY());
-		}
+		// if (path == null) {
+		// System.out.println("Path not possible");
+		// } else {
+		// for (Area.TransitionPoint transitionPoint : path) {
+		// System.out.println(transitionPoint.area.getAreaX() + " " +
+		// transitionPoint.area.getAreaY());
+		// }
+		// }
+
+		// TODO
 
 		return null;
 	}

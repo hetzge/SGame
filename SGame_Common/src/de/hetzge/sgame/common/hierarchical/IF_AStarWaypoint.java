@@ -4,6 +4,7 @@ import java.util.List;
 
 public interface IF_AStarWaypoint<WAYPOINT extends IF_AStarWaypoint<?>> {
 
-	List<WAYPOINT> getWaypoints();
-	
+	// TODO macht das reingeben als Paramter noch Sinn ?
+	List<WAYPOINT> getWaypoints(WAYPOINT waypoint);
+
 }

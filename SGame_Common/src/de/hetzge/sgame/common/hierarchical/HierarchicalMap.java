@@ -1,8 +1,5 @@
 package de.hetzge.sgame.common.hierarchical;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,8 +7,8 @@ import java.util.List;
 import de.hetzge.sgame.common.DummyMap;
 import de.hetzge.sgame.common.IF_XYFunction;
 import de.hetzge.sgame.common.Orientation;
+import de.hetzge.sgame.common.Stopwatch;
 import de.hetzge.sgame.common.definition.IF_Map;
-import de.hetzge.sgame.common.serializer.Serializer;
 
 public class HierarchicalMap implements Serializable {
 
@@ -236,24 +233,10 @@ public class HierarchicalMap implements Serializable {
 	}
 
 	public static void main(String[] args) {
-		FileOutputStream fout = null;
-		ObjectOutputStream oos = null;
-		try {
-			HierarchicalMap2 hierarchicalMap = new HierarchicalMap2(new DummyMap());
-			
-			hierarchicalMap.findPath(35, 35, 100, 100);
-			
-			
-			fout = new FileOutputStream("cache/test.map");
-			oos = new ObjectOutputStream(fout);
-			oos.write(Serializer.toByteArray(hierarchicalMap));
-
-			oos.close();
-			fout.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		Stopwatch stopwatch = new Stopwatch("HierarchicalMap");
+		HierarchicalMap2 hierarchicalMap = new HierarchicalMap2(new DummyMap());
+		hierarchicalMap.findPath(50, 50, 1333, 1333);
+		stopwatch.stop();
 	}
 
 }
