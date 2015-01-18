@@ -1,6 +1,8 @@
 package de.hetzge.sgame.common.hierarchical;
 
-public class XY {
+import java.io.Serializable;
+
+public class XY implements Serializable {
 	public final int x;
 	public final int y;
 

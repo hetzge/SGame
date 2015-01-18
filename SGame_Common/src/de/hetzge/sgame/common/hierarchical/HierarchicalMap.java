@@ -235,7 +235,7 @@ public class HierarchicalMap implements Serializable {
 	public static void main(String[] args) {
 		Stopwatch stopwatch = new Stopwatch("HierarchicalMap");
 		HierarchicalMap2 hierarchicalMap = new HierarchicalMap2(new DummyMap());
-		hierarchicalMap.findPath(50, 50, 1333, 1333);
+		hierarchicalMap.findPath(10, 10, 75, 75);
 		stopwatch.stop();
 	}
 

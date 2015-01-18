@@ -79,18 +79,24 @@ public class LibGdxApplication implements ApplicationListener {
 		RenderConfig.INSTANCE.viewport.setHeight(this.camera.viewportHeight);
 
 		// TEMP
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
 			this.camera.translate(3f, 0f);
-		if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
 			this.camera.translate(-3f, 0f);
-		if (Gdx.input.isKeyPressed(Input.Keys.UP))
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
 			this.camera.translate(0f, -3f);
-		if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
 			this.camera.translate(0f, 3f);
+		}
 
 		this.fpsLogger.log();
 		// System.out.println(RenderUtil.renderCount);
 		RenderUtil.renderCount = 0;
+
+		LibGdxConfig.INSTANCE.stateTime += Gdx.graphics.getDeltaTime();
 	}
 
 	@Override

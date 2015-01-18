@@ -69,7 +69,7 @@ public class BaseGame extends Application {
 			renderableModule.setAnimationKey(AnimationKey.TEST);
 
 			PositionAndDimensionModule positionAndDimensionModule = new PositionAndDimensionModule(entity);
-			positionAndDimensionModule.setDimension(new Dimension(5, 5));
+			positionAndDimensionModule.setDimension(new Dimension(32f, 48f));
 
 			CollisionModule collisionModule = new CollisionModule(entity);
 			entity.registerModules(renderableModule, positionAndDimensionModule, collisionModule);

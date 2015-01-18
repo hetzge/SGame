@@ -2,34 +2,51 @@ package de.hetzge.sgame.common.activemap;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javolution.util.FastCollection;
 import javolution.util.FastSet;
-import de.hetzge.sgame.common.Stopwatch;
+import de.hetzge.sgame.common.hierarchical.XY;
 
 public class ActiveMap<TYPE> implements Serializable {
 
 	private class ActiveNode<TYPE> implements Serializable {
 
-		private transient FastCollection<ActiveNode> connectors = new FastSet<ActiveNode>().parallel();
-		private transient ActiveNode connectedWith;
+		private transient FastCollection<ActiveNode<TYPE>> connectors = new FastSet<ActiveNode<TYPE>>().parallel();
+		private transient ActiveNode<TYPE> connectedWith;
+
+		private final int x;
+		private final int y;
 
 		private TYPE object;
 
-		public ActiveNode() {
-			this.object = null;
+		public ActiveNode(int x, int y) {
+			this(x, y, null);
 		}
 
-		public ActiveNode(TYPE object) {
+		public ActiveNode(int x, int y, TYPE object) {
 			this.object = object;
+			this.x = x;
+			this.y = y;
 		}
 
-		public void connectTo(ActiveNode activeNode) {
-			if (this.connectedWith != null) {
-				this.connectedWith.getLazyConnectors().remove(this);
+		public void connectTo(ActiveNode<TYPE> activeNode) {
+			if (activeNode != this.connectedWith) {
+				if (this.connectedWith != null) {
+					this.connectedWith.removeConnection(this);
+				}
+				activeNode.getLazyConnectors().add(this);
+				this.connectedWith = activeNode;
 			}
-			activeNode.getLazyConnectors().add(this);
-			this.connectedWith = activeNode;
+		}
+
+		private void removeConnection(ActiveNode<TYPE> activeNode) {
+			this.getLazyConnectors().remove(activeNode);
+			if (this.getLazyConnectors().isEmpty()) {
+				ActiveMap.this.nodesByXY.remove(new XY(this.x, this.y));
+			}
 		}
 
 		public TYPE getObject() {
@@ -48,9 +65,9 @@ public class ActiveMap<TYPE> implements Serializable {
 		 * method is needed because after serialization the connectors set is
 		 * null
 		 */
-		public FastCollection<ActiveNode> getLazyConnectors() {
+		public FastCollection<ActiveNode<TYPE>> getLazyConnectors() {
 			if (this.connectors == null) {
-				this.connectors = new FastSet<ActiveNode>().parallel();
+				this.connectors = new FastSet<ActiveNode<TYPE>>().parallel();
 			}
 			return this.connectors;
 		}
@@ -58,72 +75,84 @@ public class ActiveMap<TYPE> implements Serializable {
 
 	private final int widthInTiles;
 	private final int heightInTiles;
-	private final ActiveNode<TYPE>[][] nodes;
+
+	// private final ActiveNode<TYPE>[][] nodes;
+
+	private final Map<XY, ActiveNode<TYPE>> nodesByXY = new HashMap<>();
 
 	public ActiveMap(int widthInTiles, int heightInTiles) {
 		this.widthInTiles = widthInTiles;
 		this.heightInTiles = heightInTiles;
-
-		this.nodes = new ActiveNode[widthInTiles][];
-
-		Stopwatch stopwatch = new Stopwatch("init active node array");
-		for (int x = 0; x < widthInTiles; x++) {
-			this.nodes[x] = new ActiveNode[heightInTiles];
-			for (int y = 0; y < heightInTiles; y++) {
-				this.nodes[x][y] = new ActiveNode<>();
-			}
-		}
-		stopwatch.stop();
 	}
 
 	/**
 	 * connects the activeMap to the current one at the given position
 	 */
-	public void connect(int startX, int startY, ActiveMap activeMap) {
-		if (startX < 0)
+	public void connect(int startX, int startY, ActiveMap<TYPE> activeMap) {
+		if (startX < 0) {
 			startX = 0;
-		if (startY < 0)
+		}
+		if (startY < 0) {
 			startY = 0;
+		}
 
 		int endX = startX + activeMap.getWidthInTiles();
 		int endY = startY + activeMap.getHeightInTiles();
 
-		if (endX > this.getWidthInTiles())
+		if (endX > this.getWidthInTiles()) {
 			endX = this.getWidthInTiles();
-		if (endY > this.getHeightInTiles())
+		}
+		if (endY > this.getHeightInTiles()) {
 			endY = this.getHeightInTiles();
+		}
 
 		int x2 = 0;
 		for (int x = startX; x < endX; x++) {
 			int y2 = 0;
 			for (int y = startY; y < endY; y++) {
-				activeMap.nodes[x2][y2].connectTo(this.nodes[x][y]);
+				activeMap.getActiveNode(x2, y2).connectTo(this.getActiveNode(x, y));
 				y2++;
 			}
 			x2++;
 		}
 	}
 
+	private ActiveNode<TYPE> getActiveNode(int x, int y) {
+		XY xy = new XY(x, y);
+		ActiveNode<TYPE> activeNode = this.nodesByXY.get(xy);
+		if (activeNode == null) {
+			activeNode = new ActiveNode<>(x, y);
+			this.nodesByXY.put(xy, activeNode);
+		}
+		return activeNode;
+	}
+
 	public ActiveMap<TYPE> setObject(int x, int y, TYPE object) {
-		this.nodes[x][y].object = object;
+		this.getActiveNode(x, y).object = object;
 		return this;
 	}
 
 	public ActiveMap<TYPE> setObject(TYPE object) {
 		for (int x = 0; x < this.widthInTiles; x++) {
 			for (int y = 0; y < this.heightInTiles; y++) {
-				this.nodes[x][y].object = object;
+				this.setObject(x, y, object);
 			}
 		}
 		return this;
 	}
 
 	public Collection<TYPE> getConnectedObjects(int x, int y) {
-		return this.nodes[x][y].getConnectedObjects();
+		if (this.nodesByXY.get(new XY(x, y)) == null) {
+			return Collections.emptyList();
+		}
+		return this.getActiveNode(x, y).getConnectedObjects();
 	}
 
 	public TYPE getNodeObject(int x, int y) {
-		return this.nodes[x][y].getObject();
+		if (this.nodesByXY.get(new XY(x, y)) == null) {
+			return null;
+		}
+		return this.getActiveNode(x, y).getObject();
 	}
 
 	public int getWidthInTiles() {

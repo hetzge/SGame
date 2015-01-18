@@ -11,7 +11,7 @@ import de.hetzge.sgame.render.IF_RenderableContext;
 public class MapModule implements IF_Module, IF_Renderable<IF_RenderableContext> {
 
 	public MapModule() {
-		MapConfig.INSTANCE.setTileMap(new TileMap<IF_RenderableContext>(100, 100, 32f, 3));
+		MapConfig.INSTANCE.setTileMap(new TileMap<IF_RenderableContext>(200, 200, 32f, 3));
 	}
 
 	@Override

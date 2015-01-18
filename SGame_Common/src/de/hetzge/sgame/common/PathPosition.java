@@ -50,13 +50,14 @@ public class PathPosition implements Serializable {
 	}
 
 	public Position getCurrentWaypoint() {
-		return this.path.getPath().get(this.positionOnPath);
+		return this.path.getPathPosition(this.positionOnPath);
 	}
 
 	public float getDistanceToWaypointBefore() {
-		if (this.isOnStartOfPath())
+		if (this.isOnStartOfPath()) {
 			return 0f;
-		Position waypointBefore = this.path.getPath().get(this.positionOnPath - 1);
+		}
+		Position waypointBefore = this.path.getPathPosition(this.positionOnPath - 1);
 		return waypointBefore.distance(this.getCurrentWaypoint());
 	}
 

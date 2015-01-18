@@ -166,8 +166,6 @@ public final class AStarUtil {
 
 	public static Path findPath(IF_Collision mapCollision, int startX, int startY, int goalX, int goalY, boolean[][] collision) {
 
-		long startTime = System.currentTimeMillis();
-
 		int[][] rating = new int[mapCollision.getWidthInTiles()][];
 		for (int x = 0; x < rating.length; x++) {
 			rating[x] = new int[mapCollision.getHeightInTiles()];
@@ -212,7 +210,7 @@ public final class AStarUtil {
 				step++;
 			}
 		}
-		System.out.println("find path (" + startX + "|" + startY + ") to (" + goalX + "|" + goalY + "): " + found + " " + (System.currentTimeMillis() - startTime));
+
 		if (found) {
 			path = AStarUtil.evaluatePath(rating, startX, startY, goalX, goalY);
 
@@ -222,8 +220,7 @@ public final class AStarUtil {
 
 			return new Path(startPositionInPx, goalPositionInPx, path);
 		} else {
-
-			return new Path(null, null, null);
+			return null;
 		}
 
 	}
@@ -251,8 +248,6 @@ public final class AStarUtil {
 				return 102;
 			}
 		}, 10, 10, 100, 100, new boolean[0][]);
-		for (Position position : path.getPath()) {
-			System.out.println(position);
-		}
+
 	}
 }

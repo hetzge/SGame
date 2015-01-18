@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import de.hetzge.sgame.common.Log;
 import de.hetzge.sgame.common.Path;
+import de.hetzge.sgame.common.Stopwatch;
 import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.geometry.Position;
 
@@ -261,19 +262,24 @@ public class HierarchicalMap2 implements Serializable {
 		}
 
 		private void init() {
+
+			LinkedList<Area> areas = new LinkedList<>();
+
 			Area area;
 			if ((area = this.getLeft()) != null && !area.upToDate) {
-				area.initSelf();
+				areas.add(area);
 			}
 			if ((area = this.getRight()) != null && !area.upToDate) {
-				area.initSelf();
+				areas.add(area);
 			}
 			if ((area = this.getTop()) != null && !area.upToDate) {
-				area.initSelf();
+				areas.add(area);
 			}
 			if ((area = this.getBottom()) != null && !area.upToDate) {
-				area.initSelf();
+				areas.add(area);
 			}
+
+			areas.stream().forEach(Area::initSelf);
 
 			this.initSelf();
 		}
@@ -493,7 +499,7 @@ public class HierarchicalMap2 implements Serializable {
 
 	}
 
-	private static final int MAX_AREA_SIZE = 20;
+	private static final int MAX_AREA_SIZE = 50;
 
 	private transient final IF_Map map;
 	private final int areaWidth;
@@ -556,17 +562,20 @@ public class HierarchicalMap2 implements Serializable {
 		Area from = this.getAreaByCollisionTile(collisionTileStartX, collisionTileStartY);
 		Area to = this.getAreaByCollisionTile(collisionTileEndX, collisionTileEndY);
 
-		AStar<Area.TransitionPoint> aStar = new AStar<>(from.transitionPoints.get(0), to.transitionPoints.get(0));
-		List<HierarchicalMap2.Area.TransitionPoint> path = aStar.findPath();
+		for (int i = 0; i < 10; i++) {
+			Stopwatch stopwatch = new Stopwatch("find path");
+			AStar<Area.TransitionPoint> aStar = new AStar<>(from.transitionPoints.get(0), to.transitionPoints.get(0));
+			List<HierarchicalMap2.Area.TransitionPoint> path = aStar.findPath();
 
-		// if (path == null) {
-		// System.out.println("Path not possible");
-		// } else {
-		// for (Area.TransitionPoint transitionPoint : path) {
-		// System.out.println(transitionPoint.area.getAreaX() + " " +
-		// transitionPoint.area.getAreaY());
-		// }
-		// }
+			if (path == null) {
+				System.out.println("Path not possible");
+			} else {
+				for (Area.TransitionPoint transitionPoint : path) {
+					System.out.println(transitionPoint.area.getAreaX() + " " + transitionPoint.area.getAreaY());
+				}
+			}
+			stopwatch.stop();
+		}
 
 		// TODO
 

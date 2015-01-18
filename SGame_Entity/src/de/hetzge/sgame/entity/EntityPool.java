@@ -98,8 +98,9 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 
 	public Entity getEntityById(String id) {
 		Entity entity = this.entitiesById.get(id);
-		if (entity == null)
+		if (entity == null) {
 			throw new IllegalStateException("Entity with id " + id + " didn't exist.");
+		}
 		return entity;
 	}
 

@@ -10,7 +10,7 @@ import de.hetzge.sgame.entity.Entity;
 
 public class CollisionModule extends BaseEntityModule {
 
-	private ActiveMap<Boolean> activeCollisionMap = new ActiveMap<Boolean>(1, 1).setObject(true);
+	private ActiveMap<Boolean> activeCollisionMap = new ActiveMap<Boolean>(3, 5).setObject(true);
 
 	public CollisionModule(Entity entity) {
 		super(entity);
@@ -64,8 +64,9 @@ public class CollisionModule extends BaseEntityModule {
 	 * set given boolean array as collision tiles
 	 */
 	public void setCollision(boolean[][] collision) {
-		if (collision.length == 0)
+		if (collision.length == 0) {
 			return;
+		}
 
 		int collisionWidthInTiles = collision.length;
 		int collisionHeightInTiles = collision[0].length;

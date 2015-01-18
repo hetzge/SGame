@@ -15,10 +15,10 @@ public class Server extends BaseGame {
 		super();
 		NetworkConfig.INSTANCE.peerRole = PeerRole.SERVER;
 
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 100; i++) {
 			EntityConfig.INSTANCE.entityFactory.build(EntityType.SILLY_BLOCK, (entity) -> {
 				PositionAndDimensionModule module = entity.getModule(PositionAndDimensionModule.class);
-				module.setPosition(new InterpolatePosition(new Position((float) Math.random() * 300, (float) Math.random() * 300)));
+				module.setPosition(new InterpolatePosition(new Position((float) Math.random() * 100 + 100, (float) Math.random() * 100 + 100)));
 				// module.set(new Position((float) Math.random() * 1000, (float)
 				// Math.random() * 800), 50000);
 				});

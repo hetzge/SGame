@@ -10,7 +10,7 @@ import de.hetzge.sgame.entity.EntityConfig;
 import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 import de.hetzge.sgame.libgdx.LibGdxModule;
 import de.hetzge.sgame.libgdx.PixmapWrapper;
-import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableTexture;
+import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableAnimation;
 import de.hetzge.sgame.map.MapConfig;
 import de.hetzge.sgame.network.NetworkConfig;
 import de.hetzge.sgame.network.PeerRole;
@@ -43,9 +43,11 @@ public class Client extends BaseGame {
 		RenderConfig.INSTANCE.initRenderableConsumers.add((renderablePool) -> {
 			// register default renderable
 				renderablePool.registerRenderableRessource(PredefinedRenderId.DEFAULT, new PixmapWrapper("assets/ground/grass.png"));
-				renderablePool.registerRenderableRessource(new RenderableKey().animationKey(AnimationKey.TEST), new LibGdxRenderableTexture("assets/test.png"));
+				renderablePool.registerRenderableRessource(new RenderableKey().animationKey(AnimationKey.TEST), new LibGdxRenderableAnimation("assets/sprite.png", 32, 48, 1, 1, 3, 1));
 				renderablePool.registerRenderableRessource(RenderId.GRASS_RENDERABLE_ID, new PixmapWrapper("assets/ground/grass.png"));
 				renderablePool.registerRenderableRessource(RenderId.DESERT_RENDERABLE_ID, new PixmapWrapper("assets/ground/desert.png"));
+
+				renderablePool.registerRenderableRessource(RenderId.HERO_SPRITE_RENDERABLE_ID, new LibGdxRenderableAnimation("assets/sprite.png", 32, 48, 1, 1, 3, 1));
 			});
 
 		MapConfig.INSTANCE.tilePool.map(0, RenderId.GRASS_RENDERABLE_ID);

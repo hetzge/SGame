@@ -46,7 +46,6 @@ public class GotoKI extends BaseKI {
 				// TODO replace with pathfind util
 				// TODO check direct way
 				// TODO entity collision
-
 				return AStarUtil.findPath(CommonConfig.INSTANCE.map.getFixEntityCollisionMap(), startX, startY, GotoKI.this.collisionTileGoalX, GotoKI.this.collisionTileGoalY, new boolean[0][]);
 			}
 		};

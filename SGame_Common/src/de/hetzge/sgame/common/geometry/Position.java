@@ -6,8 +6,8 @@ import de.hetzge.sgame.common.Util;
 
 public class Position implements Serializable, IF_Position<Position> {
 
-	private float x = 0;
-	private float y = 0;
+	private float x = 0f;
+	private float y = 0f;
 
 	public Position() {
 	}
@@ -89,17 +89,22 @@ public class Position implements Serializable, IF_Position<Position> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (this.getClass() != obj.getClass())
+		}
+		if (this.getClass() != obj.getClass()) {
 			return false;
+		}
 		Position other = (Position) obj;
-		if (Float.floatToIntBits(this.x) != Float.floatToIntBits(other.x))
+		if (Float.floatToIntBits(this.x) != Float.floatToIntBits(other.x)) {
 			return false;
-		if (Float.floatToIntBits(this.y) != Float.floatToIntBits(other.y))
+		}
+		if (Float.floatToIntBits(this.y) != Float.floatToIntBits(other.y)) {
 			return false;
+		}
 		return true;
 	}
 

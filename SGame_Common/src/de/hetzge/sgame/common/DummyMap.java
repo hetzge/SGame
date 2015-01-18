@@ -6,11 +6,11 @@ import de.hetzge.sgame.common.definition.IF_Map;
 
 public class DummyMap implements IF_Map {
 
-	private ActiveCollisionMap collisionMap = new ActiveCollisionMap(1000 * 3, 1000 * 3);
+	private ActiveCollisionMap collisionMap = new ActiveCollisionMap(100 * 3, 100 * 3);
 
 	@Override
 	public int getWidthInTiles() {
-		return 1000;
+		return 100;
 	}
 
 	@Override
@@ -20,7 +20,7 @@ public class DummyMap implements IF_Map {
 
 	@Override
 	public int getHeightInTiles() {
-		return 1000;
+		return 100;
 	}
 
 	@Override

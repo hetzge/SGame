@@ -22,7 +22,7 @@ public class SillyWalkerKI extends BaseKI {
 
 	@Override
 	protected KIState updateImpl() {
-		this.changeActiveKI(new GotoKI(this.entity, (int) (Math.random() * 100), (int) (Math.random() * 100)), new KICallback());
+		this.changeActiveKI(new GotoKI(this.entity, (int) (Math.random() * 100 + 10), (int) (Math.random() * 100 + 10)), new KICallback());
 		return KIState.ACTIVE;
 	}
 

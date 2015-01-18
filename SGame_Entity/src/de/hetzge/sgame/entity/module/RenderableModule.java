@@ -30,33 +30,39 @@ public class RenderableModule extends BaseEntityModule implements IF_RenderInfor
 
 	public void setOrientation(Orientation orientation) {
 		boolean changed = false;
-		if (!this.renderableKeySyncProperty.getValue().orientation.equals(orientation))
+		if (!this.renderableKeySyncProperty.getValue().orientation.equals(orientation)) {
 			changed = true;
+		}
 		this.renderableKeySyncProperty.getValue().orientation = orientation;
-		if (changed)
+		if (changed) {
 			this.renderableKeySyncProperty.setChanged();
+		}
 	}
 
 	public void setEntityKey(IF_EntityType entityType) {
 		boolean changed = false;
-		if (!this.renderableKeySyncProperty.getValue().entityType.equals(entityType))
+		if (!this.renderableKeySyncProperty.getValue().entityType.equals(entityType)) {
 			changed = true;
+		}
 		this.renderableKeySyncProperty.getValue().entityType = entityType;
-		if (changed)
+		if (changed) {
 			this.renderableKeySyncProperty.setChanged();
+		}
 	}
 
 	public void setAnimationKey(IF_AnimationKey animationKey) {
 		boolean changed = false;
-		if (!this.renderableKeySyncProperty.getValue().animationKey.equals(animationKey))
+		if (!this.renderableKeySyncProperty.getValue().animationKey.equals(animationKey)) {
 			changed = true;
+		}
 		this.renderableKeySyncProperty.getValue().animationKey = animationKey;
-		if (changed)
+		if (changed) {
 			this.renderableKeySyncProperty.setChanged();
+		}
 	}
 
 	@Override
-	public IF_ImmutableComplexRectangle getRenderedRectangle() {
+	public IF_ImmutableComplexRectangle<?, ?> getRenderedRectangle() {
 		PositionAndDimensionModule positionAndDimensionModule = this.entity.getModule(PositionAndDimensionModule.class);
 		if (positionAndDimensionModule != null) {
 			return positionAndDimensionModule.getPositionAndDimensionRectangle();
