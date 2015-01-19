@@ -3,9 +3,9 @@ package de.hetzge.sgame.libgdx.renderable;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import de.hetzge.sgame.common.definition.IF_RenderInformation;
 import de.hetzge.sgame.libgdx.LibGdxConfig;
 import de.hetzge.sgame.libgdx.LibGdxUtil;
-import de.hetzge.sgame.render.IF_RenderInformation;
 import de.hetzge.sgame.render.IF_RenderableWrapper;
 
 public class LibGdxRenderableAnimation implements IF_RenderableWrapper<LibGdxRenderableContext> {
@@ -22,7 +22,7 @@ public class LibGdxRenderableAnimation implements IF_RenderableWrapper<LibGdxRen
 
 	@Override
 	public void render(LibGdxRenderableContext context, IF_RenderInformation onScreen) {
-		TextureRegion keyFrame = this.animation.getKeyFrame(LibGdxConfig.INSTANCE.stateTime);
+		TextureRegion keyFrame = this.animation.getKeyFrame(LibGdxConfig.INSTANCE.stateTime, true);
 		LibGdxRenderableTextureRegion.render(keyFrame, context, onScreen);
 	}
 

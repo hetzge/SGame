@@ -6,10 +6,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 
+import de.hetzge.sgame.common.definition.IF_RenderInformation;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableContext;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableTexture;
 import de.hetzge.sgame.render.IF_PixelAccess;
-import de.hetzge.sgame.render.IF_RenderInformation;
 import de.hetzge.sgame.render.IF_RenderableWrapper;
 
 public class PixmapWrapper implements IF_PixelAccess, IF_RenderableWrapper<LibGdxRenderableContext> {

@@ -1,5 +1,6 @@
 package de.hetzge.sgame.render;
 
+import de.hetzge.sgame.common.definition.IF_RenderInformation;
 import de.hetzge.sgame.common.geometry.IF_ImmutablePrimitivRectangle;
 
 public final class RenderUtil {

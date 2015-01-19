@@ -6,6 +6,7 @@ public class EntityConfig {
 
 	public final EntityPool entityPool = new EntityPool();
 	public final EntityFactory entityFactory = new EntityFactory();
+	public final ActiveEntityMap activeEntityMap = new ActiveEntityMap();
 
 	private EntityConfig() {
 	}

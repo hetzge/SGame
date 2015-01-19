@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import de.hetzge.sgame.common.Orientation;
+import de.hetzge.sgame.common.definition.IF_RenderInformation;
 import de.hetzge.sgame.common.geometry.ComplexRectangle;
 import de.hetzge.sgame.common.geometry.Dimension;
 import de.hetzge.sgame.common.geometry.Position;
@@ -28,7 +29,6 @@ import de.hetzge.sgame.map.TileDefinition;
 import de.hetzge.sgame.map.TileLayer;
 import de.hetzge.sgame.map.TileOrientation;
 import de.hetzge.sgame.render.IF_PixelAccess;
-import de.hetzge.sgame.render.IF_RenderInformation;
 import de.hetzge.sgame.render.IF_RenderableFactory;
 import de.hetzge.sgame.render.IF_RenderableWrapper;
 

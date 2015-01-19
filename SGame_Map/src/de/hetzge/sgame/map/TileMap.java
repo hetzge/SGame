@@ -7,16 +7,17 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
+import de.hetzge.sgame.common.IF_XYFunction;
 import de.hetzge.sgame.common.Stopwatch;
 import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
+import de.hetzge.sgame.common.definition.IF_RenderInformation;
 import de.hetzge.sgame.common.geometry.ComplexRectangle;
 import de.hetzge.sgame.common.geometry.Dimension;
 import de.hetzge.sgame.common.geometry.IF_ImmutablePrimitivRectangle;
 import de.hetzge.sgame.common.geometry.Position;
 import de.hetzge.sgame.common.serializer.Serializer;
-import de.hetzge.sgame.render.IF_RenderInformation;
 import de.hetzge.sgame.render.IF_Renderable;
 import de.hetzge.sgame.render.IF_RenderableContext;
 import de.hetzge.sgame.render.PredefinedRenderId;
@@ -103,8 +104,9 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 
 			Collection<Boolean> flexibleConnectedObjects = TileMap.this.flexibleEntityCollisionMap.getConnectedObjects(x, y);
 			for (Boolean aBoolean : flexibleConnectedObjects) {
-				if (aBoolean)
+				if (aBoolean) {
 					return true;
+				}
 			}
 			return false;
 		}
@@ -112,8 +114,9 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		public boolean isFlexibleCollision(int x, int y) {
 			Collection<Boolean> fixedConnectedObjects = TileMap.this.fixEntityCollisionMap.getConnectedObjects(x, y);
 			for (Boolean aBoolean : fixedConnectedObjects) {
-				if (aBoolean)
+				if (aBoolean) {
 					return true;
+				}
 			}
 
 			return false;
@@ -214,26 +217,12 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	public void renderFilledShapes(IF_RenderableContext context) {
 	}
 
-	private void iterateVisibleTiles(Consumer<Tile> consumer) {
-		int startX = (int) Math.floor(RenderConfig.INSTANCE.viewport.getAX() / this.tileSize);
-		int startY = (int) Math.floor(RenderConfig.INSTANCE.viewport.getAY() / this.tileSize);
-		int endX = startX + (int) Math.ceil(RenderConfig.INSTANCE.viewport.getWidth() / this.tileSize) + 1;
-		int endY = startY + (int) Math.ceil(RenderConfig.INSTANCE.viewport.getHeight() / this.tileSize) + 1;
-		if (startX < 0)
-			startX = 0;
-		if (startY < 0)
-			startY = 0;
-		if (endX > this.tiles.length)
-			endX = this.tiles.length;
-		if (endY > this.tiles[0].length)
-			endY = this.tiles[0].length;
-
-		for (int x = startX; x < endX; x++) {
-			for (int y = startY; y < endY; y++) {
-				TileMap<CONTEXT>.Tile tile = this.tiles[x][y];
-				consumer.accept(tile);
-			}
-		}
+	public void iterateVisibleTiles(Consumer<Tile> consumer) {
+		RenderConfig.INSTANCE.viewport.iterateVisibleTiles((IF_XYFunction<Void>) (int x, int y) -> {
+			TileMap<CONTEXT>.Tile tile = this.tiles[x][y];
+			consumer.accept(tile);
+			return null;
+		});
 	}
 
 	@Override

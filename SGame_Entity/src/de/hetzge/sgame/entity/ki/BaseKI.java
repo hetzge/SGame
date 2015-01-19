@@ -33,6 +33,14 @@ public abstract class BaseKI {
 		}
 	}
 
+	protected class LogKICallback extends KICallback {
+		public LogKICallback() {
+			this.on(KIState.FAILURE, () -> System.out.println("FAILURE"));
+			this.on(KIState.INIT_FAILURE, () -> System.out.println("INIT_FAILURE"));
+			this.on(KIState.SUCCESS, () -> System.out.println("SUCCESS"));
+		}
+	}
+
 	protected final Entity entity;
 
 	private KICallback activeCallback;

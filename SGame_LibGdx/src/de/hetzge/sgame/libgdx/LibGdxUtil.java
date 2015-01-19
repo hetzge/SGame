@@ -29,12 +29,12 @@ public final class LibGdxUtil {
 		TextureRegion[] animationFrames = new TextureRegion[widthInFrames * heightInFrames];
 		for (int x = 0; x < widthInFrames; x++) {
 			for (int y = 0; y < heightInFrames; y++) {
-				TextureRegion textureRegion = textureRegions[startFrameX + x - 1][startFrameY + y - 1];
+				TextureRegion textureRegion = textureRegions[startFrameY + y - 1][startFrameX + x - 1];
 				textureRegion.flip(false, true);
 				animationFrames[y * (widthInFrames - 1) + x] = textureRegion;
 			}
 		}
-		return new Animation(0.05f, animationFrames);
+		return new Animation(0.5f, animationFrames);
 	}
 
 }

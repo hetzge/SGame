@@ -2,6 +2,8 @@ package de.hetzge.sgame.common.timer;
 
 import java.io.Serializable;
 
+import de.hetzge.sgame.common.Util;
+
 public class Timer implements Serializable {
 
 	private final long timespanInMs;
@@ -19,6 +21,14 @@ public class Timer implements Serializable {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean isTimeWithSleep() {
+		boolean time = this.isTime();
+		if (!time) {
+			Util.sleep(this.restTime());
+		}
+		return time;
 	}
 
 	public long restTime() {

@@ -13,6 +13,7 @@ import de.hetzge.sgame.common.definition.IF_EntityType;
 import de.hetzge.sgame.entity.module.RenderableModule;
 import de.hetzge.sgame.render.IF_Renderable;
 import de.hetzge.sgame.render.IF_RenderableContext;
+import de.hetzge.sgame.render.RenderConfig;
 import de.hetzge.sgame.render.RenderUtil;
 
 public class EntityPool implements IF_Renderable<IF_RenderableContext> {
@@ -148,11 +149,19 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 
 	@Override
 	public void render(IF_RenderableContext context) {
-		Set<Entity> entitiesByModule = EntityConfig.INSTANCE.entityPool.getEntitiesByModule(RenderableModule.class);
-		for (Entity entity : entitiesByModule) {
-			RenderableModule renderModule = entity.getModule(RenderableModule.class);
-			RenderUtil.render(context, renderModule);
-		}
+
+		RenderConfig.INSTANCE.viewport.iterateVisibleTiles((int x, int y) -> {
+			Collection<Entity> entities = EntityConfig.INSTANCE.activeEntityMap.getConnectedObjects(x, y);
+			for (Entity entity : entities) {
+				if (entity.renderableModuleCache.isAvailable()) {
+					RenderableModule renderableModule = entity.renderableModuleCache.get();
+					RenderUtil.render(context, renderableModule);
+				}
+			}
+
+			// TODO return null weg machen
+				return null;
+			});
 	}
 
 	@Override

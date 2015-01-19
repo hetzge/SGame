@@ -2,8 +2,8 @@ package de.hetzge.sgame.libgdx.renderable;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import de.hetzge.sgame.common.definition.IF_RenderInformation;
 import de.hetzge.sgame.common.geometry.IF_ImmutablePrimitivRectangle;
-import de.hetzge.sgame.render.IF_RenderInformation;
 import de.hetzge.sgame.render.IF_RenderableWrapper;
 
 public class LibGdxRenderableTextureRegion implements IF_RenderableWrapper<LibGdxRenderableContext> {

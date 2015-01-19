@@ -1,4 +1,4 @@
-package de.hetzge.sgame.render;
+package de.hetzge.sgame.common.definition;
 
 import java.io.Serializable;
 

@@ -53,4 +53,5 @@ public interface IF_Map {
 	public default float convertCollisionTileInPx(int collisionTile) {
 		return collisionTile * this.getCollisionTileSize();
 	}
+
 }

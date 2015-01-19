@@ -65,7 +65,7 @@ public class GotoKI extends BaseKI {
 			Path path = this.pathfinderWorker.get();
 			this.pathfinderWorker = null;
 			if (path.isPathNotPossible()) {
-				return KIState.INIT_FAILURE;
+				return KIState.FAILURE;
 			}
 			positionAndDimensionModule.setPath(path);
 		}

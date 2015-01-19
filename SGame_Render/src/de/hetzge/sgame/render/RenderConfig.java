@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import de.hetzge.sgame.common.geometry.PrimitivRectangle;
-
 public class RenderConfig {
 
 	public static final RenderConfig INSTANCE = new RenderConfig();
@@ -16,7 +14,7 @@ public class RenderConfig {
 
 	public final RenderPool renderPool = new RenderPool();
 
-	public final PrimitivRectangle viewport = new PrimitivRectangle();
+	public final Viewport viewport = new Viewport();
 
 	public final List<Consumer<RenderableRessourcePool>> initRenderableConsumers = new LinkedList<>();
 

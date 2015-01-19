@@ -73,47 +73,19 @@ public class ActiveMap<TYPE> implements Serializable {
 		}
 	}
 
-	private final int widthInTiles;
-	private final int heightInTiles;
-
 	// private final ActiveNode<TYPE>[][] nodes;
 
 	private final Map<XY, ActiveNode<TYPE>> nodesByXY = new HashMap<>();
 
-	public ActiveMap(int widthInTiles, int heightInTiles) {
-		this.widthInTiles = widthInTiles;
-		this.heightInTiles = heightInTiles;
+	public ActiveMap() {
 	}
 
 	/**
 	 * connects the activeMap to the current one at the given position
 	 */
 	public void connect(int startX, int startY, ActiveMap<TYPE> activeMap) {
-		if (startX < 0) {
-			startX = 0;
-		}
-		if (startY < 0) {
-			startY = 0;
-		}
-
-		int endX = startX + activeMap.getWidthInTiles();
-		int endY = startY + activeMap.getHeightInTiles();
-
-		if (endX > this.getWidthInTiles()) {
-			endX = this.getWidthInTiles();
-		}
-		if (endY > this.getHeightInTiles()) {
-			endY = this.getHeightInTiles();
-		}
-
-		int x2 = 0;
-		for (int x = startX; x < endX; x++) {
-			int y2 = 0;
-			for (int y = startY; y < endY; y++) {
-				activeMap.getActiveNode(x2, y2).connectTo(this.getActiveNode(x, y));
-				y2++;
-			}
-			x2++;
+		for (Map.Entry<XY, ActiveNode<TYPE>> entry : activeMap.nodesByXY.entrySet()) {
+			activeMap.getActiveNode(entry.getKey().x, entry.getKey().y).connectTo(this.getActiveNode(startX + entry.getKey().x, startY + entry.getKey().y));
 		}
 	}
 
@@ -127,15 +99,15 @@ public class ActiveMap<TYPE> implements Serializable {
 		return activeNode;
 	}
 
-	public ActiveMap<TYPE> setObject(int x, int y, TYPE object) {
+	public ActiveMap<TYPE> setObjectOnPosition(TYPE object, int x, int y) {
 		this.getActiveNode(x, y).object = object;
 		return this;
 	}
 
-	public ActiveMap<TYPE> setObject(TYPE object) {
-		for (int x = 0; x < this.widthInTiles; x++) {
-			for (int y = 0; y < this.heightInTiles; y++) {
-				this.setObject(x, y, object);
+	public ActiveMap<TYPE> setObjectInArea(TYPE object, int width, int height) {
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				this.setObjectOnPosition(object, x, y);
 			}
 		}
 		return this;
@@ -155,18 +127,10 @@ public class ActiveMap<TYPE> implements Serializable {
 		return this.getActiveNode(x, y).getObject();
 	}
 
-	public int getWidthInTiles() {
-		return this.widthInTiles;
-	}
-
-	public int getHeightInTiles() {
-		return this.heightInTiles;
-	}
-
 	public static void main(String[] args) {
-		ActiveMap<Boolean> activeMap = new ActiveMap<>(100, 100);
-		ActiveMap<Boolean> activeMap2 = new ActiveMap<>(3, 3);
-		activeMap2.setObject(true);
+		ActiveMap<Boolean> activeMap = new ActiveMap<>();
+		ActiveMap<Boolean> activeMap2 = new ActiveMap<>();
+		activeMap2.setObjectInArea(true, 3, 3);
 
 		activeMap.connect(3, 3, activeMap2);
 		Collection<Boolean> connectedObjects = activeMap.getConnectedObjects(4, 4);

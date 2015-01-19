@@ -10,7 +10,7 @@ import de.hetzge.sgame.entity.Entity;
 
 public class CollisionModule extends BaseEntityModule {
 
-	private ActiveMap<Boolean> activeCollisionMap = new ActiveMap<Boolean>(3, 5).setObject(true);
+	private ActiveMap<Boolean> activeCollisionMap = new ActiveMap<Boolean>().setObjectInArea(true, 3, 5);
 
 	public CollisionModule(Entity entity) {
 		super(entity);
@@ -54,8 +54,8 @@ public class CollisionModule extends BaseEntityModule {
 			IF_ImmutableComplexRectangle<InterpolatePosition, Dimension> positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
 			int widthInCollisionTiles = (int) Math.ceil(positionAndDimensionRectangle.getDimension().getWidth() / CommonConfig.INSTANCE.map.getCollisionTileSize());
 			int heightInCollisionTiles = (int) Math.ceil(positionAndDimensionRectangle.getDimension().getHeight() / CommonConfig.INSTANCE.map.getCollisionTileSize());
-			ActiveMap<Boolean> activeMap = new ActiveMap<>(widthInCollisionTiles, heightInCollisionTiles);
-			activeMap.setObject(true);
+			ActiveMap<Boolean> activeMap = new ActiveMap<>();
+			activeMap.setObjectInArea(true, widthInCollisionTiles, heightInCollisionTiles);
 			this.activeCollisionMap = activeMap;
 		}
 	}
@@ -71,26 +71,13 @@ public class CollisionModule extends BaseEntityModule {
 		int collisionWidthInTiles = collision.length;
 		int collisionHeightInTiles = collision[0].length;
 
-		ActiveMap<Boolean> activeMap = new ActiveMap<>(collisionWidthInTiles, collisionHeightInTiles);
+		ActiveMap<Boolean> activeMap = new ActiveMap<>();
 
 		for (int x = 0; x < collisionWidthInTiles; x++) {
 			for (int y = 0; y < collisionHeightInTiles; y++) {
-				activeMap.setObject(x, y, collision[x][y]);
+				activeMap.setObjectOnPosition(collision[x][y], x, y);
 			}
 		}
-	}
-
-	public boolean[][] getCollisionTileArray() {
-		int widthInTiles = this.activeCollisionMap.getWidthInTiles();
-		int heightInTiles = this.activeCollisionMap.getHeightInTiles();
-		boolean[][] result = new boolean[widthInTiles][];
-		for (int x = 0; x < widthInTiles; x++) {
-			result[x] = new boolean[heightInTiles];
-			for (int y = 0; y < heightInTiles; y++) {
-				result[x][y] = this.activeCollisionMap.getNodeObject(x, y);
-			}
-		}
-		return result;
 	}
 
 }
