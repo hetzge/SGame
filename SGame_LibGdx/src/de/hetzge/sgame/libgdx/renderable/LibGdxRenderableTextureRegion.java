@@ -11,6 +11,7 @@ public class LibGdxRenderableTextureRegion implements IF_RenderableWrapper<LibGd
 	private final TextureRegion textureRegion;
 
 	public LibGdxRenderableTextureRegion(TextureRegion textureRegion) {
+		textureRegion.flip(false, true);
 		this.textureRegion = textureRegion;
 	}
 

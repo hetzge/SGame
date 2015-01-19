@@ -2,6 +2,7 @@ package de.hetzge.sgame.common.geometry;
 
 import java.io.Serializable;
 
+import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.Util;
 
 public class Position implements Serializable, IF_Position<Position> {
@@ -71,6 +72,24 @@ public class Position implements Serializable, IF_Position<Position> {
 
 	public void setY(float y) {
 		this.y = y;
+	}
+
+	public Orientation evaluateOrientationToOtherPosition(Position other) {
+		float distanceX = Math.abs(this.x - other.x);
+		float distanceY = Math.abs(this.y - other.y);
+		if (distanceX > distanceY) {
+			if (this.x > other.x) {
+				return Orientation.WEST;
+			} else {
+				return Orientation.EAST;
+			}
+		} else {
+			if (this.y > other.y) {
+				return Orientation.SOUTH;
+			} else {
+				return Orientation.NORTH;
+			}
+		}
 	}
 
 	@Override

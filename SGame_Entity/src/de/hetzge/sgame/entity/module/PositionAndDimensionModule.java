@@ -59,6 +59,9 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 	public void continueOnPath() {
 		if (this.pathPosition != null) {
 			if (this.pathPosition.continueOnPath(this.getPositionAndDimensionRectangle().getPosition())) {
+				if (this.entity.renderableModuleCache.isAvailable()) {
+					this.entity.renderableModuleCache.get().setOrientation(this.pathPosition.getOrientationFromWaypointBeforeToNext());
+				}
 				this.set(this.pathPosition.getCurrentWaypoint(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore()));
 			}
 		}

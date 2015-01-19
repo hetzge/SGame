@@ -53,6 +53,14 @@ public class PathPosition implements Serializable {
 		return this.path.getPathPosition(this.positionOnPath);
 	}
 
+	public Orientation getOrientationFromWaypointBeforeToNext() {
+		if (this.isOnEndOfPath()) {
+			return Orientation.DEFAULT;
+		}
+		Position waypointBefore = this.path.getPathPosition(this.positionOnPath - 1);
+		return waypointBefore.evaluateOrientationToOtherPosition(this.getCurrentWaypoint());
+	}
+
 	public float getDistanceToWaypointBefore() {
 		if (this.isOnStartOfPath()) {
 			return 0f;

@@ -16,7 +16,11 @@ public class RenderableIdPool {
 	}
 
 	public int get(RenderableKey renderableKey) {
-		return this.renderableKeyToRenderableId.get(renderableKey);
+		try {
+			return this.renderableKeyToRenderableId.get(renderableKey);
+		} catch (Exception e) {
+			throw new IllegalStateException("No renderable id for: " + renderableKey, e);
+		}
 	}
 
 	public int get(String dynamicRenderableKey) {

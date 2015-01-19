@@ -39,7 +39,7 @@ public class Entity implements Serializable {
 
 	private final FastMap<Class<? extends BaseEntityModule>, BaseEntityModule> modules = new FastMap<>();
 	private final String id = UUID.generateKey();
-	private transient final EntityKI entityKI = new EntityKI(this);
+	private transient EntityKI entityKI;
 	private final IF_EntityType type;
 
 	Entity(IF_EntityType type) {
@@ -65,8 +65,9 @@ public class Entity implements Serializable {
 
 	public boolean hasModules(Class<? extends BaseEntityModule>... moduleClasses) {
 		for (Class<? extends BaseEntityModule> clazz : moduleClasses) {
-			if (!this.hasModule(clazz))
+			if (!this.hasModule(clazz)) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -93,6 +94,10 @@ public class Entity implements Serializable {
 		return this.id;
 	}
 
+	public void setEntityKI(EntityKI entityKI) {
+		this.entityKI = entityKI;
+	}
+
 	/**
 	 * called when the entity is registered in a pool
 	 */
@@ -113,7 +118,9 @@ public class Entity implements Serializable {
 	}
 
 	public void updateKI() {
-		this.entityKI.update();
+		if (this.entityKI != null) {
+			this.entityKI.update();
+		}
 	}
 
 	@Override
@@ -126,18 +133,23 @@ public class Entity implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (this.getClass() != obj.getClass())
+		}
+		if (this.getClass() != obj.getClass()) {
 			return false;
+		}
 		Entity other = (Entity) obj;
 		if (this.id == null) {
-			if (other.id != null)
+			if (other.id != null) {
 				return false;
-		} else if (!this.id.equals(other.id))
+			}
+		} else if (!this.id.equals(other.id)) {
 			return false;
+		}
 		return true;
 	}
 
