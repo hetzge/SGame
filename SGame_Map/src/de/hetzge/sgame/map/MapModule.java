@@ -11,13 +11,13 @@ import de.hetzge.sgame.render.IF_RenderableContext;
 public class MapModule implements IF_Module, IF_Renderable<IF_RenderableContext> {
 
 	public MapModule() {
-		MapConfig.INSTANCE.setTileMap(new TileMap<IF_RenderableContext>(200, 200, 32f, 3));
+
 	}
 
 	@Override
 	public void init() {
+		MapConfig.INSTANCE.setTileMap(new TileMap<IF_RenderableContext>("assets\\map.json"));
 		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(TileMapMessage.class, new TileMapMessageHandler());
-
 		MessageConfig.INSTANCE.serverToNewClientMessages.add((IF_Callback<Object>) () -> {
 			return new TileMapMessage(MapConfig.INSTANCE.getTileMap());
 		});

@@ -18,7 +18,13 @@ public class RenderConfig {
 
 	public final List<Consumer<RenderableRessourcePool>> initRenderableConsumers = new LinkedList<>();
 
-	public IF_RenderableFactory renderableFactory;
+	public IF_RenderableLoader renderableLoader = new IF_RenderableLoader() {
+
+		@Override
+		public int[] loadTilesets(String[] paths, int tileSize) {
+			return new int[999];
+		}
+	};
 
 	private RenderConfig() {
 	}

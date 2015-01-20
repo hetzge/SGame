@@ -10,10 +10,10 @@ public class Viewport extends PrimitivRectangle {
 	public void iterateVisibleTiles(IF_XYFunction<Void> function) {
 		IF_Map map = CommonConfig.INSTANCE.map;
 
-		int startX = map.convertPxInTile(RenderConfig.INSTANCE.viewport.getAX());
-		int startY = map.convertPxInTile(RenderConfig.INSTANCE.viewport.getAY());
-		int endX = startX + map.convertPxInTile(RenderConfig.INSTANCE.viewport.getWidth()) + 1;
-		int endY = startY + map.convertPxInTile(RenderConfig.INSTANCE.viewport.getHeight()) + 1;
+		int startX = map.convertPxInTile(RenderConfig.INSTANCE.viewport.getAX()) - 1;
+		int startY = map.convertPxInTile(RenderConfig.INSTANCE.viewport.getAY()) - 1;
+		int endX = startX + map.convertPxInTile(RenderConfig.INSTANCE.viewport.getWidth()) + 3;
+		int endY = startY + map.convertPxInTile(RenderConfig.INSTANCE.viewport.getHeight()) + 3;
 		if (startX < 0) {
 			startX = 0;
 		}

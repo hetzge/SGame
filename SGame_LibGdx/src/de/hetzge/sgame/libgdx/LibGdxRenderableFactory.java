@@ -47,10 +47,12 @@ public class LibGdxRenderableFactory implements IF_RenderableFactory, Applicatio
 		int maxTemplateHeightInPx = 0;
 		for (TileLayer tileLayer : tileLayers) {
 			IF_PixelAccess templatePixelAccess = tileLayer.getGround().getTemplatePixelAccess();
-			if (templatePixelAccess.getWidth() > maxTemplateWidthInPx)
+			if (templatePixelAccess.getWidth() > maxTemplateWidthInPx) {
 				maxTemplateWidthInPx = templatePixelAccess.getWidth();
-			if (templatePixelAccess.getHeight() > maxTemplateHeightInPx)
+			}
+			if (templatePixelAccess.getHeight() > maxTemplateHeightInPx) {
 				maxTemplateHeightInPx = templatePixelAccess.getHeight();
+			}
 		}
 
 		Pixmap[] pixmaps = new Pixmap[tileLayers.size()];

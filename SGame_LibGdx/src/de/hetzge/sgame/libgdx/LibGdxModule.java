@@ -10,15 +10,16 @@ import de.hetzge.sgame.render.RenderConfig;
 
 public class LibGdxModule implements IF_Module {
 
+	public LibGdxModule() {
+		RenderConfig.INSTANCE.renderableLoader = new LibGdxRenderableLoader();
+	}
+
 	@Override
 	public void init() {
-		RenderConfig.INSTANCE.renderableFactory = new LibGdxRenderableFactory();
-
 		// TODO add other shapes
 		RenderConfig.INSTANCE.initRenderableConsumers.add((renderPool) -> {
 			renderPool.registerRenderableRessource(PredefinedRenderId.RECTANGLE, new LibGdxRenderableRectangle());
 		});
-
 	}
 
 	@Override

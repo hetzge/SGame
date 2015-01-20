@@ -4,8 +4,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.function.Consumer;
+
+import com.eclipsesource.json.JsonArray;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
 
 import de.hetzge.sgame.common.IF_XYFunction;
 import de.hetzge.sgame.common.Stopwatch;
@@ -29,15 +36,14 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	private class Tile implements IF_RenderInformation, Serializable, IF_ImmutablePrimitivRectangle {
 
 		// Rectangle interface auch verwenden
-		// Renderable key unter in cachen (static hochzählen)
 
-		private final int tileId;
+		private final int renderId;
 
 		private final int x;
 		private final int y;
 
-		public Tile(int x, int y) {
-			this.tileId = 0; // TODO
+		public Tile(int x, int y, int renderId) {
+			this.renderId = renderId;
 			this.x = x;
 			this.y = y;
 		}
@@ -49,7 +55,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 
 		@Override
 		public int getRenderableKey() {
-			return MapConfig.INSTANCE.tilePool.getRenderableId(this.tileId);
+			return this.renderId;
 		}
 
 		@Override
@@ -130,7 +136,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	}
 
 	private final Tile[][] tiles;
-	private final float tileSize;
+	private final int tileSize;
 	private final int collisionTileFactor;
 	private final int widthInTiles;
 	private final int heightInTiles;
@@ -143,8 +149,8 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		FileOutputStream fout = null;
 		ObjectOutputStream oos = null;
 		try {
-			for (int i = 0; i < 1000; i++) {
-				TileMap<IF_RenderableContext> tileMap = new TileMap<>(100, 100, 32, 3);
+			for (int i = 0; i < 1; i++) {
+				TileMap<IF_RenderableContext> tileMap = new TileMap<>("C:\\SGame Workspace\\SGame_Game\\assets\\map.json");
 				fout = new FileOutputStream("cache/" + i + ".map");
 				oos = new ObjectOutputStream(fout);
 				oos.write(Serializer.toByteArray(tileMap));
@@ -157,25 +163,69 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		}
 	}
 
-	public TileMap(int widthInTiles, int heightInTiles, float tileSize, int collisionTileFactor) {
-		this.tileSize = tileSize;
-		this.collisionTileFactor = collisionTileFactor;
+	public TileMap(int widthInTiles, int heightInTiles) {
+		this.tileSize = 32;
+		this.collisionTileFactor = 3;
 		this.widthInTiles = widthInTiles;
 		this.heightInTiles = heightInTiles;
 		this.tiles = new TileMap.Tile[widthInTiles][heightInTiles];
 
 		Stopwatch stopwatch = new Stopwatch("init tile map tiles array");
 		for (int x = 0; x < widthInTiles; x++) {
-			this.tiles[x] = new TileMap.Tile[heightInTiles];
 			for (int y = 0; y < heightInTiles; y++) {
-				this.tiles[x][y] = new Tile(x, y);
+				this.tiles[x][y] = new Tile(x, y, 0);
 			}
 		}
 		stopwatch.stop();
-		this.mapCollision = new MapCollision();
 
-		this.fixEntityCollisionMap = new ActiveCollisionMap(widthInTiles * collisionTileFactor, heightInTiles * collisionTileFactor);
-		this.flexibleEntityCollisionMap = new ActiveCollisionMap(widthInTiles * collisionTileFactor, heightInTiles * collisionTileFactor);
+		this.mapCollision = new MapCollision();
+		this.fixEntityCollisionMap = new ActiveCollisionMap(widthInTiles * this.collisionTileFactor, heightInTiles * this.collisionTileFactor);
+		this.flexibleEntityCollisionMap = new ActiveCollisionMap(widthInTiles * this.collisionTileFactor, heightInTiles * this.collisionTileFactor);
+	}
+
+	public TileMap(String path) {
+		try {
+			if (!path.endsWith(".json")) {
+				throw new IllegalArgumentException("path must end with .json");
+			}
+
+			String json = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
+
+			JsonObject jsonMap = JsonObject.readFrom(json);
+
+			this.tileSize = 32;
+			this.collisionTileFactor = 3;
+			this.widthInTiles = jsonMap.get("width").asInt();
+			this.heightInTiles = jsonMap.get("height").asInt();
+			JsonArray layers = jsonMap.get("layers").asArray();
+
+			JsonArray tilesets = jsonMap.get("tilesets").asArray();
+			String[] tileSetImages = new String[tilesets.size()];
+			int i = 0;
+			for (JsonValue jsonValue : tilesets) {
+				JsonObject tileSet = jsonValue.asObject();
+				String tileSetImage = tileSet.get("image").asString();
+				tileSetImages[i++] = tileSetImage;
+			}
+			int[] tileRenderIds = RenderConfig.INSTANCE.renderableLoader.loadTilesets(tileSetImages, this.tileSize);
+
+			// TODO other layers
+			JsonObject firstLayer = layers.get(0).asObject();
+			JsonArray firstLayerDatas = firstLayer.get("data").asArray();
+
+			this.tiles = new TileMap.Tile[this.widthInTiles][this.heightInTiles];
+			for (int x = 0; x < this.widthInTiles; x++) {
+				for (int y = 0; y < this.heightInTiles; y++) {
+					this.tiles[x][y] = new Tile(x, y, tileRenderIds[firstLayerDatas.get(y * this.widthInTiles + x).asInt()]);
+				}
+			}
+
+			this.mapCollision = new MapCollision();
+			this.fixEntityCollisionMap = new ActiveCollisionMap(this.widthInTiles * this.collisionTileFactor, this.heightInTiles * this.collisionTileFactor);
+			this.flexibleEntityCollisionMap = new ActiveCollisionMap(this.widthInTiles * this.collisionTileFactor, this.heightInTiles * this.collisionTileFactor);
+		} catch (IOException e) {
+			throw new IllegalStateException();
+		}
 	}
 
 	@Override
@@ -197,8 +247,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 						RenderUtil.render(context, new IF_RenderInformation() {
 							@Override
 							public ComplexRectangle getRenderedRectangle() {
-								return new ComplexRectangle(new Position(x * TileMap.this.getCollisionTileSize(), y * TileMap.this.getCollisionTileSize()), new Dimension(TileMap.this
-										.getCollisionTileSize(), TileMap.this.getCollisionTileSize()));
+								return new ComplexRectangle(new Position(x * TileMap.this.getCollisionTileSize(), y * TileMap.this.getCollisionTileSize()), new Dimension(TileMap.this.getCollisionTileSize(), TileMap.this.getCollisionTileSize()));
 							}
 
 							@Override
