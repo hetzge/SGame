@@ -4,15 +4,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
-
-import com.eclipsesource.json.JsonArray;
-import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
 
 import de.hetzge.sgame.common.IF_XYFunction;
 import de.hetzge.sgame.common.Stopwatch;
@@ -25,6 +19,8 @@ import de.hetzge.sgame.common.geometry.Dimension;
 import de.hetzge.sgame.common.geometry.IF_ImmutablePrimitivRectangle;
 import de.hetzge.sgame.common.geometry.Position;
 import de.hetzge.sgame.common.serializer.Serializer;
+import de.hetzge.sgame.map.tmx.TMXMap;
+import de.hetzge.sgame.map.tmx.TMXMap.Layer;
 import de.hetzge.sgame.render.IF_Renderable;
 import de.hetzge.sgame.render.IF_RenderableContext;
 import de.hetzge.sgame.render.PredefinedRenderId;
@@ -183,49 +179,34 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		this.flexibleEntityCollisionMap = new ActiveCollisionMap(widthInTiles * this.collisionTileFactor, heightInTiles * this.collisionTileFactor);
 	}
 
-	public TileMap(String path) {
-		try {
-			if (!path.endsWith(".json")) {
-				throw new IllegalArgumentException("path must end with .json");
-			}
+	public TileMap(String pathToJsonFile) {
 
-			String json = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
+		TMXMap tmxMap = new TMXMap(pathToJsonFile);
 
-			JsonObject jsonMap = JsonObject.readFrom(json);
+		this.widthInTiles = tmxMap.getWidth();
+		this.heightInTiles = tmxMap.getHeight();
+		this.tileSize = tmxMap.getTileWidth();
+		this.collisionTileFactor = 3;
+		this.tiles = new TileMap.Tile[this.widthInTiles][this.heightInTiles];
 
-			this.tileSize = 32;
-			this.collisionTileFactor = 3;
-			this.widthInTiles = jsonMap.get("width").asInt();
-			this.heightInTiles = jsonMap.get("height").asInt();
-			JsonArray layers = jsonMap.get("layers").asArray();
+		int[] tilesetRenderIds = RenderConfig.INSTANCE.renderableLoader.loadTilesets(tmxMap.getTilesets());
 
-			JsonArray tilesets = jsonMap.get("tilesets").asArray();
-			String[] tileSetImages = new String[tilesets.size()];
-			int i = 0;
-			for (JsonValue jsonValue : tilesets) {
-				JsonObject tileSet = jsonValue.asObject();
-				String tileSetImage = tileSet.get("image").asString();
-				tileSetImages[i++] = tileSetImage;
-			}
-			int[] tileRenderIds = RenderConfig.INSTANCE.renderableLoader.loadTilesets(tileSetImages, this.tileSize);
-
-			// TODO other layers
-			JsonObject firstLayer = layers.get(0).asObject();
-			JsonArray firstLayerDatas = firstLayer.get("data").asArray();
-
-			this.tiles = new TileMap.Tile[this.widthInTiles][this.heightInTiles];
-			for (int x = 0; x < this.widthInTiles; x++) {
-				for (int y = 0; y < this.heightInTiles; y++) {
-					this.tiles[x][y] = new Tile(x, y, tileRenderIds[firstLayerDatas.get(y * this.widthInTiles + x).asInt()]);
+		List<Layer> layers = tmxMap.getLayers();
+		for (Layer layer : layers) {
+			int layerWidth = layer.getWidth();
+			int layerHeight = layer.getHeight();
+			int layerX = layer.getX();
+			int layerY = layer.getY();
+			for (int x = layerX; x < layerX + layerWidth; x++) {
+				for (int y = layerY; y < layerY + layerHeight; y++) {
+					this.tiles[x][y] = new Tile(x, y, tilesetRenderIds[layer.getData(x - layerX, y - layerY) - 1]);
 				}
 			}
-
-			this.mapCollision = new MapCollision();
-			this.fixEntityCollisionMap = new ActiveCollisionMap(this.widthInTiles * this.collisionTileFactor, this.heightInTiles * this.collisionTileFactor);
-			this.flexibleEntityCollisionMap = new ActiveCollisionMap(this.widthInTiles * this.collisionTileFactor, this.heightInTiles * this.collisionTileFactor);
-		} catch (IOException e) {
-			throw new IllegalStateException();
 		}
+
+		this.mapCollision = new MapCollision();
+		this.fixEntityCollisionMap = new ActiveCollisionMap(this.widthInTiles * this.collisionTileFactor, this.heightInTiles * this.collisionTileFactor);
+		this.flexibleEntityCollisionMap = new ActiveCollisionMap(this.widthInTiles * this.collisionTileFactor, this.heightInTiles * this.collisionTileFactor);
 	}
 
 	@Override
