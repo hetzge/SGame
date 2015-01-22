@@ -8,5 +8,6 @@ public class TileMapMessageHandler implements IF_MessageHandler<TileMapMessage> 
 	@Override
 	public void handle(TileMapMessage message) {
 		MapConfig.INSTANCE.setTileMap(message.tileMap);
+		message.tileMap.init();
 	}
 }

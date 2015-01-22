@@ -1,6 +1,7 @@
 package de.hetzge.sgame.map.tmx;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,9 +14,9 @@ import com.eclipsesource.json.JsonValue;
 
 import de.hetzge.sgame.common.definition.IF_Tileset;
 
-public class TMXMap {
+public class TMXMap implements Serializable {
 
-	public class Tileset implements IF_Tileset {
+	public class Tileset implements IF_Tileset, Serializable {
 
 		private final int firstGId;
 		private final String name;
@@ -82,7 +83,7 @@ public class TMXMap {
 
 	}
 
-	public class Layer {
+	public class Layer implements Serializable {
 		private final int[] data;
 		private final int width;
 		private final int height;

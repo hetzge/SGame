@@ -33,13 +33,13 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 
 		// Rectangle interface auch verwenden
 
-		private final int renderId;
+		private final int tileId;
 
 		private final int x;
 		private final int y;
 
-		public Tile(int x, int y, int renderId) {
-			this.renderId = renderId;
+		public Tile(int x, int y, int tileId) {
+			this.tileId = tileId;
 			this.x = x;
 			this.y = y;
 		}
@@ -51,7 +51,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 
 		@Override
 		public int getRenderableKey() {
-			return this.renderId;
+			return TileMap.this.getRenderId(this.tileId);
 		}
 
 		@Override
@@ -139,27 +139,11 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	private final MapCollision mapCollision;
 	private final ActiveCollisionMap fixEntityCollisionMap;
 	private final ActiveCollisionMap flexibleEntityCollisionMap;
-
-	public static void main(String[] args) {
-
-		FileOutputStream fout = null;
-		ObjectOutputStream oos = null;
-		try {
-			for (int i = 0; i < 1; i++) {
-				TileMap<IF_RenderableContext> tileMap = new TileMap<>("C:\\SGame Workspace\\SGame_Game\\assets\\map.json");
-				fout = new FileOutputStream("cache/" + i + ".map");
-				oos = new ObjectOutputStream(fout);
-				oos.write(Serializer.toByteArray(tileMap));
-
-				oos.close();
-				fout.close();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	private final TMXMap tmxMap;
+	private int[] renderIdByTileId;
 
 	public TileMap(int widthInTiles, int heightInTiles) {
+		this.tmxMap = null;
 		this.tileSize = 32;
 		this.collisionTileFactor = 3;
 		this.widthInTiles = widthInTiles;
@@ -180,18 +164,15 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	}
 
 	public TileMap(String pathToJsonFile) {
+		this.tmxMap = new TMXMap(pathToJsonFile);
 
-		TMXMap tmxMap = new TMXMap(pathToJsonFile);
-
-		this.widthInTiles = tmxMap.getWidth();
-		this.heightInTiles = tmxMap.getHeight();
-		this.tileSize = tmxMap.getTileWidth();
+		this.widthInTiles = this.tmxMap.getWidth();
+		this.heightInTiles = this.tmxMap.getHeight();
+		this.tileSize = this.tmxMap.getTileWidth();
 		this.collisionTileFactor = 3;
 		this.tiles = new TileMap.Tile[this.widthInTiles][this.heightInTiles];
 
-		int[] tilesetRenderIds = RenderConfig.INSTANCE.renderableLoader.loadTilesets(tmxMap.getTilesets());
-
-		List<Layer> layers = tmxMap.getLayers();
+		List<Layer> layers = this.tmxMap.getLayers();
 		for (Layer layer : layers) {
 			int layerWidth = layer.getWidth();
 			int layerHeight = layer.getHeight();
@@ -199,7 +180,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 			int layerY = layer.getY();
 			for (int x = layerX; x < layerX + layerWidth; x++) {
 				for (int y = layerY; y < layerY + layerHeight; y++) {
-					this.tiles[x][y] = new Tile(x, y, tilesetRenderIds[layer.getData(x - layerX, y - layerY) - 1]);
+					this.tiles[x][y] = new Tile(x, y, layer.getData(x - layerX, y - layerY) - 1);
 				}
 			}
 		}
@@ -207,6 +188,21 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		this.mapCollision = new MapCollision();
 		this.fixEntityCollisionMap = new ActiveCollisionMap(this.widthInTiles * this.collisionTileFactor, this.heightInTiles * this.collisionTileFactor);
 		this.flexibleEntityCollisionMap = new ActiveCollisionMap(this.widthInTiles * this.collisionTileFactor, this.heightInTiles * this.collisionTileFactor);
+
+		this.init();
+	}
+
+	public void init() {
+		if (this.tmxMap != null) {
+			this.renderIdByTileId = RenderConfig.INSTANCE.renderableLoader.loadTilesets(this.tmxMap.getTilesets());
+		}
+	}
+
+	private int getRenderId(int tileId) {
+		if (this.renderIdByTileId == null || tileId >= this.renderIdByTileId.length) {
+			return PredefinedRenderId.DEFAULT;
+		}
+		return this.renderIdByTileId[tileId];
 	}
 
 	@Override
@@ -288,6 +284,25 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	@Override
 	public float getTileSize() {
 		return this.tileSize;
+	}
+
+	public static void main(String[] args) {
+
+		FileOutputStream fout = null;
+		ObjectOutputStream oos = null;
+		try {
+			for (int i = 0; i < 1; i++) {
+				TileMap<IF_RenderableContext> tileMap = new TileMap<>("C:\\SGame Workspace\\SGame_Game\\assets\\map.json");
+				fout = new FileOutputStream("cache/" + i + ".map");
+				oos = new ObjectOutputStream(fout);
+				oos.write(Serializer.toByteArray(tileMap));
+
+				oos.close();
+				fout.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
