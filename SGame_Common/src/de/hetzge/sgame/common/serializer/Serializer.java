@@ -4,18 +4,22 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.nustaq.serialization.FSTConfiguration;
 import org.nustaq.serialization.FSTObjectInput;
 import org.nustaq.serialization.FSTObjectOutput;
 
-import de.hetzge.sgame.common.CommonConfig;
 import de.hetzge.sgame.common.definition.IF_Callback;
 
 public final class Serializer {
-	private Serializer() {
+
+	private final FSTConfiguration fstConfiguration;
+
+	public Serializer(FSTConfiguration fstConfiguration) {
+		this.fstConfiguration = fstConfiguration;
 	}
 
 	@Deprecated
-	public static byte[] serialize(Object object) throws IOException {
+	public byte[] serialize(Object object) throws IOException {
 
 		// TODO callbacks tun die noch ?
 		if (object instanceof IF_Callback) {
@@ -23,7 +27,7 @@ public final class Serializer {
 			object = callback.callback();
 		}
 
-		FSTObjectOutput objectOutput = CommonConfig.INSTANCE.fst.getObjectOutput();
+		FSTObjectOutput objectOutput = this.fstConfiguration.getObjectOutput();
 		objectOutput.writeObject(object);
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		byteArrayOutputStream.write(objectOutput.getBuffer(), 0, objectOutput.getWritten());
@@ -33,16 +37,16 @@ public final class Serializer {
 	}
 
 	@Deprecated
-	public static Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
+	public Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-		FSTObjectInput objectInput = CommonConfig.INSTANCE.fst.getObjectInput(byteArrayInputStream);
+		FSTObjectInput objectInput = this.fstConfiguration.getObjectInput(byteArrayInputStream);
 		Object readObject = objectInput.readObject();
 		byteArrayInputStream.close();
 		return readObject;
 	}
 
-	public static byte[] toByteArray(Object object) {
-		return CommonConfig.INSTANCE.fst.asByteArray(object);
+	public byte[] toByteArray(Object object) {
+		return this.fstConfiguration.asByteArray(object);
 	}
 
 }

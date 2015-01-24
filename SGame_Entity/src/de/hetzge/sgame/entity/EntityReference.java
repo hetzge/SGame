@@ -13,7 +13,7 @@ public class EntityReference implements Serializable {
 
 	public Entity get() {
 		if (this.entity == null) {
-			this.entity = EntityConfig.INSTANCE.entityPool.getEntityById(this.entityId);
+			this.entity = EntityContext.INSTANCE.get().entityPool.getEntityById(this.entityId);
 		}
 		return this.entity;
 	}

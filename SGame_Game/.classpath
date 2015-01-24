@@ -16,7 +16,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/SGame_Application"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SGame_Common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SGame_Entity"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SGame_Gui"/>

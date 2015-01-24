@@ -49,7 +49,7 @@ public class TileDefinition implements Serializable {
 	}
 
 	IF_Collision calculateCollision() {
-		int collisionTileFactor = MapConfig.INSTANCE.getTileMap().getCollisionTileFactor();
+		int collisionTileFactor = MapContext.INSTANCE.get().tileMap.getCollisionTileFactor();
 		BaseCollisionImpl collision = new BaseCollisionImpl(collisionTileFactor, collisionTileFactor);
 		for (TileLayer tileLayer : this.tileLayers) {
 			if (tileLayer.isCollision()) {

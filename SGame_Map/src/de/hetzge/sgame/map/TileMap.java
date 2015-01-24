@@ -1,8 +1,5 @@
 package de.hetzge.sgame.map;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -18,7 +15,6 @@ import de.hetzge.sgame.common.geometry.ComplexRectangle;
 import de.hetzge.sgame.common.geometry.Dimension;
 import de.hetzge.sgame.common.geometry.IF_ImmutablePrimitivRectangle;
 import de.hetzge.sgame.common.geometry.Position;
-import de.hetzge.sgame.common.serializer.Serializer;
 import de.hetzge.sgame.map.tmx.TMXMap;
 import de.hetzge.sgame.map.tmx.TMXMap.Layer;
 import de.hetzge.sgame.render.IF_Renderable;
@@ -142,7 +138,11 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	private final TMXMap tmxMap;
 	private int[] renderIdByTileId;
 
-	public TileMap(int widthInTiles, int heightInTiles) {
+	public TileMap(MapConfig mapConfig) {
+		this(mapConfig.pathToMapJson);
+	}
+
+	private TileMap(int widthInTiles, int heightInTiles) {
 		this.tmxMap = null;
 		this.tileSize = 32;
 		this.collisionTileFactor = 3;
@@ -163,7 +163,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		this.flexibleEntityCollisionMap = new ActiveCollisionMap(widthInTiles * this.collisionTileFactor, heightInTiles * this.collisionTileFactor);
 	}
 
-	public TileMap(String pathToJsonFile) {
+	private TileMap(String pathToJsonFile) {
 		this.tmxMap = new TMXMap(pathToJsonFile);
 
 		this.widthInTiles = this.tmxMap.getWidth();
@@ -284,25 +284,6 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	@Override
 	public float getTileSize() {
 		return this.tileSize;
-	}
-
-	public static void main(String[] args) {
-
-		FileOutputStream fout = null;
-		ObjectOutputStream oos = null;
-		try {
-			for (int i = 0; i < 1; i++) {
-				TileMap<IF_RenderableContext> tileMap = new TileMap<>("C:\\SGame Workspace\\SGame_Game\\assets\\map.json");
-				fout = new FileOutputStream("cache/" + i + ".map");
-				oos = new ObjectOutputStream(fout);
-				oos.write(Serializer.toByteArray(tileMap));
-
-				oos.close();
-				fout.close();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 }

@@ -1,6 +1,6 @@
 package de.hetzge.sgame.entity.ki.low;
 
-import de.hetzge.sgame.common.AStarUtil;
+import de.hetzge.sgame.common.AStarService;
 import de.hetzge.sgame.common.CommonConfig;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.PathfinderThread.PathfinderWorker;
@@ -46,7 +46,7 @@ public class GotoKI extends BaseKI {
 				// TODO replace with pathfind util
 				// TODO check direct way
 				// TODO entity collision
-				return AStarUtil.findPath(CommonConfig.INSTANCE.map.getFixEntityCollisionMap(), startX, startY, GotoKI.this.collisionTileGoalX, GotoKI.this.collisionTileGoalY, new boolean[0][]);
+				return AStarService.findPath(CommonConfig.INSTANCE.map.getFixEntityCollisionMap(), startX, startY, GotoKI.this.collisionTileGoalX, GotoKI.this.collisionTileGoalY, new boolean[0][]);
 			}
 		};
 

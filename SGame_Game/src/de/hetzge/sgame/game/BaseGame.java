@@ -1,11 +1,12 @@
 package de.hetzge.sgame.game;
 
-import de.hetzge.sgame.application.Application;
-import de.hetzge.sgame.application.ApplicationConfig;
+import se.jbee.inject.bootstrap.BootstrapperBundle;
 import de.hetzge.sgame.common.Orientation;
+import de.hetzge.sgame.common.application.Application;
 import de.hetzge.sgame.common.geometry.Dimension;
-import de.hetzge.sgame.entity.EntityConfig;
+import de.hetzge.sgame.entity.EntityFactory;
 import de.hetzge.sgame.entity.EntityModule;
+import de.hetzge.sgame.entity.EntityPool;
 import de.hetzge.sgame.entity.module.CollisionModule;
 import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 import de.hetzge.sgame.entity.module.RenderableModule;
@@ -24,16 +25,22 @@ public class BaseGame extends Application {
 	protected final EntityModule entityModule;
 	protected final MessageModule messageModule;
 
-	public BaseGame() {
-		this.mapModule = new MapModule();
+	protected final EntityFactory entityFactory;
+	protected final EntityPool entityPool;
+
+	public BaseGame(Class<? extends BootstrapperBundle> bootstrapperBundle) {
+		super(bootstrapperBundle);
+		this.mapModule = this.get(MapModule.class);
 		this.networkModule = new NetworkModule();
 		this.syncModule = new SyncModule();
-		this.entityModule = new EntityModule();
+		this.entityModule = this.get(EntityModule.class);
+		this.entityFactory = this.get(EntityFactory.class);
+		this.entityPool = this.get(EntityPool.class);
 		this.messageModule = new MessageModule();
 
-		ApplicationConfig.INSTANCE.modulePool.registerModules(this.mapModule, this.networkModule, this.syncModule, this.entityModule, this.messageModule);
+		this.modulePool.registerModules(this.mapModule, this.networkModule, this.syncModule, this.entityModule, this.messageModule);
 
-		EntityConfig.INSTANCE.entityFactory.registerFactory(EntityType.SILLY_BLOCK, (entity) -> {
+		this.entityFactory.registerFactory(EntityType.SILLY_BLOCK, (entity) -> {
 			RenderableModule renderableModule = new RenderableModule(entity);
 
 			renderableModule.setAnimationKey(AnimationKey.WALK);
@@ -47,7 +54,7 @@ public class BaseGame extends Application {
 			entity.registerModules(renderableModule, positionAndDimensionModule, collisionModule);
 		});
 
-		EntityConfig.INSTANCE.entityFactory.registerFactory(EntityType.TREE, (entity) -> {
+		this.entityFactory.registerFactory(EntityType.TREE, (entity) -> {
 			RenderableModule renderableModule = new RenderableModule(entity);
 			renderableModule.setEntityKey(EntityType.TREE);
 
@@ -60,4 +67,5 @@ public class BaseGame extends Application {
 		});
 
 	}
+
 }

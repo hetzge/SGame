@@ -1,13 +1,13 @@
-package de.hetzge.sgame.application;
+package de.hetzge.sgame.common;
 
-import java.util.HashSet;
 import java.util.Set;
 
+import javolution.util.FastSet;
 import de.hetzge.sgame.common.definition.IF_Module;
 
 public class ModulePool {
 
-	private final Set<IF_Module> modules = new HashSet<>();
+	private final FastSet<IF_Module> modules = new FastSet<>();
 
 	public void registerModule(IF_Module module) {
 		this.modules.add(module);
@@ -17,6 +17,10 @@ public class ModulePool {
 		for (IF_Module if_Module : modules) {
 			this.registerModule(if_Module);
 		}
+	}
+
+	public Set<IF_Module> getModules() {
+		return this.modules.unmodifiable();
 	}
 
 	public void init() {
@@ -36,5 +40,4 @@ public class ModulePool {
 			if_Module.update();
 		}
 	}
-
 }

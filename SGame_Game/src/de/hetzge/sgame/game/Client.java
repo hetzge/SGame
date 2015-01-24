@@ -2,12 +2,10 @@ package de.hetzge.sgame.game;
 
 import java.util.Set;
 
-import de.hetzge.sgame.application.ApplicationConfig;
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.geometry.IF_ImmutablePosition;
 import de.hetzge.sgame.common.geometry.InterpolatePosition;
 import de.hetzge.sgame.entity.Entity;
-import de.hetzge.sgame.entity.EntityConfig;
 import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 import de.hetzge.sgame.game.Definition.AnimationKey;
 import de.hetzge.sgame.game.Definition.EntityType;
@@ -15,7 +13,7 @@ import de.hetzge.sgame.libgdx.LibGdxModule;
 import de.hetzge.sgame.libgdx.PixmapWrapper;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableAnimation;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableTexture;
-import de.hetzge.sgame.map.MapConfig;
+import de.hetzge.sgame.map.TilePool;
 import de.hetzge.sgame.network.NetworkConfig;
 import de.hetzge.sgame.network.PeerRole;
 import de.hetzge.sgame.render.PredefinedRenderId;
@@ -27,17 +25,19 @@ public class Client extends BaseGame {
 
 	private final LibGdxModule libGdxModule;
 	private final RenderModule renderModule;
+	private final TilePool tilePool;
 
 	public Client() {
-		super();
+		super(ClientBootstrapperBundle.class);
 		NetworkConfig.INSTANCE.peerRole = PeerRole.CLIENT;
 		RenderConfig.INSTANCE.renderPool.registerComponentToRender(this.mapModule);
 		RenderConfig.INSTANCE.renderPool.registerComponentToRender(this.entityModule);
 
 		this.libGdxModule = new LibGdxModule();
 		this.renderModule = new RenderModule();
+		this.tilePool = this.get(TilePool.class);
 
-		ApplicationConfig.INSTANCE.modulePool.registerModules(this.libGdxModule, this.renderModule);
+		this.modulePool.registerModules(this.libGdxModule, this.renderModule);
 
 		RenderConfig.INSTANCE.initRenderableConsumers.add((renderablePool) -> {
 			renderablePool.registerRenderableRessource(PredefinedRenderId.DEFAULT, new PixmapWrapper("assets/ground/grass.png"));
@@ -52,14 +52,14 @@ public class Client extends BaseGame {
 			renderablePool.registerRenderableRessource(RenderId.HERO_SPRITE_RENDERABLE_ID, new LibGdxRenderableAnimation("assets/sprite.png", 32, 48, 1, 1, 3, 1));
 		});
 
-		MapConfig.INSTANCE.tilePool.map(0, RenderId.GRASS_RENDERABLE_ID);
+		this.tilePool.map(0, RenderId.GRASS_RENDERABLE_ID);
 	}
 
 	@Override
 	public void update() {
 		super.update();
 
-		Set<Entity> entitiesByType = EntityConfig.INSTANCE.entityPool.getEntitiesByType(EntityType.SILLY_BLOCK);
+		Set<Entity> entitiesByType = this.entityPool.getEntitiesByType(EntityType.SILLY_BLOCK);
 		for (Entity entity : entitiesByType) {
 			PositionAndDimensionModule module = entity.getModule(PositionAndDimensionModule.class);
 			IF_ImmutablePosition<InterpolatePosition> position = module.getPositionAndDimensionRectangle().getPosition();

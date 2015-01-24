@@ -13,7 +13,6 @@ import de.hetzge.sgame.common.geometry.Position;
 import de.hetzge.sgame.entity.ActiveEntityMap;
 import de.hetzge.sgame.entity.BaseEntityModule;
 import de.hetzge.sgame.entity.Entity;
-import de.hetzge.sgame.entity.EntityConfig;
 import de.hetzge.sgame.sync.SyncProperty;
 
 public class PositionAndDimensionModule extends BaseEntityModule implements IF_SetupPositionInterpolate {
@@ -114,7 +113,7 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 		IF_ImmutableComplexRectangle<InterpolatePosition, Dimension> rectangle = this.getPositionAndDimensionRectangle();
 		int x = CommonConfig.INSTANCE.map.convertPxInTile(rectangle.getX());
 		int y = CommonConfig.INSTANCE.map.convertPxInTile(rectangle.getY());
-		EntityConfig.INSTANCE.activeEntityMap.connect(x, y, this.entityOnMap);
+		this.getContext().activeEntityMap.connect(x, y, this.entityOnMap);
 	}
 
 	public boolean isFixed() {

@@ -25,23 +25,25 @@ public class EntityModule implements IF_Module, IF_Renderable<IF_RenderableConte
 
 		public CollisionThread() {
 			super("collision_thread");
+
 		}
 
 		@Override
 		public void run() {
+			EntityContext.INSTANCE.set(EntityModule.this);
 			Timer updateEntityOnMapTimer = new Timer(1000);
 			Timer updateEntityCollision = new Timer(1000);
 
 			while (true) {
 				Util.sleep(100);
 				if (updateEntityOnMapTimer.isTime()) {
-					Set<PositionAndDimensionModule> positionAndDimensionModules = EntityConfig.INSTANCE.entityPool.getEntityModulesByModuleClass(PositionAndDimensionModule.class);
+					Set<PositionAndDimensionModule> positionAndDimensionModules = EntityModule.this.entityPool.getEntityModulesByModuleClass(PositionAndDimensionModule.class);
 					for (PositionAndDimensionModule positionAndDimensionModule : positionAndDimensionModules) {
 						positionAndDimensionModule.updateEntityOnMap();
 					}
 				}
 				if (updateEntityCollision.isTime()) {
-					Set<CollisionModule> collisionModules = EntityConfig.INSTANCE.entityPool.getEntityModulesByModuleClass(CollisionModule.class);
+					Set<CollisionModule> collisionModules = EntityModule.this.entityPool.getEntityModulesByModuleClass(CollisionModule.class);
 					for (CollisionModule collisionModule : collisionModules) {
 						collisionModule.updateCollisionOnMap();
 					}
@@ -52,44 +54,59 @@ public class EntityModule implements IF_Module, IF_Renderable<IF_RenderableConte
 
 	private final CollisionThread collisionThread;
 
-	public EntityModule() {
+	public final EntityPool entityPool;
+	public final EntityFactory entityFactory;
+	public final EntityConfig entityConfig;
+	public final ActiveEntityMap activeEntityMap;
+
+	public EntityModule(EntityPool entityPool, EntityFactory entityFactory, EntityConfig entityConfig, ActiveEntityMap activeEntityMap) {
 		this.collisionThread = new CollisionThread();
+		this.entityPool = entityPool;
+		this.entityFactory = entityFactory;
+		this.entityConfig = entityConfig;
+		this.activeEntityMap = activeEntityMap;
 	}
 
 	@Override
 	public void init() {
-		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(NewEntityMessage.class, new NewEntityMessageHandler());
-		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(RemoveEntityMessage.class, new RemoveEntityMessageHandler());
-		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(AddEntitiesMessage.class, new AddEntitiesMessageHandler());
+		EntityContext.INSTANCE.set(EntityModule.this);
+		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(NewEntityMessage.class, this.get(NewEntityMessageHandler.class));
+		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(RemoveEntityMessage.class, this.get(RemoveEntityMessageHandler.class));
+		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(AddEntitiesMessage.class, this.get(AddEntitiesMessageHandler.class));
 
 		MessageConfig.INSTANCE.serverToNewClientMessages.add((IF_Callback<Object>) () -> {
-			return new AddEntitiesMessage(new ArrayList<>(EntityConfig.INSTANCE.entityPool.getEntities()));
+			return new AddEntitiesMessage(new ArrayList<>(this.entityPool.getEntities()));
 		});
 
-		EntityConfig.INSTANCE.entityPool.init();
+		this.entityPool.init();
 	}
 
 	@Override
 	public void postInit() {
+		EntityContext.INSTANCE.set(EntityModule.this);
 		this.collisionThread.start();
 	}
 
 	@Override
 	public void update() {
-		EntityConfig.INSTANCE.entityPool.update();
+		EntityContext.INSTANCE.set(EntityModule.this);
+		this.entityPool.update();
 	}
 
 	@Override
 	public void render(IF_RenderableContext context) {
-		EntityConfig.INSTANCE.entityPool.render(context);
+		EntityContext.INSTANCE.set(EntityModule.this);
+		this.entityPool.render(context);
 	}
 
 	@Override
 	public void renderShapes(IF_RenderableContext context) {
+		EntityContext.INSTANCE.set(EntityModule.this);
 	}
 
 	@Override
 	public void renderFilledShapes(IF_RenderableContext context) {
+		EntityContext.INSTANCE.set(EntityModule.this);
 	}
 
 }

@@ -22,4 +22,8 @@ public abstract class BaseEntityModule implements Serializable {
 
 	public abstract void updateImpl();
 
+	protected EntityModule getContext() {
+		return EntityContext.INSTANCE.get();
+	}
+
 }

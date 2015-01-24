@@ -22,8 +22,13 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 	private final FastMap<String, Entity> entitiesById = new FastMap<String, Entity>().parallel();
 	private final FastMap<Class<? extends BaseEntityModule>, FastSet<Entity>> entitiesByModule = new FastMap<Class<? extends BaseEntityModule>, FastSet<Entity>>().parallel();
 	private final FastMap<IF_EntityType, Set<Entity>> entitiesByType = new FastMap<IF_EntityType, Set<Entity>>().parallel();
-	private final FastMap<Class<? extends BaseEntityModule>, FastSet<BaseEntityModule>> entityModulesByModuleClass = new FastMap<Class<? extends BaseEntityModule>, FastSet<BaseEntityModule>>()
-			.parallel();
+	private final FastMap<Class<? extends BaseEntityModule>, FastSet<BaseEntityModule>> entityModulesByModuleClass = new FastMap<Class<? extends BaseEntityModule>, FastSet<BaseEntityModule>>().parallel();
+
+	private final ActiveEntityMap activeEntityMap;
+
+	public EntityPool(ActiveEntityMap activeEntityMap) {
+		this.activeEntityMap = activeEntityMap;
+	}
 
 	public void addEntity(Entity entity) {
 		entity.init();
@@ -151,7 +156,7 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 	public void render(IF_RenderableContext context) {
 
 		RenderConfig.INSTANCE.viewport.iterateVisibleTiles((int x, int y) -> {
-			Collection<Entity> entities = EntityConfig.INSTANCE.activeEntityMap.getConnectedObjects(x, y);
+			Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(x, y);
 			for (Entity entity : entities) {
 				if (entity.renderableModuleCache.isAvailable()) {
 					RenderableModule renderableModule = entity.renderableModuleCache.get();

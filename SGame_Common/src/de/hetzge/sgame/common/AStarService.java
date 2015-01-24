@@ -9,18 +9,21 @@ import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.geometry.Position;
 import de.hetzge.sgame.common.hierarchical.XY;
 
-public final class AStarUtil {
+public final class AStarService {
 
 	private static final XY[] EMPTY_TRAMPOLINE = new XY[0];
 	private static final XY[] DONE_TRAMPOLINE = new XY[0];
 
-	private AStarUtil() {
+	private final IF_MapProvider mapProvider;
+
+	public AStarService(IF_MapProvider mapProvider) {
+		this.mapProvider = mapProvider;
 	}
 
 	/**
 	 * call with current rating 1 and changed start goal coordinates
 	 */
-	private static XY[] rate(int[][] rating, IF_Collision mapCollision, int currentRating, XY startRatePosition, XY goalRatePosition, boolean[][] entityCollision) {
+	private XY[] rate(int[][] rating, IF_Collision mapCollision, int currentRating, XY startRatePosition, XY goalRatePosition, boolean[][] entityCollision) {
 		// TODO entityCollision
 
 		int x = startRatePosition.x;
@@ -38,19 +41,19 @@ public final class AStarUtil {
 			}
 
 			if (x < 0 || x >= rating.length || y < 0 || y >= rating[0].length) {
-				return AStarUtil.EMPTY_TRAMPOLINE;
+				return AStarService.EMPTY_TRAMPOLINE;
 			}
 
 			if (mapCollision.isCollision(x, y)) {
-				return AStarUtil.EMPTY_TRAMPOLINE;
+				return AStarService.EMPTY_TRAMPOLINE;
 			}
 
 			if (rating[x][y] > 0) {
-				return AStarUtil.EMPTY_TRAMPOLINE;
+				return AStarService.EMPTY_TRAMPOLINE;
 			}
 
 			if (x == goalX && y == goalY) {
-				return AStarUtil.DONE_TRAMPOLINE;
+				return AStarService.DONE_TRAMPOLINE;
 			}
 
 			rating[x][y] = currentRating;
@@ -92,7 +95,7 @@ public final class AStarUtil {
 		}
 	}
 
-	public static List<Position> evaluatePath(int[][] rating, int x, int y, int goalX, int goalY) {
+	public List<Position> evaluatePath(int[][] rating, int x, int y, int goalX, int goalY) {
 
 		List<Position> result = new ArrayList<>(rating[x][y]);
 
@@ -148,15 +151,14 @@ public final class AStarUtil {
 			}
 
 			if (nextSelectionX == x && nextSelectionY == y) {
-				throw new IllegalStateException("Path not possible from (" + x + "|" + y + ") with goal (" + goalX + "|" + goalY + ") on size (" + rating.length + "|" + rating[0].length + ")\n"
-						+ Util.toMapString(rating, x, y));
+				throw new IllegalStateException("Path not possible from (" + x + "|" + y + ") with goal (" + goalX + "|" + goalY + ") on size (" + rating.length + "|" + rating[0].length + ")\n" + Util.toMapString(rating, x, y));
 			}
 
 			x = nextSelectionX;
 			y = nextSelectionY;
 
-			float xInPx = CommonConfig.INSTANCE.map.convertCollisionTileInPx(x);
-			float yInPx = CommonConfig.INSTANCE.map.convertCollisionTileInPx(y);
+			float xInPx = this.mapProvider.provide().convertCollisionTileInPx(x);
+			float yInPx = this.mapProvider.provide().convertCollisionTileInPx(y);
 			Position position = new Position(xInPx, yInPx);
 			result.add(position);
 		}
@@ -164,7 +166,7 @@ public final class AStarUtil {
 		return result;
 	}
 
-	public static Path findPath(IF_Collision mapCollision, int startX, int startY, int goalX, int goalY, boolean[][] collision) {
+	public Path findPath(IF_Collision mapCollision, int startX, int startY, int goalX, int goalY, boolean[][] collision) {
 
 		int[][] rating = new int[mapCollision.getWidthInTiles()][];
 		for (int x = 0; x < rating.length; x++) {
@@ -179,7 +181,7 @@ public final class AStarUtil {
 		List<XY[]> trampolines;
 		List<XY[]> nextTramponlines = new LinkedList<>();
 
-		XY[] firstTrampoline = AStarUtil.rate(rating, mapCollision, step, goal, start, collision);
+		XY[] firstTrampoline = this.rate(rating, mapCollision, step, goal, start, collision);
 		nextTramponlines.add(firstTrampoline);
 
 		List<Position> path = new LinkedList<>();
@@ -198,9 +200,9 @@ public final class AStarUtil {
 					if (nextXY == null) {
 						continue;
 					}
-					XY[] rate = AStarUtil.rate(rating, mapCollision, step, nextXY, start, collision);
-					if (rate == AStarUtil.EMPTY_TRAMPOLINE) {
-					} else if (rate == AStarUtil.DONE_TRAMPOLINE) {
+					XY[] rate = this.rate(rating, mapCollision, step, nextXY, start, collision);
+					if (rate == AStarService.EMPTY_TRAMPOLINE) {
+					} else if (rate == AStarService.DONE_TRAMPOLINE) {
 						found = true;
 						break loop;
 					} else {
@@ -212,9 +214,9 @@ public final class AStarUtil {
 		}
 
 		if (found) {
-			path = AStarUtil.evaluatePath(rating, startX, startY, goalX, goalY);
+			path = this.evaluatePath(rating, startX, startY, goalX, goalY);
 
-			IF_Map map = CommonConfig.INSTANCE.map;
+			IF_Map map = this.mapProvider.provide();
 			Position startPositionInPx = new Position(map.convertCollisionTileInPx(startX), map.convertCollisionTileInPx(startY));
 			Position goalPositionInPx = new Position(map.convertCollisionTileInPx(goalX), map.convertCollisionTileInPx(goalY));
 
@@ -225,29 +227,4 @@ public final class AStarUtil {
 
 	}
 
-	public static void main(String[] args) {
-
-		Path path = AStarUtil.findPath(new IF_Collision() {
-
-			@Override
-			public void setCollision(int x, int y, boolean collision) {
-			}
-
-			@Override
-			public boolean isCollision(int x, int y) {
-				return false;
-			}
-
-			@Override
-			public int getWidthInTiles() {
-				return 102;
-			}
-
-			@Override
-			public int getHeightInTiles() {
-				return 102;
-			}
-		}, 10, 10, 100, 100, new boolean[0][]);
-
-	}
 }

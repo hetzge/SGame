@@ -12,6 +12,12 @@ public class EntityFactory {
 
 	private final Map<IF_EntityType, Consumer<Entity>> factories = new HashMap<>();
 
+	private final EntityPool entityPool;
+
+	public EntityFactory(EntityPool entityPool) {
+		this.entityPool = entityPool;
+	}
+
 	public void registerFactory(IF_EntityType entityType, Consumer<Entity> consumer) {
 		this.factories.put(entityType, consumer);
 	}
@@ -28,7 +34,7 @@ public class EntityFactory {
 		}
 
 		// add entity to pool
-		EntityConfig.INSTANCE.entityPool.addEntity(entity);
+		this.entityPool.addEntity(entity);
 
 		// share entity with others
 		NewEntityMessage newEntityMessage = new NewEntityMessage(entity);
