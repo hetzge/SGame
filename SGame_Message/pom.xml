@@ -3,25 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>SGame_Message</groupId>
 	<artifactId>SGame_Message</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>de.ruedigermoeller</groupId>
-			<artifactId>fst</artifactId>
-			<version>2.18</version>
-		</dependency>
-	</dependencies>
+
+	<parent>
+		<groupId>SGame_Common</groupId>
+		<artifactId>SGame_Common</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../SGame_Common</relativePath>
+	</parent>
+
 </project>

@@ -4,6 +4,7 @@
 	<groupId>SGame_Common</groupId>
 	<artifactId>SGame_Common</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -17,6 +18,14 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>data-local</id>
+			<name>data</name>
+			<url>file://${project.basedir}/../repo</url>
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -41,5 +50,25 @@
 			<version>0.6.5</version>
 			<scope>runtime</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.eclipsesource.minimal-json</groupId>
+			<artifactId>minimal-json</artifactId>
+			<version>0.9.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.ruedigermoeller</groupId>
+			<artifactId>fst</artifactId>
+			<version>2.18</version>
+		</dependency>
+
+		<dependency>
+			<groupId>se.jbee</groupId>
+			<artifactId>silk-di</artifactId>
+			<version>0.7.2</version>
+		</dependency>
 	</dependencies>
+
+	<packaging>pom</packaging>
 </project>
