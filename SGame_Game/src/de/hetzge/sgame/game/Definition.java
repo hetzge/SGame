@@ -1,12 +1,14 @@
 package de.hetzge.sgame.game;
 
+import se.jbee.inject.Dependency;
+import de.hetzge.sgame.common.application.Application;
 import de.hetzge.sgame.common.definition.IF_EntityType;
 import de.hetzge.sgame.map.GroundType;
 import de.hetzge.sgame.map.IF_Ground;
 import de.hetzge.sgame.render.IF_AnimationKey;
 import de.hetzge.sgame.render.IF_PixelAccess;
-import de.hetzge.sgame.render.RenderConfig;
-import de.hetzge.sgame.render.RenderUtil;
+import de.hetzge.sgame.render.RenderService;
+import de.hetzge.sgame.render.RenderableRessourcePool;
 
 public class Definition {
 
@@ -19,9 +21,9 @@ public class Definition {
 	}
 
 	public final static class RenderId {
-		public static final int GRASS_RENDERABLE_ID = RenderUtil.getNextRenderId();
-		public static final int DESERT_RENDERABLE_ID = RenderUtil.getNextRenderId();
-		public static final int HERO_SPRITE_RENDERABLE_ID = RenderUtil.getNextRenderId();
+		public static final int GRASS_RENDERABLE_ID = RenderService.getNextRenderId();
+		public static final int DESERT_RENDERABLE_ID = RenderService.getNextRenderId();
+		public static final int HERO_SPRITE_RENDERABLE_ID = RenderService.getNextRenderId();
 
 		private RenderId() {
 		}
@@ -46,7 +48,7 @@ public class Definition {
 
 		@Override
 		public IF_PixelAccess getTemplatePixelAccess() {
-			return (IF_PixelAccess) RenderConfig.INSTANCE.renderableRessourcePool.getRenderableRessource(this.renderableKey);
+			return (IF_PixelAccess) Application.INJECTOR.resolve(Dependency.dependency(RenderableRessourcePool.class)).getRenderableRessource(this.renderableKey);
 		}
 
 	}

@@ -5,14 +5,13 @@ import de.hetzge.sgame.common.geometry.Position;
 import de.hetzge.sgame.entity.ki.KIModule;
 import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 import de.hetzge.sgame.game.Definition.EntityType;
-import de.hetzge.sgame.network.NetworkConfig;
 import de.hetzge.sgame.network.PeerRole;
 
 public class Server extends BaseGame {
 
 	public Server() {
 		super(ServerBootstrapperBundle.class);
-		NetworkConfig.INSTANCE.peerRole = PeerRole.SERVER;
+		this.networkConfig.peerRole = PeerRole.SERVER;
 
 		for (int i = 0; i < 10; i++) {
 			this.entityFactory.build(EntityType.SILLY_BLOCK, (entity) -> {

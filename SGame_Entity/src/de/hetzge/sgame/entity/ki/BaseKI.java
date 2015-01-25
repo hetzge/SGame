@@ -2,9 +2,10 @@ package de.hetzge.sgame.entity.ki;
 
 import java.util.EnumSet;
 
+import de.hetzge.sgame.common.IF_DependencyInjection;
 import de.hetzge.sgame.entity.Entity;
 
-public abstract class BaseKI {
+public abstract class BaseKI implements IF_DependencyInjection {
 
 	protected enum KIState {
 		SUCCESS, FAILURE, ACTIVE, INIT_FAILURE;

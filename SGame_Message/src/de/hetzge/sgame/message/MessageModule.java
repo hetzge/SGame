@@ -4,9 +4,15 @@ import de.hetzge.sgame.common.definition.IF_Module;
 
 public class MessageModule implements IF_Module {
 
+	private final MessageHandlerPool messageHandlerPool;
+
+	public MessageModule(MessageHandlerPool messageHandlerPool) {
+		this.messageHandlerPool = messageHandlerPool;
+	}
+
 	@Override
 	public void init() {
-		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(BatchMessage.class, new BatchMessageHandler());
+		this.messageHandlerPool.registerMessageHandler(BatchMessage.class, this.get(BatchMessageHandler.class));
 	}
 
 	@Override

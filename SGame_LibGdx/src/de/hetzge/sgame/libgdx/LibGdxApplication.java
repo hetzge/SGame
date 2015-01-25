@@ -14,9 +14,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableContext;
+import de.hetzge.sgame.render.MapViewport;
 import de.hetzge.sgame.render.RenderConfig;
-import de.hetzge.sgame.render.RenderUtil;
+import de.hetzge.sgame.render.RenderPool;
+import de.hetzge.sgame.render.RenderService;
 import de.hetzge.sgame.render.RenderableRessourcePool;
+tzge.sgame.render.RenderableRessourcePool;
 
 public class LibGdxApplication implements ApplicationListener {
 	private SpriteBatch batch;
@@ -24,10 +27,20 @@ public class LibGdxApplication implements ApplicationListener {
 	private ShapeRenderer filledShapeRenderer;
 	private OrthographicCamera camera;
 	private LibGdxRenderableContext libGdxRenderableContext;
+	
 	private final FPSLogger fpsLogger;
 
-	public LibGdxApplication() {
+	private final RenderConfig renderConfig;
+	private final RenderPool renderPool;
+	private final MapViewport mapViewport;
+	private final RenderableRessourcePool renderableRessourcePool;
+
+	public LibGdxApplication(RenderConfig renderConfig, RenderPool renderPool, MapViewport mapViewport, RenderableRessourcePool renderableRessourcePool) {
 		this.fpsLogger = new FPSLogger();
+		this.renderConfig = renderConfig;
+		this.renderPool = renderPool;
+		this.mapViewport = mapViewport;
+		this.renderableRessourcePool = renderableRessourcePool;
 	}
 
 	@Override
@@ -39,8 +52,8 @@ public class LibGdxApplication implements ApplicationListener {
 		this.libGdxRenderableContext = new LibGdxRenderableContext(this.batch, this.shapeRenderer, this.filledShapeRenderer);
 		this.camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-		for (Consumer<RenderableRessourcePool> consumer : RenderConfig.INSTANCE.initRenderableConsumers) {
-			consumer.accept(RenderConfig.INSTANCE.renderableRessourcePool);
+		for (Consumer<RenderableRessourcePool> consumer : this.renderConfig.initRenderableConsumers) {
+			consumer.accept(this.renderableRessourcePool);
 		}
 	}
 
@@ -57,26 +70,26 @@ public class LibGdxApplication implements ApplicationListener {
 
 		this.batch.setProjectionMatrix(this.camera.combined);
 		this.batch.begin();
-		RenderConfig.INSTANCE.renderPool.render(this.libGdxRenderableContext);
+		this.renderPool.render(this.libGdxRenderableContext);
 		this.batch.end();
 
 		this.filledShapeRenderer.setProjectionMatrix(this.camera.combined);
 		this.filledShapeRenderer.begin(ShapeType.Filled);
-		RenderConfig.INSTANCE.renderPool.renderFilledShapes(this.libGdxRenderableContext);
+		this.renderPool.renderFilledShapes(this.libGdxRenderableContext);
 		this.filledShapeRenderer.end();
 
 		this.shapeRenderer.setProjectionMatrix(this.camera.combined);
 		this.shapeRenderer.begin(ShapeType.Line);
-		RenderConfig.INSTANCE.renderPool.renderShapes(this.libGdxRenderableContext);
+		this.renderPool.renderShapes(this.libGdxRenderableContext);
 		this.shapeRenderer.end();
 
 		// sync viewport with camera
 
-		RenderConfig.INSTANCE.viewport.setX(this.camera.position.x);
-		RenderConfig.INSTANCE.viewport.setY(this.camera.position.y);
+		this.mapViewport.setX(this.camera.position.x);
+		this.mapViewport.setY(this.camera.position.y);
 
-		RenderConfig.INSTANCE.viewport.setWidth(this.camera.viewportWidth);
-		RenderConfig.INSTANCE.viewport.setHeight(this.camera.viewportHeight);
+		this.mapViewport.setWidth(this.camera.viewportWidth);
+		this.mapViewport.setHeight(this.camera.viewportHeight);
 
 		// TEMP
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
@@ -94,7 +107,7 @@ public class LibGdxApplication implements ApplicationListener {
 
 		this.fpsLogger.log();
 		// System.out.println(RenderUtil.renderCount);
-		RenderUtil.renderCount = 0;
+		RenderService.renderCount = 0;
 
 		LibGdxConfig.INSTANCE.stateTime += Gdx.graphics.getDeltaTime();
 	}

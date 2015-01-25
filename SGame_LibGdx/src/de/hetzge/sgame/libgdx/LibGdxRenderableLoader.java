@@ -12,9 +12,15 @@ import de.hetzge.sgame.common.definition.IF_Tileset;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableTextureRegion;
 import de.hetzge.sgame.render.IF_RenderableLoader;
 import de.hetzge.sgame.render.RenderConfig;
-import de.hetzge.sgame.render.RenderUtil;
+import de.hetzge.sgame.render.RenderService;
 
 public class LibGdxRenderableLoader implements IF_RenderableLoader {
+
+	private final RenderConfig renderConfig;
+
+	public LibGdxRenderableLoader(RenderConfig renderConfig) {
+		this.renderConfig = renderConfig;
+	}
 
 	@Override
 	public int[] loadTilesets(List<? extends IF_Tileset> tilesets) {
@@ -27,10 +33,10 @@ public class LibGdxRenderableLoader implements IF_RenderableLoader {
 			ArrayList<Integer> renderIds = new ArrayList<Integer>(widthInTiles * heightInTiles);
 
 			for (int i = 0; i < widthInTiles * heightInTiles; i++) {
-				renderIds.add(RenderUtil.getNextRenderId());
+				renderIds.add(RenderService.getNextRenderId());
 			}
 
-			RenderConfig.INSTANCE.initRenderableConsumers.add((renderableRessourcePool) -> {
+			this.renderConfig.initRenderableConsumers.add((renderableRessourcePool) -> {
 				Texture texture = new Texture(Gdx.files.internal(tileset.getImage()));
 				for (int x = 0; x < widthInTiles; x++) {
 					for (int y = 0; y < heightInTiles; y++) {

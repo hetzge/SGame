@@ -14,32 +14,36 @@ import de.hetzge.sgame.libgdx.PixmapWrapper;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableAnimation;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableTexture;
 import de.hetzge.sgame.map.TilePool;
-import de.hetzge.sgame.network.NetworkConfig;
 import de.hetzge.sgame.network.PeerRole;
 import de.hetzge.sgame.render.PredefinedRenderId;
 import de.hetzge.sgame.render.RenderConfig;
 import de.hetzge.sgame.render.RenderModule;
+import de.hetzge.sgame.render.RenderPool;
 import de.hetzge.sgame.render.RenderableKey;
 
 public class Client extends BaseGame {
 
 	private final LibGdxModule libGdxModule;
 	private final RenderModule renderModule;
+	private final RenderConfig renderConfig;
+	private final RenderPool renderPool;
 	private final TilePool tilePool;
 
 	public Client() {
 		super(ClientBootstrapperBundle.class);
-		NetworkConfig.INSTANCE.peerRole = PeerRole.CLIENT;
-		RenderConfig.INSTANCE.renderPool.registerComponentToRender(this.mapModule);
-		RenderConfig.INSTANCE.renderPool.registerComponentToRender(this.entityModule);
+		this.networkConfig.peerRole = PeerRole.CLIENT;
+		this.renderConfig = this.get(RenderConfig.class);
+		this.renderPool = this.get(RenderPool.class);
+		this.renderPool.registerComponentToRender(this.mapModule);
+		this.renderPool.registerComponentToRender(this.entityModule);
 
-		this.libGdxModule = new LibGdxModule();
-		this.renderModule = new RenderModule();
+		this.libGdxModule = this.get(LibGdxModule.class);
+		this.renderModule = this.get(RenderModule.class);
 		this.tilePool = this.get(TilePool.class);
 
 		this.modulePool.registerModules(this.libGdxModule, this.renderModule);
 
-		RenderConfig.INSTANCE.initRenderableConsumers.add((renderablePool) -> {
+		this.renderConfig.initRenderableConsumers.add((renderablePool) -> {
 			renderablePool.registerRenderableRessource(PredefinedRenderId.DEFAULT, new PixmapWrapper("assets/ground/grass.png"));
 			renderablePool.registerRenderableRessource(new RenderableKey().animationKey(AnimationKey.IDLE), new LibGdxRenderableAnimation("assets/sprite.png", 32, 48, 1, 1, 3, 1));
 			renderablePool.registerRenderableRessource(new RenderableKey().entityType(EntityType.SILLY_BLOCK).animationKey(AnimationKey.WALK).orientation(Orientation.NORTH), new LibGdxRenderableAnimation("assets/sprite.png", 32, 48, 1, 1, 3, 1));

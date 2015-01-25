@@ -2,11 +2,13 @@ package de.hetzge.sgame.sync;
 
 import java.util.List;
 
-import de.hetzge.sgame.common.CommonConfig;
+import org.nustaq.serialization.FSTConfiguration;
+
 import de.hetzge.sgame.common.Util;
 import de.hetzge.sgame.common.definition.IF_Module;
 import de.hetzge.sgame.message.BatchMessage;
-import de.hetzge.sgame.message.MessageConfig;
+import de.hetzge.sgame.message.MessageHandlerPool;
+import de.hetzge.sgame.message.MessagePool;
 import de.hetzge.sgame.sync.message.SyncMessage;
 import de.hetzge.sgame.sync.message.SyncMessageHandler;
 import de.hetzge.sgame.sync.serializer.FSTSyncPropertySerializer;
@@ -22,11 +24,11 @@ public class SyncModule implements IF_Module {
 		@Override
 		public void run() {
 			while (true) {
-				List<SyncMessage> syncMessages = SyncConfig.INSTANCE.syncPool.collectSyncMessages();
+				List<SyncMessage> syncMessages = SyncModule.this.syncPool.collectSyncMessages();
 				if (!syncMessages.isEmpty()) {
 					BatchMessage batchMessage = new BatchMessage();
 					batchMessage.addCollection(syncMessages);
-					MessageConfig.INSTANCE.messagePool.addMessage(batchMessage);
+					SyncModule.this.messagePool.addMessage(batchMessage);
 				}
 				Util.sleep(100);
 			}
@@ -35,14 +37,25 @@ public class SyncModule implements IF_Module {
 
 	private final Thread syncThread;
 
-	public SyncModule() {
+	private final SyncConfig syncConfig;
+	private final SyncPool syncPool;
+	private final FSTConfiguration fstConfiguration;
+	private final MessageHandlerPool messageHandlerPool;
+	private final MessagePool messagePool;
+
+	public SyncModule(SyncConfig syncConfig, SyncPool syncPool, FSTConfiguration fstConfiguration, MessageHandlerPool messageHandlerPool, MessagePool messagePool) {
 		this.syncThread = new SyncThread();
+		this.syncConfig = syncConfig;
+		this.syncPool = syncPool;
+		this.fstConfiguration = fstConfiguration;
+		this.messageHandlerPool = messageHandlerPool;
+		this.messagePool = messagePool;
 	}
 
 	@Override
 	public void init() {
-		MessageConfig.INSTANCE.messageHandlerPool.registerMessageHandler(SyncMessage.class, new SyncMessageHandler());
-		CommonConfig.INSTANCE.fst.registerSerializer(SyncProperty.class, new FSTSyncPropertySerializer(), true);
+		this.messageHandlerPool.registerMessageHandler(SyncMessage.class, this.get(SyncMessageHandler.class));
+		this.fstConfiguration.registerSerializer(SyncProperty.class, this.get(FSTSyncPropertySerializer.class), true);
 	}
 
 	@Override

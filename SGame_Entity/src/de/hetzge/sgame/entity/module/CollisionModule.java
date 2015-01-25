@@ -1,12 +1,12 @@
 package de.hetzge.sgame.entity.module;
 
-import de.hetzge.sgame.common.CommonConfig;
 import de.hetzge.sgame.common.activemap.ActiveMap;
 import de.hetzge.sgame.common.geometry.Dimension;
 import de.hetzge.sgame.common.geometry.IF_ImmutableComplexRectangle;
 import de.hetzge.sgame.common.geometry.InterpolatePosition;
 import de.hetzge.sgame.entity.BaseEntityModule;
 import de.hetzge.sgame.entity.Entity;
+import de.hetzge.sgame.entity.EntityContext;
 
 public class CollisionModule extends BaseEntityModule {
 
@@ -18,30 +18,10 @@ public class CollisionModule extends BaseEntityModule {
 
 	@Override
 	public void initImpl() {
-		this.updateCollisionOnMap();
 	}
 
 	@Override
 	public void updateImpl() {
-	}
-
-	/**
-	 * registers the collision on the map
-	 */
-	public void updateCollisionOnMap() {
-		if (this.entity.positionAndDimensionModuleCache.isAvailable()) {
-			PositionAndDimensionModule module = this.entity.positionAndDimensionModuleCache.get();
-			IF_ImmutableComplexRectangle<InterpolatePosition, Dimension> positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
-
-			int startCollisionTileX = Math.round(positionAndDimensionRectangle.getStartPosition().getX() / CommonConfig.INSTANCE.map.getCollisionTileSize());
-			int startCollisionTileY = Math.round(positionAndDimensionRectangle.getStartPosition().getY() / CommonConfig.INSTANCE.map.getCollisionTileSize());
-
-			if (module.isFixed()) {
-				CommonConfig.INSTANCE.map.getFixEntityCollisionMap().connect(startCollisionTileX, startCollisionTileY, this.activeCollisionMap);
-			} else {
-				CommonConfig.INSTANCE.map.getFlexibleEntityCollisionMap().connect(startCollisionTileX, startCollisionTileY, this.activeCollisionMap);
-			}
-		}
 	}
 
 	/**
@@ -52,8 +32,8 @@ public class CollisionModule extends BaseEntityModule {
 		if (this.entity.hasModule(PositionAndDimensionModule.class)) {
 			PositionAndDimensionModule module = this.entity.getModule(PositionAndDimensionModule.class);
 			IF_ImmutableComplexRectangle<InterpolatePosition, Dimension> positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
-			int widthInCollisionTiles = (int) Math.ceil(positionAndDimensionRectangle.getDimension().getWidth() / CommonConfig.INSTANCE.map.getCollisionTileSize());
-			int heightInCollisionTiles = (int) Math.ceil(positionAndDimensionRectangle.getDimension().getHeight() / CommonConfig.INSTANCE.map.getCollisionTileSize());
+			int widthInCollisionTiles = (int) Math.ceil(positionAndDimensionRectangle.getDimension().getWidth() / EntityContext.INSTANCE.get().map.getCollisionTileSize());
+			int heightInCollisionTiles = (int) Math.ceil(positionAndDimensionRectangle.getDimension().getHeight() / EntityContext.INSTANCE.get().map.getCollisionTileSize());
 			ActiveMap<Boolean> activeMap = new ActiveMap<>();
 			activeMap.setObjectInArea(true, widthInCollisionTiles, heightInCollisionTiles);
 			this.activeCollisionMap = activeMap;
@@ -78,6 +58,10 @@ public class CollisionModule extends BaseEntityModule {
 				activeMap.setObjectOnPosition(collision[x][y], x, y);
 			}
 		}
+	}
+
+	public ActiveMap<Boolean> getActiveCollisionMap() {
+		return this.activeCollisionMap;
 	}
 
 }

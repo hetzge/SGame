@@ -6,16 +6,18 @@ import java.util.function.Consumer;
 
 import de.hetzge.sgame.common.definition.IF_EntityType;
 import de.hetzge.sgame.entity.message.NewEntityMessage;
-import de.hetzge.sgame.message.MessageConfig;
+import de.hetzge.sgame.message.MessagePool;
 
 public class EntityFactory {
 
 	private final Map<IF_EntityType, Consumer<Entity>> factories = new HashMap<>();
 
 	private final EntityPool entityPool;
+	private final MessagePool messagePool;
 
-	public EntityFactory(EntityPool entityPool) {
+	public EntityFactory(EntityPool entityPool, MessagePool messagePool) {
 		this.entityPool = entityPool;
+		this.messagePool = messagePool;
 	}
 
 	public void registerFactory(IF_EntityType entityType, Consumer<Entity> consumer) {
@@ -38,8 +40,7 @@ public class EntityFactory {
 
 		// share entity with others
 		NewEntityMessage newEntityMessage = new NewEntityMessage(entity);
-		MessageConfig.INSTANCE.messagePool.addMessage(newEntityMessage);
-
+		this.messagePool.addMessage(newEntityMessage);
 	}
 
 }

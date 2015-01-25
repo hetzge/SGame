@@ -11,10 +11,9 @@ public class SyncProperty<TYPE> implements Serializable {
 	private TYPE value;
 	private TYPE oldValue;
 
-	public SyncProperty(TYPE value) {
+	protected SyncProperty(TYPE value) {
 		this.key = UUID.generateKey();
 		this.value = value;
-		SyncConfig.INSTANCE.syncPool.registerSyncProperty(this);
 	}
 
 	public SyncProperty() {

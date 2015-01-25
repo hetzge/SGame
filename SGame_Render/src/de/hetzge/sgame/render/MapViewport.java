@@ -1,19 +1,25 @@
 package de.hetzge.sgame.render;
 
-import de.hetzge.sgame.common.CommonConfig;
+import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.IF_XYFunction;
 import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.geometry.PrimitivRectangle;
 
-public class Viewport extends PrimitivRectangle {
+public class MapViewport extends PrimitivRectangle {
+
+	private final IF_MapProvider mapProvider;
+
+	public MapViewport(IF_MapProvider mapProvider) {
+		this.mapProvider = mapProvider;
+	}
 
 	public void iterateVisibleTiles(IF_XYFunction<Void> function) {
-		IF_Map map = CommonConfig.INSTANCE.map;
+		IF_Map map = this.mapProvider.provide();
 
-		int startX = map.convertPxInTile(RenderConfig.INSTANCE.viewport.getAX()) - 1;
-		int startY = map.convertPxInTile(RenderConfig.INSTANCE.viewport.getAY()) - 1;
-		int endX = startX + map.convertPxInTile(RenderConfig.INSTANCE.viewport.getWidth()) + 3;
-		int endY = startY + map.convertPxInTile(RenderConfig.INSTANCE.viewport.getHeight()) + 3;
+		int startX = map.convertPxInTile(this.getAX()) - 1;
+		int startY = map.convertPxInTile(this.getAY()) - 1;
+		int endX = startX + map.convertPxInTile(this.getWidth()) + 3;
+		int endY = startY + map.convertPxInTile(this.getHeight()) + 3;
 		if (startX < 0) {
 			startX = 0;
 		}

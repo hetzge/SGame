@@ -306,7 +306,7 @@ public class LibGdxRenderableFactory implements IF_RenderableFactory, Applicatio
 			}
 
 			@Override
-			public int getRenderableKey() {
+			public int getRenderId() {
 				return 0;
 			}
 		});

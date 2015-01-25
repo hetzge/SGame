@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.nustaq.serialization.FSTConfiguration;
+
 import de.hetzge.sgame.common.Log;
 import de.hetzge.sgame.common.UUID;
 import de.hetzge.sgame.common.definition.IF_Callback;
@@ -13,25 +15,35 @@ import de.hetzge.sgame.common.exception.NetworkException;
 import de.hetzge.sgame.common.exception.SomeException;
 import de.hetzge.sgame.message.BatchMessage;
 import de.hetzge.sgame.message.MessageConfig;
+import de.hetzge.sgame.message.MessageHandlerPool;
 
 public class Server implements Peer {
 
 	private final Map<String, Connection> clients = new HashMap<>();
 
-	public Server() {
+	private final FSTConfiguration fstConfiguration;
+	private final NetworkConfig networkConfig;
+	private final MessageConfig messageConfig;
+	private final MessageHandlerPool messageHandlerPool;
+
+	public Server(FSTConfiguration fstConfiguration, NetworkConfig networkConfig, MessageConfig messageConfig, MessageHandlerPool messageHandlerPool) {
+		this.fstConfiguration = fstConfiguration;
+		this.networkConfig = networkConfig;
+		this.messageConfig = messageConfig;
+		this.messageHandlerPool = messageHandlerPool;
 	}
 
 	@Override
 	public void connect() {
 		Thread acceptClientsThread = new Thread(() -> {
-			try (ServerSocket serverSocket = new ServerSocket(NetworkConfig.INSTANCE.networkData.port)) {
+			try (ServerSocket serverSocket = new ServerSocket(this.networkConfig.networkData.port)) {
 				while (true) {
 
 					Log.NETWORK.info("Server wait for connection");
 
 					Socket socket = serverSocket.accept();
-					NetworkConfig.INSTANCE.serverLifecycle.onClientConnected();
-					Connection connection = new Connection(socket);
+					this.networkConfig.serverLifecycle.onClientConnected();
+					Connection connection = new Connection(socket, this.fstConfiguration);
 
 					Log.NETWORK.info("Server received connection");
 
@@ -39,13 +51,13 @@ public class Server implements Peer {
 
 					Log.NETWORK.info("Server received register message from client");
 
-					NetworkConfig.INSTANCE.serverLifecycle.onClientRegister(registerMessage);
+					this.networkConfig.serverLifecycle.onClientRegister(registerMessage);
 
 					connection.write(this.collectInitClientMessage());
 
 					Log.NETWORK.info("Server answered register message to client");
 
-					new AcceptMessageThread(connection).start();
+					new AcceptMessageThread(connection, this.messageHandlerPool).start();
 
 					synchronized (this.clients) {
 						this.clients.put(UUID.generateKey(), connection);
@@ -76,7 +88,7 @@ public class Server implements Peer {
 
 	private BatchMessage collectInitClientMessage() {
 		BatchMessage batchMessage = new BatchMessage();
-		for (Object object : MessageConfig.INSTANCE.serverToNewClientMessages) {
+		for (Object object : this.messageConfig.serverToNewClientMessages) {
 			if (object instanceof IF_Callback) {
 				IF_Callback<Object> callback = (IF_Callback<Object>) object;
 				batchMessage.add(callback.callback());

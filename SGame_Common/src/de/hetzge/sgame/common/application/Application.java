@@ -1,14 +1,14 @@
 package de.hetzge.sgame.common.application;
 
-import se.jbee.inject.Dependency;
 import se.jbee.inject.Injector;
 import se.jbee.inject.bootstrap.Bootstrap;
 import se.jbee.inject.bootstrap.BootstrapperBundle;
+import de.hetzge.sgame.common.IF_DependencyInjection;
 import de.hetzge.sgame.common.ModulePool;
 import de.hetzge.sgame.common.Util;
 import de.hetzge.sgame.common.timer.Timer;
 
-public abstract class Application {
+public abstract class Application implements IF_DependencyInjection {
 
 	public static Injector INJECTOR;
 	protected final ModulePool modulePool;
@@ -41,10 +41,6 @@ public abstract class Application {
 			this.modulePool.update();
 		}
 		Util.sleep(this.updateTimer.restTime());
-	}
-
-	public <T> T get(Class<T> clazz) {
-		return Application.INJECTOR.resolve(Dependency.dependency(clazz));
 	}
 
 }

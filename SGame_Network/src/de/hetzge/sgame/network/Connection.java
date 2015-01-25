@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.net.Socket;
 
 import org.nustaq.net.TCPObjectSocket;
-
-import de.hetzge.sgame.common.CommonConfig;
+import org.nustaq.serialization.FSTConfiguration;
 
 public class Connection {
 
 	private final TCPObjectSocket tcpObjectSocket;
 
-	public Connection(Socket socket) throws IOException {
-		this.tcpObjectSocket = new TCPObjectSocket(socket, CommonConfig.INSTANCE.fst);
+	public Connection(Socket socket, FSTConfiguration fstConfiguration) throws IOException {
+		this.tcpObjectSocket = new TCPObjectSocket(socket, fstConfiguration);
 	}
 
 	public Object read() throws Exception {

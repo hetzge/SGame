@@ -6,6 +6,11 @@ import java.util.List;
 public class MessagePool {
 
 	private final List<Object> buffer = new LinkedList<>();
+	private final MessageConfig messageConfig;
+
+	public MessagePool(MessageConfig messageConfig) {
+		this.messageConfig = messageConfig;
+	}
 
 	public synchronized List<Object> flush() {
 		LinkedList<Object> result = new LinkedList<>(this.buffer);
@@ -14,7 +19,7 @@ public class MessagePool {
 	}
 
 	public synchronized void addMessage(Object message) {
-		if (MessageConfig.INSTANCE.enableMessagePool) {
+		if (this.messageConfig.enableMessagePool) {
 			this.buffer.add(message);
 		}
 	}

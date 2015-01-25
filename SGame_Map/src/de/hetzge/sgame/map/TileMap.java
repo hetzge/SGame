@@ -21,7 +21,7 @@ import de.hetzge.sgame.render.IF_Renderable;
 import de.hetzge.sgame.render.IF_RenderableContext;
 import de.hetzge.sgame.render.PredefinedRenderId;
 import de.hetzge.sgame.render.RenderConfig;
-import de.hetzge.sgame.render.RenderUtil;
+import de.hetzge.sgame.render.RenderService;
 
 public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF_Renderable<IF_RenderableContext>, Serializable {
 
@@ -46,7 +46,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		}
 
 		@Override
-		public int getRenderableKey() {
+		public int getRenderId() {
 			return TileMap.this.getRenderId(this.tileId);
 		}
 
@@ -208,7 +208,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 	@Override
 	public void render(IF_RenderableContext context) {
 		this.iterateVisibleTiles((tile) -> {
-			RenderUtil.render(context, tile);
+			RenderService.render(context, tile);
 		});
 	}
 
@@ -221,7 +221,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 					int x = tile.x * this.collisionTileFactor + cx;
 					int y = tile.y * this.collisionTileFactor + cy;
 					if (this.mapCollision.isCollision(x, y)) {
-						RenderUtil.render(context, new IF_RenderInformation() {
+						RenderService.render(context, new IF_RenderInformation() {
 							@Override
 							public ComplexRectangle getRenderedRectangle() {
 								return new ComplexRectangle(new Position(x * TileMap.this.getCollisionTileSize(), y * TileMap.this.getCollisionTileSize()), new Dimension(TileMap.this.getCollisionTileSize(), TileMap.this.getCollisionTileSize()));

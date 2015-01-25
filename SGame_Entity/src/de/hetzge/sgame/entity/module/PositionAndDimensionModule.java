@@ -1,6 +1,5 @@
 package de.hetzge.sgame.entity.module;
 
-import de.hetzge.sgame.common.CommonConfig;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.PathPosition;
 import de.hetzge.sgame.common.activemap.ActiveMap;
@@ -17,8 +16,8 @@ import de.hetzge.sgame.sync.SyncProperty;
 
 public class PositionAndDimensionModule extends BaseEntityModule implements IF_SetupPositionInterpolate {
 
-	private final SyncProperty<InterpolateRectangle> dimensionSyncProperty = new SyncProperty<InterpolateRectangle>(new InterpolateRectangle());
-	private final SyncProperty<Float> speedPerMsSyncProperty = new SyncProperty<Float>(0.02f);
+	private final SyncProperty<InterpolateRectangle> dimensionSyncProperty = this.createSyncProperty(new InterpolateRectangle());
+	private final SyncProperty<Float> speedPerMsSyncProperty = this.createSyncProperty(0.02f);
 	private final ActiveMap<Entity> entityOnMap = new ActiveEntityMap().setObjectOnPosition(this.entity, 0, 0);
 
 	private boolean fixed = false;
@@ -107,13 +106,6 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 	public void set(Position startValue, Position endValue, long startTimeInMs, long endTimeInMs) {
 		this.dimensionSyncProperty.getValue().set(startValue, endValue, startTimeInMs, endTimeInMs);
 		this.dimensionSyncProperty.setChanged();
-	}
-
-	public void updateEntityOnMap() {
-		IF_ImmutableComplexRectangle<InterpolatePosition, Dimension> rectangle = this.getPositionAndDimensionRectangle();
-		int x = CommonConfig.INSTANCE.map.convertPxInTile(rectangle.getX());
-		int y = CommonConfig.INSTANCE.map.convertPxInTile(rectangle.getY());
-		this.getContext().activeEntityMap.connect(x, y, this.entityOnMap);
 	}
 
 	public boolean isFixed() {

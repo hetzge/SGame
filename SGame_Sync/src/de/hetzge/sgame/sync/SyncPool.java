@@ -11,6 +11,12 @@ public class SyncPool {
 
 	private final Map<String, SyncProperty<?>> syncProperties = new FastMap<String, SyncProperty<?>>().parallel();
 
+	public <T> SyncProperty<T> createAndRegisterSyncProperty(T value) {
+		SyncProperty<T> syncProperty = new SyncProperty<T>(value);
+		this.registerSyncProperty(syncProperty);
+		return syncProperty;
+	}
+
 	public void registerSyncProperty(SyncProperty<?> syncProperty) {
 		this.syncProperties.put(syncProperty.getKey(), syncProperty);
 	}

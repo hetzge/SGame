@@ -5,11 +5,11 @@ import java.util.List;
 import de.hetzge.sgame.common.Util;
 import de.hetzge.sgame.common.definition.IF_Module;
 import de.hetzge.sgame.message.MessageConfig;
+import de.hetzge.sgame.message.MessagePool;
 
 public class NetworkModule implements IF_Module {
 
 	private class NetworkThread extends Thread {
-
 		public NetworkThread() {
 			super("network_thread");
 		}
@@ -17,9 +17,9 @@ public class NetworkModule implements IF_Module {
 		@Override
 		public void run() {
 			while (true) {
-				List<Object> messages = MessageConfig.INSTANCE.messagePool.flush();
+				List<Object> messages = NetworkModule.this.messagePool.flush();
 				for (Object message : messages) {
-					NetworkConfig.INSTANCE.peer.sendMessage(message);
+					NetworkModule.this.networkConfig.peer.sendMessage(message);
 				}
 				Util.sleep(100);
 			}
@@ -27,21 +27,27 @@ public class NetworkModule implements IF_Module {
 	}
 
 	private final NetworkThread networkThread;
+	private final NetworkConfig networkConfig;
+	private final MessageConfig messageConfig;
+	private final MessagePool messagePool;
 
-	public NetworkModule() {
+	public NetworkModule(NetworkConfig networkConfig, MessageConfig messageConfig, MessagePool messagePool) {
 		this.networkThread = new NetworkThread();
+		this.networkConfig = networkConfig;
+		this.messageConfig = messageConfig;
+		this.messagePool = messagePool;
 	}
 
 	@Override
 	public void init() {
-		MessageConfig.INSTANCE.enableMessagePool = true;
+		this.messageConfig.enableMessagePool = true;
 
-		switch (NetworkConfig.INSTANCE.peerRole) {
+		switch (this.networkConfig.peerRole) {
 		case CLIENT:
-			NetworkConfig.INSTANCE.peer = new Client();
+			this.networkConfig.peer = this.get(Client.class);
 			break;
 		case SERVER:
-			NetworkConfig.INSTANCE.peer = new Server();
+			this.networkConfig.peer = this.get(Server.class);
 			break;
 		default:
 			throw new IllegalStateException();
@@ -50,7 +56,7 @@ public class NetworkModule implements IF_Module {
 
 	@Override
 	public void postInit() {
-		NetworkConfig.INSTANCE.peer.connect();
+		this.networkConfig.peer.connect();
 		this.networkThread.start();
 	}
 

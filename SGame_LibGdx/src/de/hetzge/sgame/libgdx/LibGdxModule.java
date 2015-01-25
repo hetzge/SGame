@@ -10,14 +10,16 @@ import de.hetzge.sgame.render.RenderConfig;
 
 public class LibGdxModule implements IF_Module {
 
-	public LibGdxModule() {
-		RenderConfig.INSTANCE.renderableLoader = new LibGdxRenderableLoader();
+	private final RenderConfig renderConfig;
+
+	public LibGdxModule(RenderConfig renderConfig) {
+		this.renderConfig = renderConfig;
 	}
 
 	@Override
 	public void init() {
 		// TODO add other shapes
-		RenderConfig.INSTANCE.initRenderableConsumers.add((renderPool) -> {
+		this.renderConfig.initRenderableConsumers.add((renderPool) -> {
 			renderPool.registerRenderableRessource(PredefinedRenderId.RECTANGLE, new LibGdxRenderableRectangle());
 		});
 	}
@@ -29,7 +31,7 @@ public class LibGdxModule implements IF_Module {
 		cfg.useGL30 = false;
 		cfg.width = LibGdxConfig.INSTANCE.screenWidth;
 		cfg.height = LibGdxConfig.INSTANCE.screenHeight;
-		new LwjglApplication(new LibGdxApplication(), cfg);
+		new LwjglApplication(this.get(LibGdxApplication.class), cfg);
 	}
 
 	@Override

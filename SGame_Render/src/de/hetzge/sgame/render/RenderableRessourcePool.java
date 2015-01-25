@@ -7,7 +7,10 @@ public class RenderableRessourcePool {
 
 	private final Map<Integer, IF_RenderableWrapper<?>> renderableRessources = new HashMap<>();
 
-	public RenderableRessourcePool() {
+	private final RenderableIdPool renderableIdPool;
+
+	public RenderableRessourcePool(RenderableIdPool renderableIdPool) {
+		this.renderableIdPool = renderableIdPool;
 	}
 
 	public void registerRenderableRessource(int renderableId, IF_RenderableWrapper<?> renderable) {
@@ -15,8 +18,8 @@ public class RenderableRessourcePool {
 	}
 
 	public void registerRenderableRessource(RenderableKey renderableKey, IF_RenderableWrapper<?> renderable) {
-		int nextRenderId = RenderUtil.getNextRenderId();
-		RenderConfig.INSTANCE.renderableIdPool.register(renderableKey, nextRenderId);
+		int nextRenderId = RenderService.getNextRenderId();
+		this.renderableIdPool.register(renderableKey, nextRenderId);
 		this.registerRenderableRessource(nextRenderId, renderable);
 	}
 

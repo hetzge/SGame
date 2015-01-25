@@ -14,6 +14,7 @@ import de.hetzge.sgame.game.Definition.AnimationKey;
 import de.hetzge.sgame.game.Definition.EntityType;
 import de.hetzge.sgame.map.MapModule;
 import de.hetzge.sgame.message.MessageModule;
+import de.hetzge.sgame.network.NetworkConfig;
 import de.hetzge.sgame.network.NetworkModule;
 import de.hetzge.sgame.sync.SyncModule;
 
@@ -24,19 +25,20 @@ public class BaseGame extends Application {
 	protected final SyncModule syncModule;
 	protected final EntityModule entityModule;
 	protected final MessageModule messageModule;
-
+	protected final NetworkConfig networkConfig;
 	protected final EntityFactory entityFactory;
 	protected final EntityPool entityPool;
 
 	public BaseGame(Class<? extends BootstrapperBundle> bootstrapperBundle) {
 		super(bootstrapperBundle);
 		this.mapModule = this.get(MapModule.class);
-		this.networkModule = new NetworkModule();
-		this.syncModule = new SyncModule();
+		this.networkModule = this.get(NetworkModule.class);
+		this.networkConfig = this.get(NetworkConfig.class);
+		this.syncModule = this.get(SyncModule.class);
 		this.entityModule = this.get(EntityModule.class);
 		this.entityFactory = this.get(EntityFactory.class);
 		this.entityPool = this.get(EntityPool.class);
-		this.messageModule = new MessageModule();
+		this.messageModule = this.get(MessageModule.class);
 
 		this.modulePool.registerModules(this.mapModule, this.networkModule, this.syncModule, this.entityModule, this.messageModule);
 

@@ -1,9 +1,10 @@
 package de.hetzge.sgame.entity.ki.low;
 
 import de.hetzge.sgame.common.AStarService;
-import de.hetzge.sgame.common.CommonConfig;
+import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.PathfinderThread.PathfinderWorker;
+import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.entity.ki.BaseKI;
 import de.hetzge.sgame.entity.ki.KIConfig;
@@ -15,10 +16,16 @@ public class GotoKI extends BaseKI {
 	private final int collisionTileGoalY;
 	private PathfinderWorker pathfinderWorker;
 
+	private final IF_MapProvider mapProvider;
+	private final AStarService aStarService;
+
 	public GotoKI(Entity entity, int collisionTileGoalX, int collisionTileGoalY) {
 		super(entity);
 		this.collisionTileGoalX = collisionTileGoalX;
 		this.collisionTileGoalY = collisionTileGoalY;
+
+		this.mapProvider = this.get(IF_MapProvider.class);
+		this.aStarService = this.get(AStarService.class);
 	}
 
 	@Override
@@ -29,14 +36,15 @@ public class GotoKI extends BaseKI {
 	@Override
 	protected KIState initImpl() {
 		PositionAndDimensionModule positionAndDimensionModule = this.entity.positionAndDimensionModuleCache.get();
+		IF_Map map = this.mapProvider.provide();
 
 		// test if goal is empty
-		if (CommonConfig.INSTANCE.map.getFixEntityCollisionMap().isCollision(this.collisionTileGoalX, this.collisionTileGoalY)) {
+		if (map.getFixEntityCollisionMap().isCollision(this.collisionTileGoalX, this.collisionTileGoalY)) {
 			return KIState.INIT_FAILURE;
 		}
 
-		int startX = CommonConfig.INSTANCE.map.convertPxInCollisionTile(positionAndDimensionModule.getPositionAndDimensionRectangle().getPosition().getX());
-		int startY = CommonConfig.INSTANCE.map.convertPxInCollisionTile(positionAndDimensionModule.getPositionAndDimensionRectangle().getPosition().getY());
+		int startX = map.convertPxInCollisionTile(positionAndDimensionModule.getPositionAndDimensionRectangle().getPosition().getX());
+		int startY = map.convertPxInCollisionTile(positionAndDimensionModule.getPositionAndDimensionRectangle().getPosition().getY());
 
 		this.pathfinderWorker = KIConfig.INSTANCE.pathfinderThread.new PathfinderWorker() {
 
@@ -46,7 +54,7 @@ public class GotoKI extends BaseKI {
 				// TODO replace with pathfind util
 				// TODO check direct way
 				// TODO entity collision
-				return AStarService.findPath(CommonConfig.INSTANCE.map.getFixEntityCollisionMap(), startX, startY, GotoKI.this.collisionTileGoalX, GotoKI.this.collisionTileGoalY, new boolean[0][]);
+				return GotoKI.this.aStarService.findPath(map.getFixEntityCollisionMap(), startX, startY, GotoKI.this.collisionTileGoalX, GotoKI.this.collisionTileGoalY, new boolean[0][]);
 			}
 		};
 
