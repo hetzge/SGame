@@ -2,7 +2,9 @@ package de.hetzge.sgame.entity;
 
 import java.io.Serializable;
 
-public class EntityReference implements Serializable {
+import de.hetzge.sgame.common.IF_DependencyInjection;
+
+public class EntityReference implements Serializable, IF_DependencyInjection {
 
 	private final String entityId;
 	private transient Entity entity;
@@ -13,7 +15,7 @@ public class EntityReference implements Serializable {
 
 	public Entity get() {
 		if (this.entity == null) {
-			this.entity = EntityContext.INSTANCE.get().entityPool.getEntityById(this.entityId);
+			this.entity = this.get(EntityPool.class).getEntityById(this.entityId);
 		}
 		return this.entity;
 	}

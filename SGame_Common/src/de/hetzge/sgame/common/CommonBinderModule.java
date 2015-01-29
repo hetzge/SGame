@@ -12,7 +12,6 @@ public class CommonBinderModule extends BinderModule {
 		this.bind(FstService.class).to(FstService.class);
 		this.bind(CommonConfig.class).to(CommonConfig.class);
 		this.bind(ModulePool.class).to(ModulePool.class);
-		this.bind(CommonConfig.class).to(CommonConfig.class);
 		this.bind(FSTConfiguration.class).to((produced, injected) -> {
 			return FSTConfiguration.getDefaultConfiguration();
 		});

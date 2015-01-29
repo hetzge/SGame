@@ -5,11 +5,11 @@ import de.hetzge.sgame.common.IF_XYFunction;
 import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.geometry.PrimitivRectangle;
 
-public class MapViewport extends PrimitivRectangle {
+public class Viewport extends PrimitivRectangle {
 
 	private final IF_MapProvider mapProvider;
 
-	public MapViewport(IF_MapProvider mapProvider) {
+	public Viewport(IF_MapProvider mapProvider) {
 		this.mapProvider = mapProvider;
 	}
 

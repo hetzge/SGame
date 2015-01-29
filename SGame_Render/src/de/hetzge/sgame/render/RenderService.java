@@ -10,17 +10,23 @@ public final class RenderService {
 
 	public static int renderCount = 0;
 
-	private final MapViewport mapViewport;
+	private final Viewport viewport;
 	private final RenderableRessourcePool renderableRessourcePool;
 	private final RenderableIdPool renderableIdPool;
 
 	// for reuse
 	private final RenderInformation renderInformation = new RenderInformation();
 
-	public RenderService(MapViewport mapViewport, RenderableRessourcePool renderableRessourcePool, RenderableIdPool renderableIdPool) {
-		this.mapViewport = mapViewport;
+	public RenderService(Viewport viewport, RenderableRessourcePool renderableRessourcePool, RenderableIdPool renderableIdPool) {
+		this.viewport = viewport;
 		this.renderableRessourcePool = renderableRessourcePool;
 		this.renderableIdPool = renderableIdPool;
+	}
+
+	public <CONTEXT extends IF_RenderableContext> void render(CONTEXT context, IF_ImmutablePrimitivRectangle rectangle, int renderId) {
+		this.renderInformation.rectangle = rectangle;
+		this.renderInformation.renderId = renderId;
+		this.render(context, this.renderInformation);
 	}
 
 	public <CONTEXT extends IF_RenderableContext> void render(CONTEXT context, IF_ImmutablePrimitivRectangle rectangle, RenderableKey renderableKey) {
@@ -31,7 +37,7 @@ public final class RenderService {
 
 	public <CONTEXT extends IF_RenderableContext> void render(CONTEXT context, IF_RenderInformation onScreen) {
 		IF_ImmutablePrimitivRectangle renderedRectangle = onScreen.getRenderedRectangle();
-		if (this.mapViewport.doesOverlapWith(renderedRectangle)) {
+		if (this.viewport.doesOverlapWith(renderedRectangle)) {
 			IF_RenderableWrapper<CONTEXT> renderable = (IF_RenderableWrapper<CONTEXT>) this.renderableRessourcePool.getRenderableRessource(onScreen.getRenderId());
 			if (renderable == null) {
 				throw new IllegalStateException("No renderable for key " + onScreen.getRenderId());

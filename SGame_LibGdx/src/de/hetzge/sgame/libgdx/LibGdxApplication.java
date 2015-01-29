@@ -14,12 +14,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableContext;
-import de.hetzge.sgame.render.MapViewport;
 import de.hetzge.sgame.render.RenderConfig;
 import de.hetzge.sgame.render.RenderPool;
 import de.hetzge.sgame.render.RenderService;
 import de.hetzge.sgame.render.RenderableRessourcePool;
-tzge.sgame.render.RenderableRessourcePool;
+import de.hetzge.sgame.render.Viewport;
 
 public class LibGdxApplication implements ApplicationListener {
 	private SpriteBatch batch;
@@ -27,15 +26,15 @@ public class LibGdxApplication implements ApplicationListener {
 	private ShapeRenderer filledShapeRenderer;
 	private OrthographicCamera camera;
 	private LibGdxRenderableContext libGdxRenderableContext;
-	
+
 	private final FPSLogger fpsLogger;
 
 	private final RenderConfig renderConfig;
 	private final RenderPool renderPool;
-	private final MapViewport mapViewport;
+	private final Viewport mapViewport;
 	private final RenderableRessourcePool renderableRessourcePool;
 
-	public LibGdxApplication(RenderConfig renderConfig, RenderPool renderPool, MapViewport mapViewport, RenderableRessourcePool renderableRessourcePool) {
+	public LibGdxApplication(RenderConfig renderConfig, RenderPool renderPool, Viewport mapViewport, RenderableRessourcePool renderableRessourcePool) {
 		this.fpsLogger = new FPSLogger();
 		this.renderConfig = renderConfig;
 		this.renderPool = renderPool;

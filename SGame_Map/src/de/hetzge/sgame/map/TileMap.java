@@ -3,29 +3,20 @@ package de.hetzge.sgame.map;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
 
-import de.hetzge.sgame.common.IF_XYFunction;
 import de.hetzge.sgame.common.Stopwatch;
 import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
-import de.hetzge.sgame.common.definition.IF_RenderInformation;
-import de.hetzge.sgame.common.geometry.ComplexRectangle;
-import de.hetzge.sgame.common.geometry.Dimension;
 import de.hetzge.sgame.common.geometry.IF_ImmutablePrimitivRectangle;
-import de.hetzge.sgame.common.geometry.Position;
 import de.hetzge.sgame.map.tmx.TMXMap;
 import de.hetzge.sgame.map.tmx.TMXMap.Layer;
-import de.hetzge.sgame.render.IF_Renderable;
-import de.hetzge.sgame.render.IF_RenderableContext;
+import de.hetzge.sgame.render.IF_RenderableLoader;
 import de.hetzge.sgame.render.PredefinedRenderId;
-import de.hetzge.sgame.render.RenderConfig;
-import de.hetzge.sgame.render.RenderService;
 
-public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF_Renderable<IF_RenderableContext>, Serializable {
+public class TileMap implements IF_Map, Serializable {
 
-	private class Tile implements IF_RenderInformation, Serializable, IF_ImmutablePrimitivRectangle {
+	public class Tile implements Serializable, IF_ImmutablePrimitivRectangle {
 
 		// Rectangle interface auch verwenden
 
@@ -40,12 +31,6 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 			this.y = y;
 		}
 
-		@Override
-		public IF_ImmutablePrimitivRectangle getRenderedRectangle() {
-			return this;
-		}
-
-		@Override
 		public int getRenderId() {
 			return TileMap.this.getRenderId(this.tileId);
 		}
@@ -188,13 +173,11 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		this.mapCollision = new MapCollision();
 		this.fixEntityCollisionMap = new ActiveCollisionMap(this.widthInTiles * this.collisionTileFactor, this.heightInTiles * this.collisionTileFactor);
 		this.flexibleEntityCollisionMap = new ActiveCollisionMap(this.widthInTiles * this.collisionTileFactor, this.heightInTiles * this.collisionTileFactor);
-
-		this.init();
 	}
 
-	public void init() {
+	public void initTIleRenderIds(IF_RenderableLoader renderableLoader) {
 		if (this.tmxMap != null) {
-			this.renderIdByTileId = RenderConfig.INSTANCE.renderableLoader.loadTilesets(this.tmxMap.getTilesets());
+			this.renderIdByTileId = renderableLoader.loadTilesets(this.tmxMap.getTilesets());
 		}
 	}
 
@@ -205,50 +188,8 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 		return this.renderIdByTileId[tileId];
 	}
 
-	@Override
-	public void render(IF_RenderableContext context) {
-		this.iterateVisibleTiles((tile) -> {
-			RenderService.render(context, tile);
-		});
-	}
-
-	@Override
-	public void renderShapes(IF_RenderableContext context) {
-
-		this.iterateVisibleTiles((tile) -> {
-			for (int cx = 0; cx < this.collisionTileFactor; cx++) {
-				for (int cy = 0; cy < this.collisionTileFactor; cy++) {
-					int x = tile.x * this.collisionTileFactor + cx;
-					int y = tile.y * this.collisionTileFactor + cy;
-					if (this.mapCollision.isCollision(x, y)) {
-						RenderService.render(context, new IF_RenderInformation() {
-							@Override
-							public ComplexRectangle getRenderedRectangle() {
-								return new ComplexRectangle(new Position(x * TileMap.this.getCollisionTileSize(), y * TileMap.this.getCollisionTileSize()), new Dimension(TileMap.this.getCollisionTileSize(), TileMap.this.getCollisionTileSize()));
-							}
-
-							@Override
-							public int getRenderableKey() {
-								return PredefinedRenderId.RECTANGLE;
-							}
-						});
-					}
-				}
-			}
-
-		});
-	}
-
-	@Override
-	public void renderFilledShapes(IF_RenderableContext context) {
-	}
-
-	public void iterateVisibleTiles(Consumer<Tile> consumer) {
-		RenderConfig.INSTANCE.viewport.iterateVisibleTiles((IF_XYFunction<Void>) (int x, int y) -> {
-			TileMap<CONTEXT>.Tile tile = this.tiles[x][y];
-			consumer.accept(tile);
-			return null;
-		});
+	public Tile getTile(int x, int y) {
+		return this.tiles[x][y];
 	}
 
 	@Override
@@ -268,7 +209,7 @@ public class TileMap<CONTEXT extends IF_RenderableContext> implements IF_Map, IF
 
 	@Override
 	public IF_Collision getCollision() {
-		return null;
+		return this.mapCollision;
 	}
 
 	@Override

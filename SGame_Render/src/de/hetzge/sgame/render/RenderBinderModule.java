@@ -10,9 +10,9 @@ public class RenderBinderModule extends BinderModule {
 		this.bind(RenderableRessourcePool.class).to(RenderableRessourcePool.class);
 		this.bind(RenderableIdPool.class).to(RenderableIdPool.class);
 		this.bind(RenderPool.class).to(RenderPool.class);
-		this.bind(MapViewport.class).to(MapViewport.class);
 		this.bind(RenderBinderModule.class).to(RenderBinderModule.class);
 		this.bind(RenderService.class).to(RenderService.class);
+		this.bind(RenderModule.class).to(RenderModule.class);
 	}
 
 }

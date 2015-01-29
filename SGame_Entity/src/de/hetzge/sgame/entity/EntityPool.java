@@ -13,8 +13,8 @@ import de.hetzge.sgame.common.definition.IF_EntityType;
 import de.hetzge.sgame.entity.module.RenderableModule;
 import de.hetzge.sgame.render.IF_Renderable;
 import de.hetzge.sgame.render.IF_RenderableContext;
-import de.hetzge.sgame.render.MapViewport;
 import de.hetzge.sgame.render.RenderService;
+import de.hetzge.sgame.render.Viewport;
 
 public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 
@@ -25,12 +25,12 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 	private final FastMap<Class<? extends BaseEntityModule>, FastSet<BaseEntityModule>> entityModulesByModuleClass = new FastMap<Class<? extends BaseEntityModule>, FastSet<BaseEntityModule>>().parallel();
 
 	private final ActiveEntityMap activeEntityMap;
-	private final MapViewport mapViewport;
+	private final Viewport viewport;
 	private final RenderService renderService;
 
-	public EntityPool(ActiveEntityMap activeEntityMap, MapViewport mapViewport, RenderService renderService) {
+	public EntityPool(ActiveEntityMap activeEntityMap, Viewport viewport, RenderService renderService) {
 		this.activeEntityMap = activeEntityMap;
-		this.mapViewport = mapViewport;
+		this.viewport = viewport;
 		this.renderService = renderService;
 	}
 
@@ -159,7 +159,7 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 	@Override
 	public void render(IF_RenderableContext context) {
 
-		this.mapViewport.iterateVisibleTiles((int x, int y) -> {
+		this.viewport.iterateVisibleTiles((int x, int y) -> {
 			Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(x, y);
 			for (Entity entity : entities) {
 				if (entity.renderableModuleCache.isAvailable()) {

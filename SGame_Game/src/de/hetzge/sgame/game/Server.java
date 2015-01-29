@@ -6,6 +6,7 @@ import de.hetzge.sgame.entity.ki.KIModule;
 import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 import de.hetzge.sgame.game.Definition.EntityType;
 import de.hetzge.sgame.network.PeerRole;
+import de.hetzge.sgame.render.RenderModule;
 
 public class Server extends BaseGame {
 
@@ -29,7 +30,9 @@ public class Server extends BaseGame {
 			});
 		}
 
-		this.modulePool.registerModules(this.get(KIModule.class));
+		// TODO Server sollte keine Render abhängigkeit haben ?!
+		this.modulePool.registerModule(this.get(RenderModule.class));
+		this.modulePool.registerModule(this.get(KIModule.class));
 	}
 
 	public static void main(String[] args) {
