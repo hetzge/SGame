@@ -37,12 +37,12 @@ public class TileMap implements IF_Map, Serializable {
 
 		@Override
 		public float getX() {
-			return this.x * TileMap.this.tileSize;
+			return this.x * TileMap.this.tileSize + this.getWidth() / 2;
 		}
 
 		@Override
 		public float getY() {
-			return this.y * TileMap.this.tileSize;
+			return this.y * TileMap.this.tileSize + this.getHeight() / 2;
 		}
 
 		@Override
@@ -85,7 +85,7 @@ public class TileMap implements IF_Map, Serializable {
 			// if (isMapCollision)
 			// return true;
 
-			Collection<Boolean> flexibleConnectedObjects = TileMap.this.flexibleEntityCollisionMap.getConnectedObjects(x, y);
+			Collection<Boolean> flexibleConnectedObjects = TileMap.this.fixEntityCollisionMap.getConnectedObjects(x, y);
 			for (Boolean aBoolean : flexibleConnectedObjects) {
 				if (aBoolean) {
 					return true;
@@ -95,7 +95,7 @@ public class TileMap implements IF_Map, Serializable {
 		}
 
 		public boolean isFlexibleCollision(int x, int y) {
-			Collection<Boolean> fixedConnectedObjects = TileMap.this.fixEntityCollisionMap.getConnectedObjects(x, y);
+			Collection<Boolean> fixedConnectedObjects = TileMap.this.flexibleEntityCollisionMap.getConnectedObjects(x, y);
 			for (Boolean aBoolean : fixedConnectedObjects) {
 				if (aBoolean) {
 					return true;

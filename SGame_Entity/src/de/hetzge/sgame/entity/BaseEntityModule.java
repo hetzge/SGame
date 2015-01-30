@@ -19,16 +19,16 @@ public abstract class BaseEntityModule implements Serializable {
 		this.initImpl();
 	}
 
-	public abstract void initImpl();
-
 	public final void update() {
 		this.updateImpl();
 	}
 
-	public abstract void updateImpl();
-
 	protected <T> SyncProperty<T> createSyncProperty(T value) {
 		return Application.INJECTOR.resolve(Dependency.dependency(SyncPool.class)).createAndRegisterSyncProperty(value);
 	}
+
+	public abstract void updateImpl();
+
+	public abstract void initImpl();
 
 }

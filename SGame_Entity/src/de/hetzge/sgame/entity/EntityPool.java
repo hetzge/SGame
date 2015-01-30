@@ -13,6 +13,7 @@ import de.hetzge.sgame.common.definition.IF_EntityType;
 import de.hetzge.sgame.entity.module.RenderableModule;
 import de.hetzge.sgame.render.IF_Renderable;
 import de.hetzge.sgame.render.IF_RenderableContext;
+import de.hetzge.sgame.render.PredefinedRenderId;
 import de.hetzge.sgame.render.RenderService;
 import de.hetzge.sgame.render.Viewport;
 
@@ -175,6 +176,21 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 
 	@Override
 	public void renderShapes(IF_RenderableContext context) {
+
+		this.viewport.iterateVisibleTiles((int x, int y) -> {
+			Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(x, y);
+			for (Entity entity : entities) {
+				if (entity.renderableModuleCache.isAvailable()) {
+					RenderableModule renderableModule = entity.renderableModuleCache.get();
+
+					this.renderService.render(context, renderableModule.getRenderedRectangle(), PredefinedRenderId.RECTANGLE);
+				}
+			}
+
+			// TODO return null weg machen
+				return null;
+			});
+
 	}
 
 	@Override

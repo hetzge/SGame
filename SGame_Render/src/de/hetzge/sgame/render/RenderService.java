@@ -35,14 +35,14 @@ public final class RenderService {
 		this.render(context, this.renderInformation);
 	}
 
-	public <CONTEXT extends IF_RenderableContext> void render(CONTEXT context, IF_RenderInformation onScreen) {
-		IF_ImmutablePrimitivRectangle renderedRectangle = onScreen.getRenderedRectangle();
+	public <CONTEXT extends IF_RenderableContext> void render(CONTEXT context, IF_RenderInformation renderInformation) {
+		IF_ImmutablePrimitivRectangle renderedRectangle = renderInformation.getRenderedRectangle();
 		if (this.viewport.doesOverlapWith(renderedRectangle)) {
-			IF_RenderableWrapper<CONTEXT> renderable = (IF_RenderableWrapper<CONTEXT>) this.renderableRessourcePool.getRenderableRessource(onScreen.getRenderId());
+			IF_RenderableWrapper<CONTEXT> renderable = (IF_RenderableWrapper<CONTEXT>) this.renderableRessourcePool.getRenderableRessource(renderInformation.getRenderId());
 			if (renderable == null) {
-				throw new IllegalStateException("No renderable for key " + onScreen.getRenderId());
+				throw new IllegalStateException("No renderable for key " + renderInformation.getRenderId());
 			}
-			renderable.render(context, onScreen);
+			renderable.render(context, renderInformation);
 			RenderService.renderCount++;
 		}
 	}
