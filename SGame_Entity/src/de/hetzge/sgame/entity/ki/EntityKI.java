@@ -1,7 +1,7 @@
 package de.hetzge.sgame.entity.ki;
 
 import de.hetzge.sgame.entity.Entity;
-import de.hetzge.sgame.entity.ki.high.SillyWalkerKI;
+import de.hetzge.sgame.entity.ki.high.SillyGotoKI;
 
 // TODO welche Rolle spielt diese Klasse ? EntityKI zu allgemein ...
 public class EntityKI extends BaseKI {
@@ -17,7 +17,7 @@ public class EntityKI extends BaseKI {
 
 	@Override
 	protected KIState updateImpl() {
-		this.changeActiveKI(new SillyWalkerKI(this.entity), new KICallback());
+		this.changeActiveKI(new SillyGotoKI(this.entity));
 		return null;
 	}
 

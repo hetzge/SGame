@@ -3,10 +3,10 @@ package de.hetzge.sgame.common.activemap;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import javolution.util.FastCollection;
+import javolution.util.FastMap;
 import javolution.util.FastSet;
 import de.hetzge.sgame.common.hierarchical.XY;
 
@@ -39,6 +39,19 @@ public class ActiveMap<TYPE> implements Serializable {
 				}
 				activeNode.getLazyConnectors().add(this);
 				this.connectedWith = activeNode;
+			}
+		}
+
+		private void unchain() {
+			if (this.connectedWith != null) {
+				this.connectedWith.removeConnection(this);
+			}
+			FastCollection<ActiveNode<TYPE>> connectors = this.getLazyConnectors();
+			for (ActiveNode<TYPE> activeNode : connectors) {
+				activeNode.connectedWith = null;
+			}
+			if (this.getLazyConnectors().isEmpty()) {
+				ActiveMap.this.nodesByXY.remove(new XY(this.x, this.y));
 			}
 		}
 
@@ -75,7 +88,7 @@ public class ActiveMap<TYPE> implements Serializable {
 
 	// private final ActiveNode<TYPE>[][] nodes;
 
-	private final Map<XY, ActiveNode<TYPE>> nodesByXY = new HashMap<>();
+	private final Map<XY, ActiveNode<TYPE>> nodesByXY = new FastMap<XY, ActiveNode<TYPE>>().parallel();
 
 	public ActiveMap() {
 	}
@@ -125,6 +138,13 @@ public class ActiveMap<TYPE> implements Serializable {
 			return null;
 		}
 		return this.getActiveNode(x, y).getObject();
+	}
+
+	public void unchain() {
+		Collection<ActiveMap<TYPE>.ActiveNode<TYPE>> activeNodes = this.nodesByXY.values();
+		for (ActiveNode<TYPE> activeNode : activeNodes) {
+			activeNode.unchain();
+		}
 	}
 
 	public static void main(String[] args) {

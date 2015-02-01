@@ -12,7 +12,7 @@ public class SillyWalkerKI extends BaseKI {
 
 	@Override
 	protected boolean condition() {
-		return this.entity.positionAndDimensionModuleCache.isAvailable();
+		return this.entity.positionAndDimensionModuleCache.isAvailable() && !this.entity.positionAndDimensionModuleCache.get().isFixed();
 	}
 
 	@Override
@@ -22,7 +22,7 @@ public class SillyWalkerKI extends BaseKI {
 
 	@Override
 	protected KIState updateImpl() {
-		this.changeActiveKI(new GotoKI(this.entity, (int) (Math.random() * 100 + 10), (int) (Math.random() * 100 + 10)), new KICallback());
+		this.changeActiveKI(new GotoKI(this.entity, (int) (Math.random() * 100 + 10), (int) (Math.random() * 100 + 10)));
 		return KIState.ACTIVE;
 	}
 

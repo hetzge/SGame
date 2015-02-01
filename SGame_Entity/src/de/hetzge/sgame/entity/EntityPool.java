@@ -9,7 +9,12 @@ import javolution.util.FastCollection;
 import javolution.util.FastMap;
 import javolution.util.FastSet;
 import javolution.util.FastTable;
+import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.definition.IF_EntityType;
+import de.hetzge.sgame.common.geometry.ComplexRectangle;
+import de.hetzge.sgame.common.geometry.Dimension;
+import de.hetzge.sgame.common.geometry.Position;
+import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 import de.hetzge.sgame.entity.module.RenderableModule;
 import de.hetzge.sgame.render.IF_Renderable;
 import de.hetzge.sgame.render.IF_RenderableContext;
@@ -182,8 +187,16 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 			for (Entity entity : entities) {
 				if (entity.renderableModuleCache.isAvailable()) {
 					RenderableModule renderableModule = entity.renderableModuleCache.get();
-
 					this.renderService.render(context, renderableModule.getRenderedRectangle(), PredefinedRenderId.RECTANGLE);
+				}
+				if (entity.positionAndDimensionModuleCache.isAvailable()) {
+					PositionAndDimensionModule positionAndDimensionModule = entity.positionAndDimensionModuleCache.get();
+					Path path = positionAndDimensionModule.getPath();
+					if (path != null) {
+						Position dimension = path.getGoal().copy().subtract(path.getStart());
+						ComplexRectangle pathRectangle = ComplexRectangle.createComplexRectangleTopLeftOrigin(positionAndDimensionModule.getPositionAndDimensionRectangle().getPosition(), new Dimension(dimension));
+						this.renderService.render(context, pathRectangle, PredefinedRenderId.LINE);
+					}
 				}
 			}
 

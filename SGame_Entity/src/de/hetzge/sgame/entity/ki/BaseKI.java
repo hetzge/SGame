@@ -3,35 +3,16 @@ package de.hetzge.sgame.entity.ki;
 import java.util.EnumSet;
 
 import de.hetzge.sgame.common.IF_DependencyInjection;
+import de.hetzge.sgame.common.Log;
 import de.hetzge.sgame.entity.Entity;
 
 public abstract class BaseKI implements IF_DependencyInjection {
 
+	private static final KICallback EMPTY_KI_CALLBACK = new KICallback();
+
 	protected enum KIState {
 		SUCCESS, FAILURE, ACTIVE, INIT_FAILURE;
 		public static final EnumSet<KIState> FINISH_STATES = EnumSet.of(SUCCESS, FAILURE);
-	}
-
-	protected class KICallback {
-		Runnable[] runnables = new Runnable[KIState.values().length];
-
-		public KICallback() {
-		}
-
-		public KICallback on(KIState state, Runnable runnable) {
-			this.runnables[state.ordinal()] = runnable;
-			return this;
-		}
-
-		public void call(KIState state) {
-			if (state == null) {
-				return;
-			}
-			Runnable runnable = this.runnables[state.ordinal()];
-			if (runnable != null) {
-				runnable.run();
-			}
-		}
 	}
 
 	protected class LogKICallback extends KICallback {
@@ -51,9 +32,16 @@ public abstract class BaseKI implements IF_DependencyInjection {
 		this.entity = entity;
 	}
 
-	protected void changeActiveKI(BaseKI activceKI, KICallback callback) {
-		if (activceKI.condition()) {
-			this.activeKI = activceKI;
+	protected void changeActiveKI(BaseKI activceKI) {
+		this.changeActiveKI(activceKI, BaseKI.EMPTY_KI_CALLBACK);
+	}
+
+	protected void changeActiveKI(BaseKI activeKI, KICallback callback) {
+
+		Log.KI.debug("Change KI for entity " + this.entity + " to " + activeKI);
+
+		if (activeKI.condition()) {
+			this.activeKI = activeKI;
 			this.activeCallback = callback;
 			KIState state = this.activeKI.init();
 			this.callCallback(state);
@@ -62,14 +50,19 @@ public abstract class BaseKI implements IF_DependencyInjection {
 		}
 	}
 
+	// TODO mal mit einem durchspielen
 	public KIState update() {
 		if (this.activeKI != null) {
 			KIState state = this.activeKI.update();
+			BaseKI activeKIBefore = this.activeKI;
 			this.callCallback(state);
 			if (KIState.FINISH_STATES.contains(state)) {
 				this.activeKI.finish();
-				this.activeKI = null;
-				this.activeCallback = null;
+				if (this.activeKI == activeKIBefore) {
+					this.activeKI = null;
+					this.activeCallback = null;
+				}
+				return KIState.ACTIVE;
 			}
 			return state;
 		} else {

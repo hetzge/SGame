@@ -8,7 +8,6 @@ import de.hetzge.sgame.common.geometry.Dimension;
 import de.hetzge.sgame.common.geometry.IF_ImmutableComplexRectangle;
 import de.hetzge.sgame.common.geometry.InterpolatePosition;
 import de.hetzge.sgame.common.timer.Timer;
-import de.hetzge.sgame.entity.module.CollisionModule;
 import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 
 public class EntityOnMapThread extends Thread {
@@ -27,7 +26,6 @@ public class EntityOnMapThread extends Thread {
 	@Override
 	public void run() {
 		Timer updateEntityOnMapTimer = new Timer(1000);
-		Timer updateEntityCollision = new Timer(1000);
 
 		while (true) {
 			Util.sleep(100);
@@ -35,29 +33,24 @@ public class EntityOnMapThread extends Thread {
 				Set<PositionAndDimensionModule> positionAndDimensionModules = this.entityPool.getEntityModulesByModuleClass(PositionAndDimensionModule.class);
 				for (PositionAndDimensionModule positionAndDimensionModule : positionAndDimensionModules) {
 					this.updateEntityOnMap(positionAndDimensionModule);
-				}
-			}
-			if (updateEntityCollision.isTime()) {
-				Set<CollisionModule> collisionModules = this.entityPool.getEntityModulesByModuleClass(CollisionModule.class);
-				for (CollisionModule collisionModule : collisionModules) {
-					this.updateCollisionOnMap(collisionModule);
+					this.updateCollisionOnMap(positionAndDimensionModule);
 				}
 			}
 		}
 	}
 
-	private void updateCollisionOnMap(CollisionModule collisionModule) {
-		if (collisionModule.entity.positionAndDimensionModuleCache.isAvailable()) {
-			PositionAndDimensionModule module = collisionModule.entity.positionAndDimensionModuleCache.get();
+	private void updateCollisionOnMap(PositionAndDimensionModule positionAndDimensionModule) {
+		if (positionAndDimensionModule.entity.positionAndDimensionModuleCache.isAvailable()) {
+			PositionAndDimensionModule module = positionAndDimensionModule.entity.positionAndDimensionModuleCache.get();
 			IF_ImmutableComplexRectangle<InterpolatePosition, Dimension> positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
 
 			int startCollisionTileX = this.mapProvider.provide().convertPxInCollisionTile(positionAndDimensionRectangle.getStartPosition().getX());
 			int startCollisionTileY = this.mapProvider.provide().convertPxInCollisionTile(positionAndDimensionRectangle.getStartPosition().getY());
 
 			if (module.isFixed()) {
-				this.mapProvider.provide().getFixEntityCollisionMap().connect(startCollisionTileX, startCollisionTileY, collisionModule.getActiveCollisionMap());
+				this.mapProvider.provide().getFixEntityCollisionMap().connect(startCollisionTileX, startCollisionTileY, positionAndDimensionModule.getActiveCollisionMap());
 			} else {
-				this.mapProvider.provide().getFlexibleEntityCollisionMap().connect(startCollisionTileX, startCollisionTileY, collisionModule.getActiveCollisionMap());
+				this.mapProvider.provide().getFlexibleEntityCollisionMap().connect(startCollisionTileX, startCollisionTileY, positionAndDimensionModule.getActiveCollisionMap());
 			}
 		}
 	}

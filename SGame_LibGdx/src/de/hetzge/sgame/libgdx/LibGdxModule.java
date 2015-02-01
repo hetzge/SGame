@@ -4,6 +4,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import de.hetzge.sgame.common.definition.IF_Module;
+import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableLine;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableRectangle;
 import de.hetzge.sgame.render.PredefinedRenderId;
 import de.hetzge.sgame.render.RenderConfig;
@@ -21,6 +22,7 @@ public class LibGdxModule implements IF_Module {
 		// TODO add other shapes
 		this.renderConfig.initRenderableConsumers.add((renderPool) -> {
 			renderPool.registerRenderableRessource(PredefinedRenderId.RECTANGLE, new LibGdxRenderableRectangle());
+			renderPool.registerRenderableRessource(PredefinedRenderId.LINE, new LibGdxRenderableLine());
 		});
 	}
 

@@ -70,7 +70,7 @@ public class MapModule implements IF_Module, IF_Renderable<IF_RenderableContext>
 		this.mapViewport.iterateVisibleTiles((tileX, tileY) -> {
 			for (int cx = 0; cx < this.getTileMap().getCollisionTileFactor(); cx++) {
 				for (int cy = 0; cy < this.getTileMap().getCollisionTileFactor(); cy++) {
-					if (this.getTileMap().getCollision().isCollision(tileX * this.getTileMap().getCollisionTileFactor() + cx, tileY * this.getTileMap().getCollisionTileFactor() + cy)) {
+					if (this.getTileMap().getFixEntityCollisionMap().isCollision(tileX * this.getTileMap().getCollisionTileFactor() + cx, tileY * this.getTileMap().getCollisionTileFactor() + cy)) {
 						this.renderService.render(context, new PrimitivRectangle(tileX * this.getTileMap().getTileSize() + cx * this.getTileMap().getCollisionTileSize(), tileY * this.getTileMap().getTileSize() + cy * this.getTileMap().getCollisionTileSize(), this.getTileMap().getCollisionTileSize(), this.getTileMap().getCollisionTileSize()), PredefinedRenderId.RECTANGLE);
 					}
 				}

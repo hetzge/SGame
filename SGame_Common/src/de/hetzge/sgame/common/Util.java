@@ -1,5 +1,7 @@
 package de.hetzge.sgame.common;
 
+import java.util.ArrayList;
+
 import de.hetzge.sgame.common.geometry.IF_ImmutablePosition;
 
 public final class Util {
@@ -20,11 +22,40 @@ public final class Util {
 		}
 	}
 
+	public static Integer[] valuesInsideOut(int start, int end) {
+		if (start == end) {
+			return new Integer[] { start };
+		}
+
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		int range = Math.abs(start - end);
+		boolean even = range % 2 == 0;
+		int halfRange = (int) Math.floor(range / 2f);
+		int center = start + halfRange;
+
+		if (even) {
+			for (int i = 0; i < halfRange; i++) {
+				result.add(center + (even ? -1 : 0) - i);
+				result.add(center + (even ? 0 : 1) + i);
+			}
+		} else {
+			result.add(center);
+			for (int i = 1; i <= halfRange; i++) {
+				result.add(center + (even ? -1 : 0) - i);
+				result.add(center + (even ? 0 : 1) + i);
+			}
+		}
+
+		return result.toArray(new Integer[result.size()]);
+	}
+
 	public static String toMapString(int[][] array, int markX, int markY) {
-		if (array.length == 0)
+		if (array.length == 0) {
 			return "";
-		if (array[0].length == 0)
+		}
+		if (array[0].length == 0) {
 			return "";
+		}
 
 		int[] maxLengthPerColumn = new int[array.length];
 		for (int x = 0; x < array.length; x++) {
@@ -60,8 +91,9 @@ public final class Util {
 	}
 
 	public static void main(String[] args) {
-		int[][] array = { { 1, 2, 3 }, { 1, 211, 3 }, { 100, 254454654, 3 } };
-		String mapString = Util.toMapString(array, 2, 2);
-		System.out.println(mapString);
+		Integer[] valuesInsideOut = Util.valuesInsideOut(20, 15);
+		for (Integer integer : valuesInsideOut) {
+			System.out.println(integer);
+		}
 	}
 }

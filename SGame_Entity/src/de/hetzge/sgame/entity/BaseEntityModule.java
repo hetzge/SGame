@@ -27,6 +27,10 @@ public abstract class BaseEntityModule implements Serializable {
 		return Application.INJECTOR.resolve(Dependency.dependency(SyncPool.class)).createAndRegisterSyncProperty(value);
 	}
 
+	public Entity getEntity() {
+		return this.entity;
+	}
+
 	public abstract void updateImpl();
 
 	public abstract void initImpl();

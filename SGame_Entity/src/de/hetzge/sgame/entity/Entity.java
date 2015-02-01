@@ -7,7 +7,6 @@ import javolution.util.FastMap;
 import de.hetzge.sgame.common.UUID;
 import de.hetzge.sgame.common.definition.IF_EntityType;
 import de.hetzge.sgame.entity.ki.EntityKI;
-import de.hetzge.sgame.entity.module.CollisionModule;
 import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 import de.hetzge.sgame.entity.module.RenderableModule;
 
@@ -155,14 +154,17 @@ public class Entity implements Serializable {
 
 	// optimized module access
 
-	public transient EntityModuleCache<CollisionModule> collisionModuleCache;
 	public transient EntityModuleCache<PositionAndDimensionModule> positionAndDimensionModuleCache;
 	public transient EntityModuleCache<RenderableModule> renderableModuleCache;
 
 	private void initModuleCaches() {
-		this.collisionModuleCache = new EntityModuleCache<>(CollisionModule.class);
 		this.positionAndDimensionModuleCache = new EntityModuleCache<>(PositionAndDimensionModule.class);
 		this.renderableModuleCache = new EntityModuleCache<>(RenderableModule.class);
+	}
+
+	@Override
+	public String toString() {
+		return this.id;
 	}
 
 }

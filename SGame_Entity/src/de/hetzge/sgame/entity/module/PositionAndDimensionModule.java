@@ -18,11 +18,12 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 
 	private final SyncProperty<InterpolateRectangle> dimensionSyncProperty = this.createSyncProperty(new InterpolateRectangle());
 	private final SyncProperty<Float> speedPerMsSyncProperty = this.createSyncProperty(0.02f);
+	private final SyncProperty<Path> pathSyncProperty = this.createSyncProperty(null);
 	private final ActiveMap<Entity> entityOnMap = new ActiveEntityMap().setObjectOnPosition(this.entity, 0, 0);
+	private ActiveMap<Boolean> activeCollisionMap = new ActiveMap<Boolean>().setObjectInArea(true, 5, 5);
 
 	private boolean fixed = false;
 
-	private Path path;
 	private PathPosition pathPosition;
 
 	public PositionAndDimensionModule(Entity entity) {
@@ -38,13 +39,13 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 	}
 
 	public void setPath(Path path) {
-		this.path = path;
+		this.pathSyncProperty.setValue(path);
 		this.pathPosition = new PathPosition(path, 0);
 		this.set(this.pathPosition.getCurrentWaypoint(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore()));
 	}
 
 	public void unsetPath() {
-		this.path = null;
+		this.pathSyncProperty.setValue(null);
 		this.pathPosition = null;
 		this.stopMoving();
 	}
@@ -112,12 +113,47 @@ public class PositionAndDimensionModule extends BaseEntityModule implements IF_S
 		return this.fixed;
 	}
 
+	public void setFixed(boolean fixed) {
+		this.fixed = fixed;
+	}
+
+	public Path getPath() {
+		return this.pathSyncProperty.getValue();
+	}
+
 	public boolean hasPath() {
-		return this.path != null && this.pathPosition != null;
+		return this.getPath() != null && this.pathPosition != null;
 	}
 
 	public ActiveMap<Entity> getEntityOnMap() {
 		return this.entityOnMap;
+	}
+
+	/**
+	 * set given boolean array as collision tiles
+	 */
+	public void setCollision(boolean[][] collision) {
+		if (collision.length == 0) {
+			return;
+		}
+
+		int collisionWidthInTiles = collision.length;
+		int collisionHeightInTiles = collision[0].length;
+
+		ActiveMap<Boolean> activeMap = new ActiveMap<>();
+
+		for (int x = 0; x < collisionWidthInTiles; x++) {
+			for (int y = 0; y < collisionHeightInTiles; y++) {
+				activeMap.setObjectOnPosition(collision[x][y], x, y);
+			}
+		}
+
+		this.activeCollisionMap.unchain();
+		this.activeCollisionMap = activeMap;
+	}
+
+	public ActiveMap<Boolean> getActiveCollisionMap() {
+		return this.activeCollisionMap;
 	}
 
 }

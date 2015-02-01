@@ -10,6 +10,10 @@ public class Dimension implements Serializable, IF_Dimension<Dimension> {
 	public Dimension() {
 	}
 
+	public Dimension(IF_ImmutablePosition<?> position) {
+		this(Math.abs(position.getX()), Math.abs(position.getY()));
+	}
+
 	public Dimension(float width, float height) {
 		this.width = width;
 		this.height = height;

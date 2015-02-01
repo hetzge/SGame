@@ -19,8 +19,7 @@ public final class LogUtil {
 		public String format(LogRecord record) {
 			StringBuilder sb = new StringBuilder();
 
-			sb.append(new Date(record.getMillis())).append(" ").append(record.getLevel().getLocalizedName()).append(" ").append(record.getLoggerName()).append(": ").append(this.formatMessage(record))
-					.append(LogFormatter.LINE_SEPARATOR);
+			sb.append(new Date(record.getMillis())).append(" ").append(record.getLevel().getLocalizedName()).append(" ").append(record.getLoggerName()).append(": ").append(this.formatMessage(record)).append(LogFormatter.LINE_SEPARATOR);
 
 			if (record.getThrown() != null) {
 				try {
@@ -54,5 +53,9 @@ public final class LogUtil {
 			Log.LOG.warning("can't create file logger with name " + name);
 		}
 		return Log.VOID;
+	}
+
+	public static org.apache.log4j.Logger createJLVLogger(String name) {
+		return org.apache.log4j.Logger.getLogger(name);
 	}
 }

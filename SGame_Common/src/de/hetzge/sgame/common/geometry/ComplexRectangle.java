@@ -26,6 +26,15 @@ public class ComplexRectangle implements Serializable, IF_Rectangle<Position, Di
 		this(new Position(), new Dimension());
 	}
 
+	public static ComplexRectangle createComplexRectangleCenteredOrigin(Position position, Dimension dimension) {
+		return new ComplexRectangle(position, dimension);
+	}
+
+	public static ComplexRectangle createComplexRectangleTopLeftOrigin(Position position, Dimension dimension) {
+		position = position.copy().add(new Position(dimension.calculateHalfWidth(), dimension.calculateHalfHeight()));
+		return new ComplexRectangle(position, dimension);
+	}
+
 	public void recalculateRectangle() {
 		this.startPosition = this.position.copy().subtract(new Position(this.dimension.calculateHalfWidth(), this.dimension.calculateHalfHeight()));
 		this.endPosition = this.startPosition.copy().add(new Position(this.dimension.getWidth(), this.dimension.getHeight()));

@@ -11,13 +11,21 @@ public final class Log {
 	public static final Logger LOG = Logger.getLogger("LOG");
 	public static final Logger NETWORK = Logger.getLogger("NETWORK");
 	public static final Logger PATHFINDING = Logger.getLogger("PATHFINDING");
+	public static final org.apache.log4j.Logger KI = LogUtil.createJLVLogger("KI");
 	public static final Logger SYNC_MONITOR = LogUtil.createFileLogger("SYNC_MONITOR");
 
 	static {
-		VOID.setLevel(Level.OFF);
+		Log.VOID.setLevel(Level.OFF);
+
 	}
 
 	private Log() {
+	}
+
+	public static void main(String[] args) {
+		Log.KI.debug("Hello");
+		Log.KI.debug("World");
+		Log.KI.debug("Hello");
 	}
 
 }
