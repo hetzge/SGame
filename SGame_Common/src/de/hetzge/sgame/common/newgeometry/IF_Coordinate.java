@@ -1,6 +1,9 @@
 package de.hetzge.sgame.common.newgeometry;
 
-public interface IF_Coordinate extends IF_XY<XY> {
+import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
+import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_MutableView;
+
+public interface IF_Coordinate extends IF_Coordinate_ImmutableView, IF_Coordinate_MutableView {
 	@Override
 	public default void setIX(int x) {
 		this.setX(x);

@@ -2,7 +2,7 @@ package de.hetzge.sgame.common.geometry;
 
 import java.io.Serializable;
 
-public interface IF_ImmutableComplexRectangle<POSITION extends IF_Position, DIMENSION extends IF_Dimension> extends Serializable, IF_ImmutablePrimitivRectangle {
+public interface IF_ImmutableComplexRectangle<POSITION extends IF_Position<?>, DIMENSION extends IF_Dimension<?>> extends Serializable, IF_ImmutablePrimitivRectangle {
 
 	public IF_ImmutablePosition<POSITION> getPosition();
 

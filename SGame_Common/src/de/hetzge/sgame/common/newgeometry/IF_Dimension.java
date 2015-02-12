@@ -1,6 +1,10 @@
 package de.hetzge.sgame.common.newgeometry;
 
-public interface IF_Dimension extends IF_XY<XY> {
+import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_ImmutableView;
+import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_MutableView;
+
+public interface IF_Dimension extends IF_Dimension_ImmutableView, IF_Dimension_MutableView {
+
 	@Override
 	public default void setWidth(float width) {
 		this.setX(width);
@@ -20,4 +24,5 @@ public interface IF_Dimension extends IF_XY<XY> {
 	public default float getHeight() {
 		return Math.abs(this.getY());
 	}
+
 }

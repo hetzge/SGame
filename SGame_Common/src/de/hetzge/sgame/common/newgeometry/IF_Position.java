@@ -1,6 +1,10 @@
 package de.hetzge.sgame.common.newgeometry;
 
-public interface IF_Position extends IF_XY<XY> {
+import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
+import de.hetzge.sgame.common.newgeometry.views.IF_Position_MutableView;
+
+public interface IF_Position extends IF_Position_ImmutableView, IF_Position_MutableView {
+
 	@Override
 	public default float getFX() {
 		return this.getX();
@@ -20,4 +24,5 @@ public interface IF_Position extends IF_XY<XY> {
 	public default void setFY(float y) {
 		this.setY(y);
 	}
+
 }

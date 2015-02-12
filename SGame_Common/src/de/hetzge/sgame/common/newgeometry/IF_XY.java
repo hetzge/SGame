@@ -1,14 +1,8 @@
 package de.hetzge.sgame.common.newgeometry;
 
-import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_MutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_MutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Position_MutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_XY_View;
 
-public interface IF_XY<IMPLEMENTATION extends IF_XY<?>> extends IF_XY_View, IF_Coordinate_ImmutableView, IF_Coordinate_MutableView, IF_Dimension_ImmutableView, IF_Dimension_MutableView, IF_Position_ImmutableView, IF_Position_MutableView {
+public interface IF_XY extends IF_XY_View {
 
 	public float getX();
 
@@ -18,76 +12,47 @@ public interface IF_XY<IMPLEMENTATION extends IF_XY<?>> extends IF_XY_View, IF_C
 
 	public void setY(float y);
 
-	@Override
-	public default IF_Dimension_ImmutableView asDimensionImmutableView() {
-		return this;
-	}
-
-	@Override
-	public default IF_Dimension_MutableView asDimensionMutableView() {
-		return this;
-	}
-
-	@Override
-	public default IF_Position_ImmutableView asPositionImmutableView() {
-		return this;
-	}
-
-	@Override
-	public default IF_Position_MutableView asPositionMutableView() {
-		return this;
-	}
-
-	@Override
-	public default IF_Coordinate_ImmutableView asCoordinateImmutableView() {
-		return this;
-	}
-
-	@Override
-	public default IF_Coordinate_MutableView asCoordinateMutableView() {
-		return this;
-	}
-
-	public default void add(IF_XY<?> xy) {
+	public default <T extends IF_XY> T add(T xy) {
 		this.setX(this.getX() + xy.getX());
 		this.setX(this.getY() + xy.getY());
+		return (T) this;
 	}
 
-	public default void substract(IF_XY<?> xy) {
+	public default <T extends IF_XY> T substract(T xy) {
 		this.setX(this.getX() - xy.getX());
 		this.setX(this.getY() - xy.getY());
+		return (T) this;
 	}
 
-	public default void multiply(IF_XY<?> xy) {
+	public default <T extends IF_XY> T multiply(T xy) {
 		this.setX(this.getX() * xy.getX());
 		this.setX(this.getY() * xy.getY());
+		return (T) this;
 	}
 
-	public default void divide(IF_XY<?> xy) {
+	public default <T extends IF_XY> T divide(T xy) {
 		this.setX(this.getX() / xy.getX());
 		this.setX(this.getY() / xy.getY());
+		return (T) this;
 	}
 
-	public default float distance(IF_XY<?> xy) {
-		IMPLEMENTATION abs = this.abs();
+	public default float distance(IF_XY xy) {
+		IF_XY abs = this.abs();
 		return (float) Math.sqrt(abs.getX() * abs.getX() + abs.getY() * abs.getY());
 	}
 
-	public default IMPLEMENTATION dif(IF_XY<?> xy) {
-		IMPLEMENTATION copy = this.copy();
+	public default IF_XY dif(IF_XY xy) {
+		IF_XY copy = new XY(this);
 		copy.substract(xy);
 		copy.abs();
 		return copy;
 	}
 
-	public default IMPLEMENTATION abs() {
-		return this.create(Math.abs(this.getX()), Math.abs(this.getY()));
+	public default IF_XY abs() {
+		return new XY(Math.abs(this.getX()), Math.abs(this.getY()));
 	}
 
-	public IMPLEMENTATION copy();
-
-	public IMPLEMENTATION create(float x, float y);
-
-	public IMPLEMENTATION create(IF_XY<?> xy);
-
+	public default <T extends IF_XY> T copy() {
+		return (T) this;
+	}
 }

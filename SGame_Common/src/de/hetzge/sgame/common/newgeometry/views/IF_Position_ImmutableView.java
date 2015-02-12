@@ -1,6 +1,8 @@
 package de.hetzge.sgame.common.newgeometry.views;
 
-public interface IF_Position_ImmutableView extends IF_XY_View {
+import de.hetzge.sgame.common.newgeometry.IF_XY;
+
+public interface IF_Position_ImmutableView extends IF_XY {
 
 	public float getFX();
 

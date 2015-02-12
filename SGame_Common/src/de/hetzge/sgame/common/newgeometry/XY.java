@@ -1,6 +1,13 @@
 package de.hetzge.sgame.common.newgeometry;
 
-public class XY implements IF_Position, IF_Dimension, IF_Coordinate, IF_XY<XY> {
+import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
+import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_MutableView;
+import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_ImmutableView;
+import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_MutableView;
+import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
+import de.hetzge.sgame.common.newgeometry.views.IF_Position_MutableView;
+
+public class XY implements IF_Position, IF_Dimension, IF_Coordinate {
 
 	private float x;
 	private float y;
@@ -8,6 +15,11 @@ public class XY implements IF_Position, IF_Dimension, IF_Coordinate, IF_XY<XY> {
 	public XY(float x, float y) {
 		this.x = x;
 		this.y = y;
+	}
+
+	public XY(IF_XY xy) {
+		this.x = xy.getX();
+		this.y = xy.getY();
 	}
 
 	@Override
@@ -31,18 +43,33 @@ public class XY implements IF_Position, IF_Dimension, IF_Coordinate, IF_XY<XY> {
 	}
 
 	@Override
-	public XY create(IF_XY<?> xy) {
-		return this.create(xy.getX(), xy.getY());
+	public IF_Dimension_ImmutableView asDimensionImmutableView() {
+		return this;
 	}
 
 	@Override
-	public XY create(float x, float y) {
-		return new XY(x, y);
+	public IF_Dimension_MutableView asDimensionMutableView() {
+		return this;
 	}
 
 	@Override
-	public XY copy() {
-		return this.create(this.getX(), this.getY());
+	public IF_Position_ImmutableView asPositionImmutableView() {
+		return this;
+	}
+
+	@Override
+	public IF_Position_MutableView asPositionMutableView() {
+		return this;
+	}
+
+	@Override
+	public IF_Coordinate_ImmutableView asCoordinateImmutableView() {
+		return this;
+	}
+
+	@Override
+	public IF_Coordinate_MutableView asCoordinateMutableView() {
+		return this;
 	}
 
 }
