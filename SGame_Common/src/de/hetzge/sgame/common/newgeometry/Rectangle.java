@@ -5,7 +5,7 @@ import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_MutableView;
 
-public class Rectangle implements IF_Rectangle {
+public class Rectangle implements IF_Rectangle_MutableView {
 
 	private float x;
 	private float y;
@@ -13,15 +13,30 @@ public class Rectangle implements IF_Rectangle {
 	private float width;
 	private float height;
 
+	public Rectangle() {
+		this(0f, 0f, 0f, 0f);
+	}
+
+	public Rectangle(IF_Position_ImmutableView position, IF_Dimension_ImmutableView dimension) {
+		this(position.getFX(), position.getFY(), dimension.getWidth(), dimension.getHeight());
+	}
+
+	public Rectangle(float x, float y, float width, float height) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+	}
+
 	@Override
-	public void setPosition(IF_Position_ImmutableView position) {
+	public void setPositionA(IF_Position_ImmutableView position) {
 		this.x = position.getFX();
 		this.y = position.getFY();
 	}
 
 	@Override
 	public void setCenteredPosition(IF_Position_ImmutableView position) {
-		this.setPosition(position.copy().substract(this.getHalfDimension().asPositionImmutableView()));
+		this.setPositionA(position.copy().substract(this.getHalfDimension().asPositionImmutableView()));
 	}
 
 	@Override
@@ -31,55 +46,24 @@ public class Rectangle implements IF_Rectangle {
 	}
 
 	@Override
-	public IF_Position_ImmutableView getPosition() {
+	public IF_Position_ImmutableView getCenteredPosition() {
 		return new XY(this.x, this.y);
 	}
 
 	@Override
-	public IF_Position_ImmutableView getCenteredPosition() {
-		return new XY(this.getPosition().copy().add(this.getHalfDimension()));
-	}
-
-	@Override
 	public IF_Dimension_ImmutableView getDimension() {
-		// TODO Auto-generated method stub
-		return null;
+		return new XY(this.width, this.height);
 	}
 
-	@Override
-	public IF_Position_ImmutableView getPositionA() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IF_Position_ImmutableView getPositionB() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IF_Position_ImmutableView getPositionC() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IF_Position_ImmutableView getPositionD() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public IF_Rectangle_ImmutableView asRectangleImmutableView() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	@Override
 	public IF_Rectangle_MutableView asRectangleMutableView() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 }

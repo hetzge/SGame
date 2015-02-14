@@ -12,6 +12,11 @@ public class XY implements IF_Position, IF_Dimension, IF_Coordinate {
 	private float x;
 	private float y;
 
+	public XY(float value){
+		this.x = value;
+		this.y = value;
+	}
+
 	public XY(float x, float y) {
 		this.x = x;
 		this.y = y;
@@ -33,13 +38,15 @@ public class XY implements IF_Position, IF_Dimension, IF_Coordinate {
 	}
 
 	@Override
-	public void setX(float x) {
+	public <T extends IF_XY> T setX(float x) {
 		this.x = x;
+		return (T) this;
 	}
 
 	@Override
-	public void setY(float y) {
+	public <T extends IF_XY> T setY(float y) {
 		this.y = y;
+		return (T) this;
 	}
 
 	@Override

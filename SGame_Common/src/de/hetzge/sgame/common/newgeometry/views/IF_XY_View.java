@@ -1,6 +1,8 @@
 package de.hetzge.sgame.common.newgeometry.views;
 
-public interface IF_XY_View {
+import de.hetzge.sgame.common.newgeometry.IF_XY;
+
+public interface IF_XY_View extends IF_XY {
 
 	public IF_Dimension_ImmutableView asDimensionImmutableView();
 

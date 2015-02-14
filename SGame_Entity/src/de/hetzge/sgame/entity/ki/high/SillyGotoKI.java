@@ -1,6 +1,6 @@
 package de.hetzge.sgame.entity.ki.high;
 
-import de.hetzge.sgame.common.geometry.IF_ImmutablePosition;
+import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.entity.OnMapService;
 import de.hetzge.sgame.entity.ki.BaseKI;
@@ -30,7 +30,7 @@ public class SillyGotoKI extends BaseKI {
 			{
 				this.on(KIState.FAILURE, () -> SillyGotoKI.this.changeActiveKI(new WaitKI(SillyGotoKI.this.entity, 5000), new KICallback()));
 				this.on(KIState.SUCCESS, () -> {
-					IF_ImmutablePosition<?> goalPosition = SillyGotoKI.this.onMapService.findPositionAround(findFixEntityKI.getResult(), SillyGotoKI.this.entity);
+					IF_Position_ImmutableView goalPosition = SillyGotoKI.this.onMapService.findPositionAround(findFixEntityKI.getResult(), SillyGotoKI.this.entity);
 					if (goalPosition != null) {
 						SillyGotoKI.this.changeActiveKI(new GotoKI(SillyGotoKI.this.entity, goalPosition));
 					} else {

@@ -1,6 +1,7 @@
 package de.hetzge.sgame.sync;
 
 import java.io.Serializable;
+import java.util.function.Consumer;
 
 import de.hetzge.sgame.common.UUID;
 import de.hetzge.sgame.sync.message.SyncMessage;
@@ -31,7 +32,7 @@ public class SyncProperty<TYPE> implements Serializable {
 
 	public void setChanged() {
 		this.oldValue = null; // TODO Optimierung damit auch innere Werte auf
-								// Änderungen überprüft werden (equals)
+		// Änderungen überprüft werden (equals)
 	}
 
 	protected SyncMessage flush() {
@@ -43,6 +44,11 @@ public class SyncProperty<TYPE> implements Serializable {
 			return syncMessage;
 		}
 		return null;
+	}
+
+	public void change(Consumer<TYPE> consumer){
+		consumer.accept(this.value);
+		this.setChanged();
 	}
 
 	public TYPE getValue() {

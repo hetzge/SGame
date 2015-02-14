@@ -18,9 +18,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.definition.IF_RenderInformation;
-import de.hetzge.sgame.common.geometry.ComplexRectangle;
-import de.hetzge.sgame.common.geometry.Dimension;
-import de.hetzge.sgame.common.geometry.Position;
+import de.hetzge.sgame.common.newgeometry.IF_XY;
+import de.hetzge.sgame.common.newgeometry.Rectangle;
+import de.hetzge.sgame.common.newgeometry.XY;
+import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableContext;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableTexture;
 import de.hetzge.sgame.map.GroundType;
@@ -176,10 +177,10 @@ public class LibGdxRenderableFactory implements IF_RenderableFactory, Applicatio
 	}
 
 	private static boolean isNoAlphaAround(Pixmap pixmap, int x, int y) {
-		Position position = new Position(x, y);
+		IF_XY position = new XY(x, y);
 		boolean noAlphaAround = false;
 		for (Orientation orientation : Orientation.values()) {
-			Position positionAround = position.copy().add(orientation.orientationFactor);
+			IF_XY positionAround = position.copy().add(orientation.orientationFactor);
 			if (positionAround.getX() > 0 && positionAround.getY() > 0 && positionAround.getX() < pixmap.getWidth() && positionAround.getY() < pixmap.getHeight()) {
 				Color color = new Color(pixmap.getPixel((int) positionAround.getX(), (int) positionAround.getY()));
 				if (color.a <= 0.2) {
@@ -301,8 +302,8 @@ public class LibGdxRenderableFactory implements IF_RenderableFactory, Applicatio
 		this.renderable.render(this.libGdxRenderableContext, new IF_RenderInformation() {
 
 			@Override
-			public ComplexRectangle getRenderedRectangle() {
-				return new ComplexRectangle(new Position(100, 100), new Dimension(100, 100));
+			public IF_Rectangle_ImmutableView getRenderedRectangle() {
+				return new Rectangle(new XY(100, 100), new XY(100, 100));
 			}
 
 			@Override

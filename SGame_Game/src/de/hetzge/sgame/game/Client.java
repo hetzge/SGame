@@ -3,8 +3,7 @@ package de.hetzge.sgame.game;
 import java.util.Set;
 
 import de.hetzge.sgame.common.Orientation;
-import de.hetzge.sgame.common.geometry.IF_ImmutablePosition;
-import de.hetzge.sgame.common.geometry.InterpolatePosition;
+import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 import de.hetzge.sgame.game.Definition.AnimationKey;
@@ -66,7 +65,7 @@ public class Client extends BaseGame {
 		Set<Entity> entitiesByType = this.entityPool.getEntitiesByType(EntityType.SILLY_BLOCK);
 		for (Entity entity : entitiesByType) {
 			PositionAndDimensionModule module = entity.getModule(PositionAndDimensionModule.class);
-			IF_ImmutablePosition<InterpolatePosition> position = module.getPositionAndDimensionRectangle().getPosition();
+			IF_Position_ImmutableView position = module.getPositionAndDimensionRectangle().getCenteredPosition();
 			// System.out.println(position.getStartValue() + " " +
 			// position.getStartTime() + "  <" + position.getX() + " | " +
 			// position.getY() + "> " + position.getEndTime() + " "

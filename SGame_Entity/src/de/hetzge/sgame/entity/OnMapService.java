@@ -4,18 +4,16 @@ import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.Util;
 import de.hetzge.sgame.common.definition.IF_Map;
-import de.hetzge.sgame.common.geometry.Dimension;
-import de.hetzge.sgame.common.geometry.IF_ImmutableComplexRectangle;
-import de.hetzge.sgame.common.geometry.IF_ImmutablePosition;
-import de.hetzge.sgame.common.geometry.IF_ImmutablePrimitivRectangle;
-import de.hetzge.sgame.common.geometry.InterpolatePosition;
-import de.hetzge.sgame.common.geometry.Position;
+import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
+import de.hetzge.sgame.common.newgeometry.XY;
+import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
+import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 
 public class OnMapService {
 
 	public class On {
 
-		private final IF_ImmutablePrimitivRectangle rectangle;
+		private final IF_Rectangle_ImmutableView rectangle;
 
 		private final int startCollisionTileX;
 		private final int startCollisionTileY;
@@ -32,20 +30,27 @@ public class OnMapService {
 		private final int widthInTiles;
 		private final int heightInTiles;
 
-		public On(IF_ImmutablePrimitivRectangle rectangle) {
+		public On(IF_Rectangle_ImmutableView rectangle) {
 			IF_Map map = OnMapService.this.mapProvider.provide();
 
 			this.rectangle = rectangle;
 
-			this.startCollisionTileX = map.convertPxInCollisionTile(rectangle.getAX());
-			this.startCollisionTileY = map.convertPxInCollisionTile(rectangle.getAY());
-			this.endCollisionTileX = map.convertPxInCollisionTile(rectangle.getDX());
-			this.endCollisionTileY = map.convertPxInCollisionTile(rectangle.getDY());
+			IF_Position_ImmutableView positionA = rectangle.getPositionA();
+			IF_Position_ImmutableView positionD = rectangle.getPositionD();
+			IF_Coordinate collisionTilePositionA = map.convertPxXYInCollisionTileXY(positionA);
+			IF_Coordinate tilePositionA = map.convertPxXYInTileXY(positionA);
+			IF_Coordinate collisionTilePositionD = map.convertPxXYInCollisionTileXY(positionD);
+			IF_Coordinate tilePositionD = map.convertPxXYInTileXY(positionD);
 
-			this.startTileX = map.convertPxInTile(rectangle.getAX());
-			this.startTileY = map.convertPxInTile(rectangle.getAY());
-			this.endTileX = map.convertPxInTile(rectangle.getDX());
-			this.endTileY = map.convertPxInTile(rectangle.getDY());
+			this.startCollisionTileX = collisionTilePositionA.getIX();
+			this.startCollisionTileY = collisionTilePositionA.getIY();
+			this.endCollisionTileX = collisionTilePositionD.getIX();
+			this.endCollisionTileY = collisionTilePositionD.getIY();
+
+			this.startTileX = tilePositionA.getIX();
+			this.startTileY = tilePositionA.getIY();
+			this.endTileX = tilePositionD.getIX();
+			this.endTileY = tilePositionD.getIY();
 
 			this.widthInCollisionTiles = this.endCollisionTileX - this.startCollisionTileX + 1;
 			this.heightInCollisionTiles = this.endCollisionTileY - this.startCollisionTileY + 1;
@@ -64,8 +69,8 @@ public class OnMapService {
 			return collisionArray;
 		}
 
-		public IF_ImmutablePosition<?> findCollisionPositionAround(On other) {
-			Orientation orientation = new Position(other.rectangle.getX(), other.rectangle.getY()).evaluateOrientationToOtherPosition(new Position(this.rectangle.getX(), this.rectangle.getY()));
+		public IF_Position_ImmutableView findCollisionPositionAround(On other) {
+			Orientation orientation = other.rectangle.getCenteredPosition().orientationToOther(this.rectangle.getCenteredPosition());
 			switch (orientation) {
 			case EAST:
 				return this.findCollisionPositionAround(other, Orientation.EAST, Orientation.NORTH, Orientation.SOUTH, Orientation.WEST);
@@ -80,9 +85,9 @@ public class OnMapService {
 			}
 		}
 
-		private IF_ImmutablePosition<?> findCollisionPositionAround(On other, Orientation... orientations) {
+		private IF_Position_ImmutableView findCollisionPositionAround(On other, Orientation... orientations) {
 			for (Orientation orientation : orientations) {
-				IF_ImmutablePosition<?> result = null;
+				IF_Position_ImmutableView result = null;
 				switch (orientation) {
 				case EAST:
 					result = this.findCollisionPositionAroundRight(other);
@@ -106,7 +111,7 @@ public class OnMapService {
 			return null;
 		}
 
-		private IF_ImmutablePosition<?> findCollisionPositionAroundTop(On other) {
+		private IF_Position_ImmutableView findCollisionPositionAroundTop(On other) {
 			int startX = this.startCollisionTileX - other.widthInCollisionTiles;
 			int startY = this.startCollisionTileY - other.heightInCollisionTiles;
 			int endX = this.endCollisionTileX + other.widthInCollisionTiles;
@@ -114,7 +119,7 @@ public class OnMapService {
 			return this.findCollisionPositionAroundRow(startX, startY, endX, endY, other.widthInCollisionTiles, other.heightInCollisionTiles, other);
 		}
 
-		private IF_ImmutablePosition<?> findCollisionPositionAroundBottom(On other) {
+		private IF_Position_ImmutableView findCollisionPositionAroundBottom(On other) {
 			int startX = this.startCollisionTileX - other.widthInCollisionTiles;
 			int startY = this.endCollisionTileY + 1;
 			int endX = this.endCollisionTileX + other.widthInCollisionTiles;
@@ -122,7 +127,7 @@ public class OnMapService {
 			return this.findCollisionPositionAroundRow(startX, startY, endX, endY, other.widthInCollisionTiles, other.heightInCollisionTiles, other);
 		}
 
-		private IF_ImmutablePosition<?> findCollisionPositionAroundLeft(On other) {
+		private IF_Position_ImmutableView findCollisionPositionAroundLeft(On other) {
 			int startX = this.startCollisionTileX - other.widthInCollisionTiles;
 			int startY = this.startCollisionTileY - other.heightInCollisionTiles;
 			int endX = startX;
@@ -130,7 +135,7 @@ public class OnMapService {
 			return this.findCollisionPositionAroundRow(startX, startY, endX, endY, other.widthInCollisionTiles, other.heightInCollisionTiles, other);
 		}
 
-		private IF_ImmutablePosition<?> findCollisionPositionAroundRight(On other) {
+		private IF_Position_ImmutableView findCollisionPositionAroundRight(On other) {
 			int startX = this.endCollisionTileX + 1;
 			int startY = this.startCollisionTileY - other.heightInCollisionTiles;
 			int endX = startX;
@@ -138,7 +143,7 @@ public class OnMapService {
 			return this.findCollisionPositionAroundRow(startX, startY, endX, endY, other.widthInCollisionTiles, other.heightInCollisionTiles, other);
 		}
 
-		private IF_ImmutablePosition<?> findCollisionPositionAroundRow(int startX, int startY, int endX, int endY, int width, int height, On other) {
+		private IF_Position_ImmutableView findCollisionPositionAroundRow(int startX, int startY, int endX, int endY, int width, int height, On other) {
 			IF_Map map = OnMapService.this.mapProvider.provide();
 
 			Integer[] xValues = Util.valuesInsideOut(startX, endX);
@@ -154,7 +159,7 @@ public class OnMapService {
 							}
 						}
 					}
-					return new Position(map.convertCollisionTileInPx(startX) + map.convertCollisionTileInPx(width) / 2, map.convertCollisionTileInPx(startY) + map.convertCollisionTileInPx(height) / 2);
+					return new XY(map.convertCollisionTileInPx(startX) + map.convertCollisionTileInPx(width) / 2, map.convertCollisionTileInPx(startY) + map.convertCollisionTileInPx(height) / 2);
 				}
 			}
 			return null;
@@ -167,14 +172,14 @@ public class OnMapService {
 		this.mapProvider = mapProvider;
 	}
 
-	public On on(IF_ImmutablePrimitivRectangle rectangle) {
+	public On on(IF_Rectangle_ImmutableView rectangle) {
 		return new On(rectangle);
 	}
 
-	public IF_ImmutablePosition<?> findPositionAround(Entity around, Entity entity) {
+	public IF_Position_ImmutableView findPositionAround(Entity around, Entity entity) {
 		if (around.positionAndDimensionModuleCache.isAvailable() && entity.positionAndDimensionModuleCache.isAvailable()) {
-			IF_ImmutableComplexRectangle<InterpolatePosition, Dimension> aroundRectangle = around.positionAndDimensionModuleCache.get().getPositionAndDimensionRectangle();
-			IF_ImmutableComplexRectangle<InterpolatePosition, Dimension> entityRectangle = entity.positionAndDimensionModuleCache.get().getPositionAndDimensionRectangle();
+			IF_Rectangle_ImmutableView aroundRectangle = around.positionAndDimensionModuleCache.get().getPositionAndDimensionRectangle();
+			IF_Rectangle_ImmutableView entityRectangle = entity.positionAndDimensionModuleCache.get().getPositionAndDimensionRectangle();
 			return this.on(aroundRectangle).findCollisionPositionAround(this.on(entityRectangle));
 		} else {
 			throw new IllegalArgumentException("The given entities (or one of them) has no position to evaluate position arround.");

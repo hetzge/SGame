@@ -3,7 +3,7 @@ package de.hetzge.sgame.game;
 import se.jbee.inject.bootstrap.BootstrapperBundle;
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.application.Application;
-import de.hetzge.sgame.common.geometry.Dimension;
+import de.hetzge.sgame.common.newgeometry.XY;
 import de.hetzge.sgame.entity.EntityFactory;
 import de.hetzge.sgame.entity.EntityModule;
 import de.hetzge.sgame.entity.EntityPool;
@@ -53,7 +53,7 @@ public class BaseGame extends Application {
 			renderableModule.setOrientation(Orientation.SOUTH);
 
 			PositionAndDimensionModule positionAndDimensionModule = new PositionAndDimensionModule(entity);
-			positionAndDimensionModule.setDimension(new Dimension(32f, 48f));
+			positionAndDimensionModule.setDimension(new XY(32f, 48f));
 
 			entity.registerModules(renderableModule, positionAndDimensionModule);
 
@@ -65,7 +65,7 @@ public class BaseGame extends Application {
 			renderableModule.setEntityKey(EntityType.TREE);
 
 			PositionAndDimensionModule positionAndDimensionModule = new PositionAndDimensionModule(entity);
-			positionAndDimensionModule.setDimension(new Dimension(64f, 64f));
+			positionAndDimensionModule.setDimension(new XY(64f, 64f));
 			positionAndDimensionModule.setFixed(true);
 			positionAndDimensionModule.setCollision(this.onMapService.on(positionAndDimensionModule.getPositionAndDimensionRectangle()).asCollisionArray());
 

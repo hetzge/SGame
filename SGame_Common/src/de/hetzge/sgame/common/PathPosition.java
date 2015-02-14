@@ -2,8 +2,8 @@ package de.hetzge.sgame.common;
 
 import java.io.Serializable;
 
-import de.hetzge.sgame.common.geometry.IF_ImmutablePosition;
-import de.hetzge.sgame.common.geometry.Position;
+import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
+import de.hetzge.sgame.common.newgeometry.IF_Position;
 
 public class PathPosition implements Serializable {
 
@@ -49,7 +49,11 @@ public class PathPosition implements Serializable {
 		}
 	}
 
-	public Position getCurrentWaypoint() {
+	public IF_Coordinate getCurrentCollisionCoordinate() {
+		return this.path.getPathCollisionCoordinate(this.positionOnPath);
+	}
+
+	public IF_Position getCurrentPosition() {
 		return this.path.getPathPosition(this.positionOnPath);
 	}
 
@@ -57,28 +61,28 @@ public class PathPosition implements Serializable {
 		if (this.isOnEndOfPath()) {
 			return Orientation.DEFAULT;
 		}
-		Position waypointBefore = this.path.getPathPosition(this.positionOnPath - 1);
-		return waypointBefore.evaluateOrientationToOtherPosition(this.getCurrentWaypoint());
+		IF_Position waypointBefore = this.path.getPathPosition(this.positionOnPath - 1);
+		return waypointBefore.orientationToOther(this.getCurrentCollisionCoordinate());
 	}
 
 	public float getDistanceToWaypointBefore() {
 		if (this.isOnStartOfPath()) {
 			return 0f;
 		}
-		Position waypointBefore = this.path.getPathPosition(this.positionOnPath - 1);
-		return waypointBefore.distance(this.getCurrentWaypoint());
+		IF_Position waypointBefore = this.path.getPathPosition(this.positionOnPath - 1);
+		return waypointBefore.distance(this.getCurrentCollisionCoordinate());
 	}
 
-	public boolean continueOnPath(IF_ImmutablePosition<?> position) {
-		if (!this.isOnEndOfPath() && this.getCurrentWaypoint().distance(position) < 1F) {
+	public boolean continueOnPath(IF_Position position) {
+		if (!this.isOnEndOfPath() && this.getCurrentCollisionCoordinate().distance(position) < 1F) {
 			this.moveForward();
 			return true;
 		}
 		return false;
 	}
 
-	public boolean reachedEndOfPath(IF_ImmutablePosition<?> position) {
-		return this.isOnEndOfPath() && this.getCurrentWaypoint().distance(position) < 1F;
+	public boolean reachedEndOfPath(IF_Position position) {
+		return this.isOnEndOfPath() && this.getCurrentCollisionCoordinate().distance(position) < 1F;
 	}
 
 }

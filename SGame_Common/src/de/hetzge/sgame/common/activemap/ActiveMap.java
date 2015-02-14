@@ -8,7 +8,8 @@ import java.util.Map;
 import javolution.util.FastCollection;
 import javolution.util.FastMap;
 import javolution.util.FastSet;
-import de.hetzge.sgame.common.hierarchical.XY;
+import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
+import de.hetzge.sgame.common.newgeometry.XY;
 
 public class ActiveMap<TYPE> implements Serializable {
 
@@ -88,7 +89,7 @@ public class ActiveMap<TYPE> implements Serializable {
 
 	// private final ActiveNode<TYPE>[][] nodes;
 
-	private final Map<XY, ActiveNode<TYPE>> nodesByXY = new FastMap<XY, ActiveNode<TYPE>>().parallel();
+	private final Map<IF_Coordinate, ActiveNode<TYPE>> nodesByXY = new FastMap<IF_Coordinate, ActiveNode<TYPE>>().parallel();
 
 	public ActiveMap() {
 	}
@@ -97,8 +98,8 @@ public class ActiveMap<TYPE> implements Serializable {
 	 * connects the activeMap to the current one at the given position
 	 */
 	public void connect(int startX, int startY, ActiveMap<TYPE> activeMap) {
-		for (Map.Entry<XY, ActiveNode<TYPE>> entry : activeMap.nodesByXY.entrySet()) {
-			activeMap.getActiveNode(entry.getKey().x, entry.getKey().y).connectTo(this.getActiveNode(startX + entry.getKey().x, startY + entry.getKey().y));
+		for (Map.Entry<IF_Coordinate, ActiveNode<TYPE>> entry : activeMap.nodesByXY.entrySet()) {
+			activeMap.getActiveNode(entry.getKey().getIX(), entry.getKey().getIY()).connectTo(this.getActiveNode(startX + entry.getKey().getIX(), startY + entry.getKey().getIY()));
 		}
 	}
 

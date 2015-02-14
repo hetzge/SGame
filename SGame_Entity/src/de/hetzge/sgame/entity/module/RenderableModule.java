@@ -2,8 +2,8 @@ package de.hetzge.sgame.entity.module;
 
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.definition.IF_EntityType;
-import de.hetzge.sgame.common.geometry.ComplexRectangle;
-import de.hetzge.sgame.common.geometry.IF_ImmutableComplexRectangle;
+import de.hetzge.sgame.common.newgeometry.Rectangle;
+import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 import de.hetzge.sgame.entity.BaseEntityModule;
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.render.IF_AnimationKey;
@@ -59,12 +59,12 @@ public class RenderableModule extends BaseEntityModule {
 		}
 	}
 
-	public IF_ImmutableComplexRectangle<?, ?> getRenderedRectangle() {
+	public IF_Rectangle_ImmutableView getRenderedRectangle() {
 		PositionAndDimensionModule positionAndDimensionModule = this.entity.getModule(PositionAndDimensionModule.class);
 		if (positionAndDimensionModule != null) {
 			return positionAndDimensionModule.getPositionAndDimensionRectangle();
 		} else {
-			return new ComplexRectangle();
+			return new Rectangle();
 		}
 	}
 

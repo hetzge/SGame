@@ -3,9 +3,11 @@ package de.hetzge.sgame.render;
 import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.IF_XYFunction;
 import de.hetzge.sgame.common.definition.IF_Map;
-import de.hetzge.sgame.common.geometry.PrimitivRectangle;
+import de.hetzge.sgame.common.newgeometry.Rectangle;
+import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_ImmutableView;
+import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 
-public class Viewport extends PrimitivRectangle {
+public class Viewport extends Rectangle {
 
 	private final IF_MapProvider mapProvider;
 
@@ -16,10 +18,13 @@ public class Viewport extends PrimitivRectangle {
 	public void iterateVisibleTiles(IF_XYFunction<Void> function) {
 		IF_Map map = this.mapProvider.provide();
 
-		int startX = map.convertPxInTile(this.getAX()) - 1;
-		int startY = map.convertPxInTile(this.getAY()) - 1;
-		int endX = startX + map.convertPxInTile(this.getWidth()) + 3;
-		int endY = startY + map.convertPxInTile(this.getHeight()) + 3;
+		IF_Position_ImmutableView positionA = this.getPositionA();
+		IF_Dimension_ImmutableView dimension = this.getDimension();
+
+		int startX = map.convertPxInTile(positionA.getFX()) - 1;
+		int startY = map.convertPxInTile(positionA.getFY()) - 1;
+		int endX = startX + map.convertPxInTile(dimension.getWidth()) + 3;
+		int endY = startY + map.convertPxInTile(dimension.getHeight()) + 3;
 		if (startX < 0) {
 			startX = 0;
 		}

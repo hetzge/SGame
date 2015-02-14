@@ -4,9 +4,8 @@ import java.util.Set;
 
 import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.Util;
-import de.hetzge.sgame.common.geometry.Dimension;
-import de.hetzge.sgame.common.geometry.IF_ImmutableComplexRectangle;
-import de.hetzge.sgame.common.geometry.InterpolatePosition;
+import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
+import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 import de.hetzge.sgame.common.timer.Timer;
 import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 
@@ -42,23 +41,21 @@ public class EntityOnMapThread extends Thread {
 	private void updateCollisionOnMap(PositionAndDimensionModule positionAndDimensionModule) {
 		if (positionAndDimensionModule.entity.positionAndDimensionModuleCache.isAvailable()) {
 			PositionAndDimensionModule module = positionAndDimensionModule.entity.positionAndDimensionModuleCache.get();
-			IF_ImmutableComplexRectangle<InterpolatePosition, Dimension> positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
+			IF_Rectangle_ImmutableView positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
 
-			int startCollisionTileX = this.mapProvider.provide().convertPxInCollisionTile(positionAndDimensionRectangle.getStartPosition().getX());
-			int startCollisionTileY = this.mapProvider.provide().convertPxInCollisionTile(positionAndDimensionRectangle.getStartPosition().getY());
+			IF_Coordinate entityStartCoordinate = this.mapProvider.provide().convertPxXYInCollisionTileXY(positionAndDimensionRectangle.getPositionA().asPositionImmutableView());
 
 			if (module.isFixed()) {
-				this.mapProvider.provide().getFixEntityCollisionMap().connect(startCollisionTileX, startCollisionTileY, positionAndDimensionModule.getActiveCollisionMap());
+				this.mapProvider.provide().getFixEntityCollisionMap().connect(entityStartCoordinate.getIX(), entityStartCoordinate.getIY(), positionAndDimensionModule.getActiveCollisionMap());
 			} else {
-				this.mapProvider.provide().getFlexibleEntityCollisionMap().connect(startCollisionTileX, startCollisionTileY, positionAndDimensionModule.getActiveCollisionMap());
+				this.mapProvider.provide().getFlexibleEntityCollisionMap().connect(entityStartCoordinate.getIX(), entityStartCoordinate.getIY(), positionAndDimensionModule.getActiveCollisionMap());
 			}
 		}
 	}
 
 	private void updateEntityOnMap(PositionAndDimensionModule positionAndDimensionModule) {
-		IF_ImmutableComplexRectangle<InterpolatePosition, Dimension> rectangle = positionAndDimensionModule.getPositionAndDimensionRectangle();
-		int x = this.mapProvider.provide().convertPxInTile(rectangle.getX());
-		int y = this.mapProvider.provide().convertPxInTile(rectangle.getY());
-		this.activeEntityMap.connect(x, y, positionAndDimensionModule.getEntityOnMap());
+		IF_Rectangle_ImmutableView rectangle = positionAndDimensionModule.getPositionAndDimensionRectangle();
+		IF_Coordinate entityCenteredCoordinate = this.mapProvider.provide().convertPxXYInCollisionTileXY(rectangle.getCenteredPosition());
+		this.activeEntityMap.connect(entityCenteredCoordinate.getIX(), entityCenteredCoordinate.getIY(), positionAndDimensionModule.getEntityOnMap());
 	}
 }

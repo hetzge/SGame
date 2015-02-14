@@ -1,6 +1,8 @@
 package de.hetzge.sgame.common.newgeometry.views;
 
-public interface IF_Rectangle_View {
+import java.io.Serializable;
+
+public interface IF_Rectangle_View extends Serializable {
 
 	public IF_Rectangle_ImmutableView asRectangleImmutableView();
 

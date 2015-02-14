@@ -2,7 +2,7 @@ package de.hetzge.sgame.render;
 
 import de.hetzge.sgame.common.RenderInformation;
 import de.hetzge.sgame.common.definition.IF_RenderInformation;
-import de.hetzge.sgame.common.geometry.IF_ImmutablePrimitivRectangle;
+import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 
 public final class RenderService {
 
@@ -23,20 +23,20 @@ public final class RenderService {
 		this.renderableIdPool = renderableIdPool;
 	}
 
-	public <CONTEXT extends IF_RenderableContext> void render(CONTEXT context, IF_ImmutablePrimitivRectangle rectangle, int renderId) {
+	public <CONTEXT extends IF_RenderableContext> void render(CONTEXT context, IF_Rectangle_ImmutableView rectangle, int renderId) {
 		this.renderInformation.rectangle = rectangle;
 		this.renderInformation.renderId = renderId;
 		this.render(context, this.renderInformation);
 	}
 
-	public <CONTEXT extends IF_RenderableContext> void render(CONTEXT context, IF_ImmutablePrimitivRectangle rectangle, RenderableKey renderableKey) {
+	public <CONTEXT extends IF_RenderableContext> void render(CONTEXT context, IF_Rectangle_ImmutableView rectangle, RenderableKey renderableKey) {
 		this.renderInformation.rectangle = rectangle;
 		this.renderInformation.renderId = this.renderableIdPool.get(renderableKey);
 		this.render(context, this.renderInformation);
 	}
 
 	public <CONTEXT extends IF_RenderableContext> void render(CONTEXT context, IF_RenderInformation renderInformation) {
-		IF_ImmutablePrimitivRectangle renderedRectangle = renderInformation.getRenderedRectangle();
+		IF_Rectangle_ImmutableView renderedRectangle = renderInformation.getRenderedRectangle();
 		if (this.viewport.doesOverlapWith(renderedRectangle)) {
 			IF_RenderableWrapper<CONTEXT> renderable = (IF_RenderableWrapper<CONTEXT>) this.renderableRessourcePool.getRenderableRessource(renderInformation.getRenderId());
 			if (renderable == null) {

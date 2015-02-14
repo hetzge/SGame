@@ -2,17 +2,9 @@ package de.hetzge.sgame.common;
 
 import java.util.ArrayList;
 
-import de.hetzge.sgame.common.geometry.IF_ImmutablePosition;
-
 public final class Util {
 
 	private Util() {
-	}
-
-	public static float calculateDistance(IF_ImmutablePosition<?> position, IF_ImmutablePosition<?> otherPosition) {
-		float a = Math.abs(position.getX() - otherPosition.getX());
-		float b = Math.abs(position.getY() - otherPosition.getY());
-		return (float) Math.sqrt(a * a + b * b);
 	}
 
 	public static void sleep(long timeInMs) {
@@ -88,6 +80,20 @@ public final class Util {
 		}
 
 		return builder.toString();
+	}
+
+	public static float interpolateFloat(float startValue, long startTimeInMs, float endValue, long endTimeInMs) {
+		long interpolationTimeSpan = endTimeInMs - startTimeInMs;
+		if (interpolationTimeSpan == 0) {
+			return endValue;
+		}
+		long currentMs = System.currentTimeMillis() - startTimeInMs;
+		float interpolationTimeSpanDoneInPercent = (float) currentMs / interpolationTimeSpan;
+		if (interpolationTimeSpanDoneInPercent > 1f) {
+			return endValue;
+		}
+		float valueSpan = endValue - startValue;
+		return startValue + valueSpan * interpolationTimeSpanDoneInPercent;
 	}
 
 	public static void main(String[] args) {

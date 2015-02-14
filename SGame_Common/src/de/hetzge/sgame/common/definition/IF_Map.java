@@ -1,6 +1,11 @@
 package de.hetzge.sgame.common.definition;
 
 import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
+import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
+import de.hetzge.sgame.common.newgeometry.IF_Position;
+import de.hetzge.sgame.common.newgeometry.XY;
+import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
+import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 
 public interface IF_Map {
 
@@ -52,6 +57,22 @@ public interface IF_Map {
 
 	public default float convertCollisionTileInPx(int collisionTile) {
 		return collisionTile * this.getCollisionTileSize();
+	}
+
+	public default IF_Position convertCollisionTileXYInPxXY(IF_Coordinate_ImmutableView coordinate) {
+		return coordinate.copy().multiply(new XY(this.getCollisionTileSize()));
+	}
+
+	public default IF_Position convertTileXYInPxXY(IF_Coordinate_ImmutableView coordinate) {
+		return coordinate.copy().multiply(new XY(this.getTileSize()));
+	}
+
+	public default IF_Coordinate convertPxXYInCollisionTileXY(IF_Position_ImmutableView position) {
+		return position.copy().divide(new XY(this.getCollisionTileSize()));
+	}
+
+	public default IF_Coordinate convertPxXYInTileXY(IF_Position_ImmutableView position){
+		return position.copy().divide(new XY(this.getTileSize()));
 	}
 
 }

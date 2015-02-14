@@ -5,9 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.hetzge.sgame.common.definition.IF_Collision;
-import de.hetzge.sgame.common.definition.IF_Map;
-import de.hetzge.sgame.common.geometry.Position;
-import de.hetzge.sgame.common.hierarchical.XY;
+import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
+import de.hetzge.sgame.common.newgeometry.XY;
 
 public final class AStarService {
 
@@ -23,14 +22,14 @@ public final class AStarService {
 	/**
 	 * call with current rating 1 and changed start goal coordinates
 	 */
-	private XY[] rate(int[][] rating, IF_Collision mapCollision, int currentRating, XY startRatePosition, XY goalRatePosition, boolean[][] entityCollision) {
+	private XY[] rate(int[][] rating, IF_Collision mapCollision, int currentRating, IF_Coordinate startRatePosition, IF_Coordinate goalRatePosition, boolean[][] entityCollision) {
 		// TODO entityCollision
 
-		int x = startRatePosition.x;
-		int y = startRatePosition.y;
+		int x = startRatePosition.getIX();
+		int y = startRatePosition.getIY();
 
-		int goalX = goalRatePosition.x;
-		int goalY = goalRatePosition.y;
+		int goalX = goalRatePosition.getIX();
+		int goalY = goalRatePosition.getIY();
 
 		XY[] next = new XY[4];
 
@@ -95,9 +94,9 @@ public final class AStarService {
 		}
 	}
 
-	public List<Position> evaluatePath(int[][] rating, int x, int y, int goalX, int goalY) {
+	public List<IF_Coordinate> evaluatePath(int[][] rating, int x, int y, int goalX, int goalY) {
 
-		List<Position> result = new ArrayList<>(rating[x][y]);
+		List<IF_Coordinate> result = new ArrayList<>(rating[x][y]);
 
 		int mapWidthInCollisionTiles = rating.length;
 		int mapHeightInCollisionTiles = rating[0].length;
@@ -157,10 +156,8 @@ public final class AStarService {
 			x = nextSelectionX;
 			y = nextSelectionY;
 
-			float xInPx = this.mapProvider.provide().convertCollisionTileInPx(x);
-			float yInPx = this.mapProvider.provide().convertCollisionTileInPx(y);
-			Position position = new Position(xInPx, yInPx);
-			result.add(position);
+			IF_Coordinate coordinate = new XY(x, y);
+			result.add(coordinate);
 		}
 
 		return result;
@@ -175,8 +172,8 @@ public final class AStarService {
 
 		int step = 1;
 
-		XY start = new XY(startX, startY);
-		XY goal = new XY(goalX, goalY);
+		IF_Coordinate start = new XY(startX, startY);
+		IF_Coordinate goal = new XY(goalX, goalY);
 
 		List<XY[]> trampolines;
 		List<XY[]> nextTramponlines = new LinkedList<>();
@@ -184,7 +181,7 @@ public final class AStarService {
 		XY[] firstTrampoline = this.rate(rating, mapCollision, step, goal, start, collision);
 		nextTramponlines.add(firstTrampoline);
 
-		List<Position> path = new LinkedList<>();
+		List<IF_Coordinate> path = new LinkedList<>();
 
 		boolean found = false;
 		loop: while (!found) {
@@ -215,12 +212,7 @@ public final class AStarService {
 
 		if (found) {
 			path = this.evaluatePath(rating, startX, startY, goalX, goalY);
-
-			IF_Map map = this.mapProvider.provide();
-			Position startPositionInPx = new Position(map.convertCollisionTileInPx(startX), map.convertCollisionTileInPx(startY));
-			Position goalPositionInPx = new Position(map.convertCollisionTileInPx(goalX), map.convertCollisionTileInPx(goalY));
-
-			return new Path(startPositionInPx, goalPositionInPx, path);
+			return new Path(start, goal, path, this.mapProvider.provide());
 		} else {
 			return null;
 		}

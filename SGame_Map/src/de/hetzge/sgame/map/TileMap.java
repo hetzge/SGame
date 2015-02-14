@@ -8,7 +8,7 @@ import de.hetzge.sgame.common.Stopwatch;
 import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
-import de.hetzge.sgame.common.geometry.IF_ImmutablePrimitivRectangle;
+import de.hetzge.sgame.common.newgeometry.IF_XY;
 import de.hetzge.sgame.map.tmx.TMXMap;
 import de.hetzge.sgame.map.tmx.TMXMap.Layer;
 import de.hetzge.sgame.render.IF_RenderableLoader;
@@ -16,7 +16,7 @@ import de.hetzge.sgame.render.PredefinedRenderId;
 
 public class TileMap implements IF_Map, Serializable {
 
-	public class Tile implements Serializable, IF_ImmutablePrimitivRectangle {
+	public class Tile implements IF_XY {
 
 		// Rectangle interface auch verwenden
 
@@ -45,15 +45,14 @@ public class TileMap implements IF_Map, Serializable {
 			return this.y * TileMap.this.tileSize + this.getHeight() / 2;
 		}
 
-		@Override
 		public float getWidth() {
 			return TileMap.this.tileSize;
 		}
 
-		@Override
 		public float getHeight() {
 			return TileMap.this.tileSize;
 		}
+
 	}
 
 	private class MapCollision implements IF_Collision, Serializable {

@@ -1,38 +1,51 @@
 package de.hetzge.sgame.common.newgeometry;
 
-import de.hetzge.sgame.common.newgeometry.views.IF_XY_View;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 
-public interface IF_XY extends IF_XY_View {
+import de.hetzge.sgame.common.Orientation;
+
+public interface IF_XY extends Serializable {
 
 	public float getX();
 
 	public float getY();
 
-	public void setX(float x);
+	public default <T extends IF_XY> T setX(float x){
+		throw new UnsupportedOperationException();
+	}
 
-	public void setY(float y);
+	public default <T extends IF_XY> T setY(float y){
+		throw new UnsupportedOperationException();
+	}
 
 	public default <T extends IF_XY> T add(T xy) {
 		this.setX(this.getX() + xy.getX());
-		this.setX(this.getY() + xy.getY());
+		this.setY(this.getY() + xy.getY());
 		return (T) this;
 	}
 
 	public default <T extends IF_XY> T substract(T xy) {
 		this.setX(this.getX() - xy.getX());
-		this.setX(this.getY() - xy.getY());
+		this.setY(this.getY() - xy.getY());
 		return (T) this;
 	}
 
 	public default <T extends IF_XY> T multiply(T xy) {
 		this.setX(this.getX() * xy.getX());
-		this.setX(this.getY() * xy.getY());
+		this.setY(this.getY() * xy.getY());
 		return (T) this;
 	}
 
 	public default <T extends IF_XY> T divide(T xy) {
 		this.setX(this.getX() / xy.getX());
-		this.setX(this.getY() / xy.getY());
+		this.setY(this.getY() / xy.getY());
+		return (T) this;
+	}
+
+	public default <T extends IF_XY> T abs() {
+		this.setX(Math.abs(this.getX()));
+		this.setY(Math.abs(this.getY()));
 		return (T) this;
 	}
 
@@ -42,17 +55,34 @@ public interface IF_XY extends IF_XY_View {
 	}
 
 	public default IF_XY dif(IF_XY xy) {
-		IF_XY copy = new XY(this);
+		IF_XY copy = this.copy();
 		copy.substract(xy);
 		copy.abs();
 		return copy;
 	}
 
-	public default IF_XY abs() {
-		return new XY(Math.abs(this.getX()), Math.abs(this.getY()));
+	public default Orientation orientationToOther(IF_XY other) {
+		IF_XY dif = other.copy().dif(this);
+		if (dif.getX() > dif.getY()) {
+			if (this.getX() - other.getX() > 0) {
+				return Orientation.EAST;
+			} else {
+				return Orientation.WEST;
+			}
+		} else {
+			if (this.getY() - other.getY() > 0) {
+				return Orientation.SOUTH;
+			} else {
+				return Orientation.NORTH;
+			}
+		}
 	}
 
 	public default <T extends IF_XY> T copy() {
-		return (T) this;
+		try {
+			return (T) getClass().getConstructor(Float.class, Float.class).newInstance(this.getX(), this.getY());
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			throw new IllegalStateException("Every implementation of IF_XY must have a constructor with float x and float y as parameter.");
+		}
 	}
 }

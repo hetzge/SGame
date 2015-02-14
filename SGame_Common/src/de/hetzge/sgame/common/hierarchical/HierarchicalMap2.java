@@ -6,13 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import de.hetzge.sgame.common.Log;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.Stopwatch;
 import de.hetzge.sgame.common.definition.IF_Map;
-import de.hetzge.sgame.common.geometry.Position;
+import de.hetzge.sgame.common.newgeometry.IF_Position;
+import de.hetzge.sgame.common.newgeometry.XY;
 
 public class HierarchicalMap2 implements Serializable {
 
@@ -30,26 +30,26 @@ public class HierarchicalMap2 implements Serializable {
 				int nextX;
 				int nextY;
 
-				nextX = waypoint.x - 1;
-				nextY = waypoint.y;
+				nextX = waypoint.getIX() - 1;
+				nextY = waypoint.getIY();
 				if (Area.this.isAreaPosition(nextX, nextY) && !Area.this.isCollision(nextX, nextY)) {
 					result.add(new AStarWaypoint(nextX, nextY));
 				}
 
-				nextX = waypoint.x;
-				nextY = waypoint.y - 1;
+				nextX = waypoint.getIX();
+				nextY = waypoint.getIY() - 1;
 				if (Area.this.isAreaPosition(nextX, nextY) && !Area.this.isCollision(nextX, nextY)) {
 					result.add(new AStarWaypoint(nextX, nextY));
 				}
 
-				nextX = waypoint.x + 1;
-				nextY = waypoint.y;
+				nextX = waypoint.getIX() + 1;
+				nextY = waypoint.getIY();
 				if (Area.this.isAreaPosition(nextX, nextY) && !Area.this.isCollision(nextX, nextY)) {
 					result.add(new AStarWaypoint(nextX, nextY));
 				}
 
-				nextX = waypoint.x;
-				nextY = waypoint.y + 1;
+				nextX = waypoint.getIX();
+				nextY = waypoint.getIY() + 1;
 				if (Area.this.isAreaPosition(nextX, nextY) && !Area.this.isCollision(nextX, nextY)) {
 					result.add(new AStarWaypoint(nextX, nextY));
 				}
@@ -57,8 +57,8 @@ public class HierarchicalMap2 implements Serializable {
 				return result;
 			}
 
-			public Position asGlobalPosition() {
-				return new Position(Area.this.startX + this.x * HierarchicalMap2.this.map.getCollisionTileSize(), Area.this.startY + this.y * HierarchicalMap2.this.map.getCollisionTileSize());
+			public IF_Position asGlobalPosition() {
+				return HierarchicalMap2.this.map.convertCollisionTileXYInPxXY(new XY(Area.this.startX, Area.this.startY).add(new XY(this.getIX(), this.getIY())));
 			}
 
 		}
@@ -359,8 +359,7 @@ public class HierarchicalMap2 implements Serializable {
 						AStar<AStarWaypoint> aStar = new AStar<AStarWaypoint>(transitionPointOne.asAStarWaypoint(), transitionPointTwo.asAStarWaypoint());
 						List<AStarWaypoint> foundPath = aStar.findPath();
 						if (foundPath != null) {
-							List<Position> pathPositions = foundPath.stream().map(Area.AStarWaypoint::asGlobalPosition).collect(Collectors.toList());
-							Path path = new Path(pathPositions.get(0), pathPositions.get(pathPositions.size() - 1), pathPositions);
+							Path path = new Path( foundPath.get(0),  foundPath.get(foundPath.size() - 1), foundPath, HierarchicalMap2.this.map);
 							innerMap.put(transitionPointTwo, path);
 						}
 					}
