@@ -181,8 +181,6 @@ public final class AStarService {
 		XY[] firstTrampoline = this.rate(rating, mapCollision, step, goal, start, collision);
 		nextTramponlines.add(firstTrampoline);
 
-		List<IF_Coordinate> path = new LinkedList<>();
-
 		boolean found = false;
 		loop: while (!found) {
 			trampolines = nextTramponlines;
@@ -211,7 +209,7 @@ public final class AStarService {
 		}
 
 		if (found) {
-			path = this.evaluatePath(rating, startX, startY, goalX, goalY);
+			List<IF_Coordinate> path = this.evaluatePath(rating, startX, startY, goalX, goalY);
 			return new Path(start, goal, path, this.mapProvider.provide());
 		} else {
 			return null;

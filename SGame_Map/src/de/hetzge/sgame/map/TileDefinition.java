@@ -49,7 +49,7 @@ public class TileDefinition implements Serializable {
 	}
 
 	IF_Collision calculateCollision() {
-		BaseCollisionImpl collision = new BaseCollisionImpl(3, 3); // 3 fix ?!
+		BaseCollisionImpl collision = new BaseCollisionImpl(2, 2); // TODO 2 fix !?
 		for (TileLayer tileLayer : this.tileLayers) {
 			if (tileLayer.isCollision()) {
 				IF_Collision tileOrientationAsCollision = tileLayer.getTileOrientation().asCollision();

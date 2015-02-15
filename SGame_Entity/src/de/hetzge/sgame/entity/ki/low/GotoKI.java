@@ -7,6 +7,7 @@ import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.PathfinderThread;
 import de.hetzge.sgame.common.PathfinderThread.PathfinderWorker;
 import de.hetzge.sgame.common.definition.IF_Map;
+import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.entity.ki.BaseKI;
@@ -25,8 +26,9 @@ public class GotoKI extends BaseKI {
 	public GotoKI(Entity entity, IF_Position_ImmutableView goalPosition) {
 		super(entity);
 
-		this.collisionTileGoalX = this.mapProvider.provide().convertPxInCollisionTile(goalPosition.getX());
-		this.collisionTileGoalY = this.mapProvider.provide().convertPxInCollisionTile(goalPosition.getY());
+		IF_Coordinate collisionTileGoal = this.mapProvider.provide().convertPxXYInCollisionTileXY(goalPosition);
+		this.collisionTileGoalX = collisionTileGoal.getIX();
+		this.collisionTileGoalY = collisionTileGoal.getIY();
 
 		Log.KI.debug("Created GotoKI for entity " + entity + " to " + this.collisionTileGoalX + "/" + this.collisionTileGoalY);
 	}
@@ -55,8 +57,11 @@ public class GotoKI extends BaseKI {
 			return KIState.INIT_FAILURE;
 		}
 
-		int startX = map.convertPxInCollisionTile(positionAndDimensionModule.getPositionAndDimensionRectangle().getCenteredPosition().getX());
-		int startY = map.convertPxInCollisionTile(positionAndDimensionModule.getPositionAndDimensionRectangle().getCenteredPosition().getY());
+		IF_Position_ImmutableView entityCenteredPosition = positionAndDimensionModule.getPositionAndDimensionRectangle().getCenteredPosition();
+		IF_Coordinate entityCollisionTilePosition = map.convertPxXYInCollisionTileXY(entityCenteredPosition);
+
+		int startX = entityCollisionTilePosition.getIX();
+		int startY = entityCollisionTilePosition.getIY();
 
 		this.pathfinderWorker = this.pathfinderThread.new PathfinderWorker() {
 			@Override

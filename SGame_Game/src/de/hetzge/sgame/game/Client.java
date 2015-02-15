@@ -45,9 +45,9 @@ public class Client extends BaseGame {
 		this.renderConfig.initRenderableConsumers.add((renderablePool) -> {
 			renderablePool.registerRenderableRessource(PredefinedRenderId.DEFAULT, new PixmapWrapper("assets/ground/grass.png"));
 			renderablePool.registerRenderableRessource(new RenderableKey().animationKey(AnimationKey.IDLE), new LibGdxRenderableAnimation("assets/sprite.png", 32, 48, 1, 1, 3, 1));
-			renderablePool.registerRenderableRessource(new RenderableKey().entityType(EntityType.SILLY_BLOCK).animationKey(AnimationKey.WALK).orientation(Orientation.NORTH), new LibGdxRenderableAnimation("assets/sprite.png", 32, 48, 1, 1, 3, 1));
+			renderablePool.registerRenderableRessource(new RenderableKey().entityType(EntityType.SILLY_BLOCK).animationKey(AnimationKey.WALK).orientation(Orientation.SOUTH), new LibGdxRenderableAnimation("assets/sprite.png", 32, 48, 1, 1, 3, 1));
 			renderablePool.registerRenderableRessource(new RenderableKey().entityType(EntityType.SILLY_BLOCK).animationKey(AnimationKey.WALK).orientation(Orientation.EAST), new LibGdxRenderableAnimation("assets/sprite.png", 32, 48, 1, 3, 3, 3));
-			renderablePool.registerRenderableRessource(new RenderableKey().entityType(EntityType.SILLY_BLOCK).animationKey(AnimationKey.WALK).orientation(Orientation.SOUTH), new LibGdxRenderableAnimation("assets/sprite.png", 32, 48, 1, 4, 3, 4));
+			renderablePool.registerRenderableRessource(new RenderableKey().entityType(EntityType.SILLY_BLOCK).animationKey(AnimationKey.WALK).orientation(Orientation.NORTH), new LibGdxRenderableAnimation("assets/sprite.png", 32, 48, 1, 4, 3, 4));
 			renderablePool.registerRenderableRessource(new RenderableKey().entityType(EntityType.SILLY_BLOCK).animationKey(AnimationKey.WALK).orientation(Orientation.WEST), new LibGdxRenderableAnimation("assets/sprite.png", 32, 48, 1, 2, 3, 2));
 			renderablePool.registerRenderableRessource(new RenderableKey().entityType(EntityType.TREE), new LibGdxRenderableTexture("assets/tree.png"));
 			renderablePool.registerRenderableRessource(RenderId.GRASS_RENDERABLE_ID, new PixmapWrapper("assets/ground/grass.png"));

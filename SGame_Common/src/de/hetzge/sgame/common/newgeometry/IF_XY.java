@@ -50,7 +50,7 @@ public interface IF_XY extends Serializable {
 	}
 
 	public default float distance(IF_XY xy) {
-		IF_XY abs = this.abs();
+		IF_XY abs = this.dif(xy).abs();
 		return (float) Math.sqrt(abs.getX() * abs.getX() + abs.getY() * abs.getY());
 	}
 
@@ -61,6 +61,9 @@ public interface IF_XY extends Serializable {
 		return copy;
 	}
 
+	/**
+	 * befindet sich <Orientation>lich von <other> 
+	 */
 	public default Orientation orientationToOther(IF_XY other) {
 		IF_XY dif = other.copy().dif(this);
 		if (dif.getX() > dif.getY()) {

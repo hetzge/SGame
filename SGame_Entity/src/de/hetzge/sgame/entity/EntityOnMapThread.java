@@ -55,7 +55,7 @@ public class EntityOnMapThread extends Thread {
 
 	private void updateEntityOnMap(PositionAndDimensionModule positionAndDimensionModule) {
 		IF_Rectangle_ImmutableView rectangle = positionAndDimensionModule.getPositionAndDimensionRectangle();
-		IF_Coordinate entityCenteredCoordinate = this.mapProvider.provide().convertPxXYInCollisionTileXY(rectangle.getCenteredPosition());
+		IF_Coordinate entityCenteredCoordinate = this.mapProvider.provide().convertPxXYInTileXY(rectangle.getCenteredPosition());
 		this.activeEntityMap.connect(entityCenteredCoordinate.getIX(), entityCenteredCoordinate.getIY(), positionAndDimensionModule.getEntityOnMap());
 	}
 }

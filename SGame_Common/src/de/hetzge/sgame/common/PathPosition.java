@@ -62,7 +62,7 @@ public class PathPosition implements Serializable {
 			return Orientation.DEFAULT;
 		}
 		IF_Position waypointBefore = this.path.getPathPosition(this.positionOnPath - 1);
-		return waypointBefore.orientationToOther(this.getCurrentCollisionCoordinate());
+		return this.getCurrentPosition().orientationToOther(waypointBefore);
 	}
 
 	public float getDistanceToWaypointBefore() {
@@ -70,11 +70,11 @@ public class PathPosition implements Serializable {
 			return 0f;
 		}
 		IF_Position waypointBefore = this.path.getPathPosition(this.positionOnPath - 1);
-		return waypointBefore.distance(this.getCurrentCollisionCoordinate());
+		return waypointBefore.distance(this.getCurrentPosition());
 	}
 
 	public boolean continueOnPath(IF_Position position) {
-		if (!this.isOnEndOfPath() && this.getCurrentCollisionCoordinate().distance(position) < 1F) {
+		if (!this.isOnEndOfPath() && this.getCurrentPosition().distance(position) < 1F) {
 			this.moveForward();
 			return true;
 		}

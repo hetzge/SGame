@@ -131,7 +131,7 @@ public class OnMapService {
 			int startX = this.startCollisionTileX - other.widthInCollisionTiles;
 			int startY = this.startCollisionTileY - other.heightInCollisionTiles;
 			int endX = startX;
-			int endY = startY + other.heightInCollisionTiles;
+			int endY = this.endCollisionTileY + 1;
 			return this.findCollisionPositionAroundRow(startX, startY, endX, endY, other.widthInCollisionTiles, other.heightInCollisionTiles, other);
 		}
 

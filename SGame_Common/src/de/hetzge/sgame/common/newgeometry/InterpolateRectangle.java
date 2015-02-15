@@ -79,11 +79,15 @@ public class InterpolateRectangle implements IF_Rectangle_MutableView {
 	}
 
 	public void setCenteredPosition(IF_Position_ImmutableView goal, long timeSpanInMs){
+		IF_Position interpolatedCenteredPosition = this.getInterpolatedCenteredPosition();
+		this.startX = interpolatedCenteredPosition.getFX();
+		this.startY = interpolatedCenteredPosition.getFY();
 		this.endX = goal.getFX();
 		this.endY = goal.getFY();
 
-		this.startTimeInMs = System.currentTimeMillis();
-		this.endTimeInMs = System.currentTimeMillis() + timeSpanInMs;
+		long currentTimeMillis = System.currentTimeMillis();
+		this.startTimeInMs = currentTimeMillis;
+		this.endTimeInMs = currentTimeMillis + timeSpanInMs;
 	}
 
 	public void setDimension(IF_Dimension start, IF_Dimension end, long timeSpanInMs) {
@@ -92,8 +96,9 @@ public class InterpolateRectangle implements IF_Rectangle_MutableView {
 		this.endWidth = end.getWidth();
 		this.endHeight = end.getHeight();
 
-		this.startTimeInMs = System.currentTimeMillis();
-		this.endTimeInMs = System.currentTimeMillis() + timeSpanInMs;
+		long currentTimeMillis = System.currentTimeMillis();
+		this.startTimeInMs = currentTimeMillis;
+		this.endTimeInMs = currentTimeMillis + timeSpanInMs;
 	}
 
 	@Override

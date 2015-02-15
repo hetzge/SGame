@@ -112,7 +112,7 @@ public class TileMap implements IF_Map, Serializable {
 	private TileMap(int widthInTiles, int heightInTiles) {
 		this.tmxMap = null;
 		this.tileSize = 32;
-		this.collisionTileFactor = 3;
+		this.collisionTileFactor = 2;
 		this.widthInTiles = widthInTiles;
 		this.heightInTiles = heightInTiles;
 		this.tiles = new TileMap.Tile[widthInTiles][heightInTiles];
@@ -186,7 +186,7 @@ public class TileMap implements IF_Map, Serializable {
 
 	@Override
 	public int getCollisionTileFactor() {
-		return 3;
+		return 2;
 	}
 
 	@Override
