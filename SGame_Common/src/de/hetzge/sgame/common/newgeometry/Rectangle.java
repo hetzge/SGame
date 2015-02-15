@@ -55,7 +55,6 @@ public class Rectangle implements IF_Rectangle_MutableView {
 		return new XY(this.width, this.height);
 	}
 
-
 	@Override
 	public IF_Rectangle_ImmutableView asRectangleImmutableView() {
 		return this;
@@ -64,6 +63,44 @@ public class Rectangle implements IF_Rectangle_MutableView {
 	@Override
 	public IF_Rectangle_MutableView asRectangleMutableView() {
 		return this;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Float.floatToIntBits(this.height);
+		result = prime * result + Float.floatToIntBits(this.width);
+		result = prime * result + Float.floatToIntBits(this.x);
+		result = prime * result + Float.floatToIntBits(this.y);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (this.getClass() != obj.getClass()) {
+			return false;
+		}
+		Rectangle other = (Rectangle) obj;
+		if (Float.floatToIntBits(this.height) != Float.floatToIntBits(other.height)) {
+			return false;
+		}
+		if (Float.floatToIntBits(this.width) != Float.floatToIntBits(other.width)) {
+			return false;
+		}
+		if (Float.floatToIntBits(this.x) != Float.floatToIntBits(other.x)) {
+			return false;
+		}
+		if (Float.floatToIntBits(this.y) != Float.floatToIntBits(other.y)) {
+			return false;
+		}
+		return true;
 	}
 
 }

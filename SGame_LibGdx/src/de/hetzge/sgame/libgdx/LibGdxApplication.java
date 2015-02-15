@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
+import de.hetzge.sgame.common.newgeometry.XY;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableContext;
 import de.hetzge.sgame.render.RenderConfig;
 import de.hetzge.sgame.render.RenderPool;
@@ -83,12 +84,8 @@ public class LibGdxApplication implements ApplicationListener {
 		this.shapeRenderer.end();
 
 		// sync viewport with camera
-
-		this.mapViewport.setX(this.camera.position.x);
-		this.mapViewport.setY(this.camera.position.y);
-
-		this.mapViewport.setWidth(this.camera.viewportWidth);
-		this.mapViewport.setHeight(this.camera.viewportHeight);
+		this.mapViewport.setPositionA(new XY(this.camera.position.x, this.camera.position.y));
+		this.mapViewport.setDimension(new XY(this.camera.viewportWidth, this.camera.viewportHeight));
 
 		// TEMP
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {

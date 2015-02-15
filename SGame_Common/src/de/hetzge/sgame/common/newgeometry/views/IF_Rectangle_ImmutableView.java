@@ -5,35 +5,37 @@ import de.hetzge.sgame.common.newgeometry.XY;
 
 public interface IF_Rectangle_ImmutableView extends IF_Rectangle {
 
-	IF_Position_ImmutableView getCenteredPosition();
+	@Override
+	public IF_Position_ImmutableView getCenteredPosition();
 
-	IF_Dimension_ImmutableView getDimension();
+	@Override
+	public IF_Dimension_ImmutableView getDimension();
 
-	default IF_Dimension_ImmutableView getHalfDimension() {
+	public default IF_Dimension_ImmutableView getHalfDimension() {
 		XY copy = new XY(this.getDimension());
 		XY halfDimension = copy.divide(new XY(2, 2));
 		return halfDimension;
 	}
 
 	@Override
-	default IF_Position_ImmutableView getPositionA() {
+	public default IF_Position_ImmutableView getPositionA() {
 		return this.getCenteredPosition().copy().substract(this.getHalfDimension().asPositionImmutableView());
 	}
 
 	@Override
-	default IF_Position_ImmutableView getPositionB() {
+	public default IF_Position_ImmutableView getPositionB() {
 		IF_Dimension_ImmutableView halfDimension = this.getHalfDimension();
 		return this.getCenteredPosition().copy().add(new XY(halfDimension.getWidth(), -halfDimension.getHeight()));
 	}
 
 	@Override
-	default IF_Position_ImmutableView getPositionC() {
+	public default IF_Position_ImmutableView getPositionC() {
 		IF_Dimension_ImmutableView halfDimension = this.getHalfDimension();
 		return this.getCenteredPosition().copy().add(new XY(-halfDimension.getWidth(), halfDimension.getHeight()));
 	}
 
 	@Override
-	default IF_Position_ImmutableView getPositionD() {
+	public default IF_Position_ImmutableView getPositionD() {
 		return this.getCenteredPosition().copy().add(this.getHalfDimension().asPositionImmutableView());
 	}
 

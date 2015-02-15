@@ -12,7 +12,7 @@ public class XY implements IF_Position, IF_Dimension, IF_Coordinate {
 	private float x;
 	private float y;
 
-	public XY(float value){
+	public XY(float value) {
 		this.x = value;
 		this.y = value;
 	}
@@ -77,6 +77,41 @@ public class XY implements IF_Position, IF_Dimension, IF_Coordinate {
 	@Override
 	public IF_Coordinate_MutableView asCoordinateMutableView() {
 		return this;
+	}
+
+	@Override
+	public IF_XY copy() {
+		return new XY(this.getFX(), this.getFY());
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Float.floatToIntBits(this.x);
+		result = prime * result + Float.floatToIntBits(this.y);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (this.getClass() != obj.getClass()) {
+			return false;
+		}
+		XY other = (XY) obj;
+		if (Float.floatToIntBits(this.x) != Float.floatToIntBits(other.x)) {
+			return false;
+		}
+		if (Float.floatToIntBits(this.y) != Float.floatToIntBits(other.y)) {
+			return false;
+		}
+		return true;
 	}
 
 }

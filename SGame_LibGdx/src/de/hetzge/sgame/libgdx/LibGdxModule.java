@@ -31,6 +31,9 @@ public class LibGdxModule implements IF_Module {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = LibGdxConfig.INSTANCE.gameTitle;
 		cfg.useGL30 = false;
+		cfg.allowSoftwareMode = false;
+		cfg.vSyncEnabled = false;
+		cfg.resizable = true;
 		cfg.width = LibGdxConfig.INSTANCE.screenWidth;
 		cfg.height = LibGdxConfig.INSTANCE.screenHeight;
 		new LwjglApplication(this.get(LibGdxApplication.class), cfg);

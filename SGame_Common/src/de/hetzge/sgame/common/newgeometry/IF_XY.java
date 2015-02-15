@@ -11,11 +11,11 @@ public interface IF_XY extends Serializable {
 
 	public float getY();
 
-	public default <T extends IF_XY> T setX(float x){
+	public default <T extends IF_XY> T setX(float x) {
 		throw new UnsupportedOperationException();
 	}
 
-	public default <T extends IF_XY> T setY(float y){
+	public default <T extends IF_XY> T setY(float y) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -78,11 +78,11 @@ public interface IF_XY extends Serializable {
 		}
 	}
 
-	public default <T extends IF_XY> T copy() {
+	public default IF_XY copy() {
 		try {
-			return (T) getClass().getConstructor(Float.class, Float.class).newInstance(this.getX(), this.getY());
+			return  getClass().getConstructor(float.class, float.class).newInstance(this.getX(), this.getY());
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			throw new IllegalStateException("Every implementation of IF_XY must have a constructor with float x and float y as parameter.");
+			throw new IllegalStateException("Every implementation (int this case " + getClass() + ") of IF_XY must have a constructor with float x and float y as parameter.", e);
 		}
 	}
 }

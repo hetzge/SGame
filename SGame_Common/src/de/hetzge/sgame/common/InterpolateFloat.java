@@ -25,24 +25,7 @@ public class InterpolateFloat implements Serializable {
 		this.endTimeInMs = interpolateFloat.getEndTimeInMs();
 	}
 
-	public float calculateCurrentNumber() {
-		if (this.done) {
-			return this.endValue;
-		}
-		long interpolationTimeSpan = this.endTimeInMs - this.startTimeInMs;
-		if (interpolationTimeSpan == 0) {
-			this.done = true;
-			return this.endValue;
-		}
-		long currentMs = System.currentTimeMillis() - this.startTimeInMs;
-		float interpolationTimeSpanDoneInPercent = (float) currentMs / interpolationTimeSpan;
-		if (interpolationTimeSpanDoneInPercent > 1f) {
-			this.done = true;
-			return this.endValue;
-		}
-		float valueSpan = this.endValue - this.startValue;
-		return this.startValue + valueSpan * interpolationTimeSpanDoneInPercent;
-	}
+
 
 	public float getStartValue() {
 		return this.startValue;

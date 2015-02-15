@@ -8,7 +8,7 @@ import de.hetzge.sgame.common.Stopwatch;
 import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
-import de.hetzge.sgame.common.newgeometry.IF_XY;
+import de.hetzge.sgame.common.newgeometry.Rectangle;
 import de.hetzge.sgame.map.tmx.TMXMap;
 import de.hetzge.sgame.map.tmx.TMXMap.Layer;
 import de.hetzge.sgame.render.IF_RenderableLoader;
@@ -16,7 +16,7 @@ import de.hetzge.sgame.render.PredefinedRenderId;
 
 public class TileMap implements IF_Map, Serializable {
 
-	public class Tile implements IF_XY {
+	public class Tile extends Rectangle {
 
 		// Rectangle interface auch verwenden
 
@@ -26,6 +26,7 @@ public class TileMap implements IF_Map, Serializable {
 		private final int y;
 
 		public Tile(int x, int y, int tileId) {
+			super(x * TileMap.this.tileSize + TileMap.this.tileSize / 2, y  * TileMap.this.tileSize + TileMap.this.tileSize / 2, TileMap.this.tileSize, TileMap.this.tileSize);
 			this.tileId = tileId;
 			this.x = x;
 			this.y = y;
@@ -33,24 +34,6 @@ public class TileMap implements IF_Map, Serializable {
 
 		public int getRenderId() {
 			return TileMap.this.getRenderId(this.tileId);
-		}
-
-		@Override
-		public float getX() {
-			return this.x * TileMap.this.tileSize + this.getWidth() / 2;
-		}
-
-		@Override
-		public float getY() {
-			return this.y * TileMap.this.tileSize + this.getHeight() / 2;
-		}
-
-		public float getWidth() {
-			return TileMap.this.tileSize;
-		}
-
-		public float getHeight() {
-			return TileMap.this.tileSize;
 		}
 
 	}
