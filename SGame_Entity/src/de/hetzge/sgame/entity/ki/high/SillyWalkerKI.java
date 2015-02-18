@@ -12,7 +12,7 @@ public class SillyWalkerKI extends BaseKI {
 
 	@Override
 	protected boolean condition() {
-		return this.entity.positionAndDimensionModuleCache.isAvailable() && !this.entity.positionAndDimensionModuleCache.get().isFixed();
+		return !this.entity.isFixedPosition();
 	}
 
 	@Override

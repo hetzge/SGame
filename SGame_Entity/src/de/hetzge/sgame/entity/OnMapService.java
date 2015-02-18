@@ -180,13 +180,7 @@ public class OnMapService {
 	}
 
 	public IF_Position_ImmutableView findPositionAround(Entity around, Entity entity) {
-		if (around.positionAndDimensionModuleCache.isAvailable() && entity.positionAndDimensionModuleCache.isAvailable()) {
-			IF_Rectangle_ImmutableView aroundRectangle = around.positionAndDimensionModuleCache.get();
-			IF_Rectangle_ImmutableView entityRectangle = entity.positionAndDimensionModuleCache.get();
-			return this.on(aroundRectangle).findCollisionPositionAround(this.on(entityRectangle));
-		} else {
-			throw new IllegalArgumentException("The given entities (or one of them) has no position to evaluate position arround.");
-		}
+		return this.on(around).findCollisionPositionAround(this.on(entity));
 	}
 
 	public List<Entity> findEntitiesAround(Predicate<Entity> filter, int radius, int max){

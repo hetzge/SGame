@@ -11,8 +11,6 @@ import javolution.util.FastSet;
 import javolution.util.FastTable;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.definition.IF_EntityType;
-import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
-import de.hetzge.sgame.entity.module.RenderableModule;
 import de.hetzge.sgame.render.IF_Renderable;
 import de.hetzge.sgame.render.IF_RenderableContext;
 import de.hetzge.sgame.render.PredefinedRenderId;
@@ -46,28 +44,6 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 		// add by id
 		this.entitiesById.put(entity.getId(), entity);
 
-		// add by modules
-		Collection<Class<? extends BaseEntityModule>> allModuleClasses = entity.getAllModuleClasses();
-		for (Class<? extends BaseEntityModule> moduleClazz : allModuleClasses) {
-			FastSet<Entity> set = this.entitiesByModule.get(moduleClazz);
-			if (set == null) {
-				set = new FastSet<>();
-				this.entitiesByModule.put(moduleClazz, set);
-			}
-			set.add(entity);
-		}
-
-		// add modules
-		Collection<BaseEntityModule> allModules = entity.getAllModules();
-		for (BaseEntityModule baseEntityModule : allModules) {
-			FastSet<BaseEntityModule> set = this.entityModulesByModuleClass.get(baseEntityModule.getClass());
-			if (set == null) {
-				set = new FastSet<>();
-				this.entityModulesByModuleClass.put(baseEntityModule.getClass(), set);
-			}
-			set.add(baseEntityModule);
-		}
-
 		// add by type
 		Set<Entity> set = this.entitiesByType.get(entity.getType());
 		if (set == null) {
@@ -83,24 +59,6 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 
 		// remove by id
 		this.entitiesById.remove(entity.getId());
-
-		// remove from by modules
-		Collection<Class<? extends BaseEntityModule>> allModuleClasses = entity.getAllModuleClasses();
-		for (Class<? extends BaseEntityModule> moduleClazz : allModuleClasses) {
-			Set<Entity> set = this.entitiesByModule.get(moduleClazz);
-			if (set != null) {
-				set.remove(entity);
-			}
-		}
-
-		// remove modules
-		Collection<BaseEntityModule> allModules = entity.getAllModules();
-		for (BaseEntityModule baseEntityModule : allModules) {
-			FastSet<BaseEntityModule> set = this.entityModulesByModuleClass.get(baseEntityModule.getClass());
-			if (set != null) {
-				set.remove(baseEntityModule);
-			}
-		}
 
 		// remove from by type
 		Set<Entity> set = this.entitiesByType.get(entity.getType());
@@ -165,10 +123,7 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 		this.viewport.iterateVisibleTiles((int x, int y) -> {
 			Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(x, y);
 			for (Entity entity : entities) {
-				if (entity.renderableModuleCache.isAvailable()) {
-					RenderableModule renderableModule = entity.renderableModuleCache.get();
-					this.renderService.render(context, renderableModule.getRenderedRectangle(), renderableModule.getRenderableKey());
-				}
+				this.renderService.render(context, entity, entity.getRenderableKey());
 			}
 
 			// TODO return null weg machen
@@ -182,16 +137,10 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 		this.viewport.iterateVisibleTiles((int x, int y) -> {
 			Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(x, y);
 			for (Entity entity : entities) {
-				if (entity.renderableModuleCache.isAvailable()) {
-					RenderableModule renderableModule = entity.renderableModuleCache.get();
-					this.renderService.render(context, renderableModule.getRenderedRectangle(), PredefinedRenderId.RECTANGLE);
-				}
-				if (entity.positionAndDimensionModuleCache.isAvailable()) {
-					PositionAndDimensionModule positionAndDimensionModule = entity.positionAndDimensionModuleCache.get();
-					Path path = positionAndDimensionModule.getPath();
-					if (path != null) {
-						this.renderService.render(context, positionAndDimensionModule, PredefinedRenderId.LINE);
-					}
+				this.renderService.render(context, entity, PredefinedRenderId.RECTANGLE);
+				Path path = entity.getPath();
+				if (path != null) {
+					this.renderService.render(context, entity, PredefinedRenderId.LINE);
 				}
 			}
 

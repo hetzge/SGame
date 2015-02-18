@@ -19,7 +19,7 @@ public class SillyGotoKI extends BaseKI {
 
 	@Override
 	protected boolean condition() {
-		return this.entity.positionAndDimensionModuleCache.isAvailable() && !this.entity.positionAndDimensionModuleCache.get().isFixed();
+		return true;
 	}
 
 	@Override

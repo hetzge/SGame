@@ -9,8 +9,6 @@ import de.hetzge.sgame.entity.EntityModule;
 import de.hetzge.sgame.entity.EntityPool;
 import de.hetzge.sgame.entity.OnMapService;
 import de.hetzge.sgame.entity.ki.EntityKI;
-import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
-import de.hetzge.sgame.entity.module.RenderableModule;
 import de.hetzge.sgame.game.Definition.AnimationKey;
 import de.hetzge.sgame.game.Definition.EntityType;
 import de.hetzge.sgame.map.MapModule;
@@ -46,30 +44,18 @@ public class BaseGame extends Application {
 		this.modulePool.registerModules(this.mapModule, this.networkModule, this.syncModule, this.entityModule, this.messageModule);
 
 		this.entityFactory.registerFactory(EntityType.SILLY_BLOCK, (entity) -> {
-			RenderableModule renderableModule = new RenderableModule(entity);
-
-			renderableModule.setAnimationKey(AnimationKey.WALK);
-			renderableModule.setEntityKey(EntityType.SILLY_BLOCK);
-			renderableModule.setOrientation(Orientation.SOUTH);
-
-			PositionAndDimensionModule positionAndDimensionModule = new PositionAndDimensionModule(entity);
-			positionAndDimensionModule.setDimension(new XY(32f, 48f));
-
-			entity.registerModules(renderableModule, positionAndDimensionModule);
-
+			entity.setAnimationKey(AnimationKey.WALK);
+			entity.setEntityKey(EntityType.SILLY_BLOCK);
+			entity.setOrientation(Orientation.SOUTH);
+			entity.setDimension(new XY(32f, 48f));
 			entity.setEntityKI(new EntityKI(entity));
 		});
 
 		this.entityFactory.registerFactory(EntityType.TREE, (entity) -> {
-			RenderableModule renderableModule = new RenderableModule(entity);
-			renderableModule.setEntityKey(EntityType.TREE);
-
-			PositionAndDimensionModule positionAndDimensionModule = new PositionAndDimensionModule(entity);
-			positionAndDimensionModule.setDimension(new XY(64f, 64f));
-			positionAndDimensionModule.setFixed(true);
-			positionAndDimensionModule.setCollision(this.onMapService.on(positionAndDimensionModule).asCollisionArray());
-
-			entity.registerModules(renderableModule, positionAndDimensionModule);
+			entity.setEntityKey(EntityType.TREE);
+			entity.setDimension(new XY(64f, 64f));
+			entity.setFixedPosition(true);
+			entity.setCollision(this.onMapService.on(entity).asCollisionArray());
 		});
 
 	}

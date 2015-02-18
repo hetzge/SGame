@@ -2,7 +2,6 @@ package de.hetzge.sgame.game;
 
 import de.hetzge.sgame.common.newgeometry.XY;
 import de.hetzge.sgame.entity.ki.KIModule;
-import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 import de.hetzge.sgame.game.Definition.EntityType;
 import de.hetzge.sgame.network.PeerRole;
 import de.hetzge.sgame.render.RenderModule;
@@ -15,8 +14,7 @@ public class Server extends BaseGame {
 
 		for (int i = 0; i < 3; i++) {
 			this.entityFactory.build(EntityType.SILLY_BLOCK, (entity) -> {
-				PositionAndDimensionModule module = entity.getModule(PositionAndDimensionModule.class);
-				module.setPosition(new XY((float) Math.random() * 100 + 100, (float) Math.random() * 100 + 100));
+				entity.setPosition(new XY((float) Math.random() * 100 + 100, (float) Math.random() * 100 + 100));
 				// module.set(new Position((float) Math.random() * 1000, (float)
 				// Math.random() * 800), 50000);
 			});
@@ -24,8 +22,7 @@ public class Server extends BaseGame {
 
 		for (int i = 0; i < 50; i++) {
 			this.entityFactory.build(EntityType.TREE, (entity) -> {
-				PositionAndDimensionModule module = entity.getModule(PositionAndDimensionModule.class);
-				module.setPosition(new XY((float) Math.random() * 1000 + 200, (float) Math.random() * 1000 + 200));
+				entity.setPosition(new XY((float) Math.random() * 1000 + 200, (float) Math.random() * 1000 + 200));
 			});
 		}
 

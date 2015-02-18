@@ -1,14 +1,15 @@
 package de.hetzge.sgame.entity.ki.low;
 
-import java.util.Set;
+import java.util.Collection;
 
 import de.hetzge.sgame.common.Log;
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.entity.EntityPool;
 import de.hetzge.sgame.entity.ki.BaseKI;
-import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 
 public class FindFixEntityKI extends BaseKI {
+
+	// TODO funktion in service auslagern
 
 	private final EntityPool entityPool = this.get(EntityPool.class);
 	private Entity result;
@@ -26,10 +27,10 @@ public class FindFixEntityKI extends BaseKI {
 
 	@Override
 	protected KIState updateImpl() {
-		Set<PositionAndDimensionModule> positionAndDimensionModules = this.entityPool.getEntityModulesByModuleClass(PositionAndDimensionModule.class);
-		for (PositionAndDimensionModule positionAndDimensionModule : positionAndDimensionModules) {
-			if (positionAndDimensionModule.isFixed() && Math.random() > 0.5d) {
-				this.result = positionAndDimensionModule.getEntity();
+		Collection<Entity> entities = this.entityPool.getEntities();
+		for (Entity entity : entities) {
+			if (entity.isFixedPosition() && Math.random() > 0.5d) {
+				this.result = entity;
 				return KIState.SUCCESS;
 			}
 		}

@@ -11,7 +11,6 @@ import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.entity.ki.BaseKI;
-import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 
 public class GotoKI extends BaseKI {
 
@@ -44,12 +43,11 @@ public class GotoKI extends BaseKI {
 
 	@Override
 	protected boolean condition() {
-		return this.entity.positionAndDimensionModuleCache.isAvailable();
+		return true;
 	}
 
 	@Override
 	protected KIState initImpl() {
-		PositionAndDimensionModule positionAndDimensionModule = this.entity.positionAndDimensionModuleCache.get();
 		IF_Map map = this.mapProvider.provide();
 
 		// test if goal is empty
@@ -57,7 +55,7 @@ public class GotoKI extends BaseKI {
 			return KIState.INIT_FAILURE;
 		}
 
-		IF_Position_ImmutableView entityCenteredPosition = positionAndDimensionModule.getCenteredPosition();
+		IF_Position_ImmutableView entityCenteredPosition = this.entity.getCenteredPosition();
 		IF_Coordinate entityCollisionTilePosition = map.convertPxXYInCollisionTileXY(entityCenteredPosition);
 
 		int startX = entityCollisionTilePosition.getIX();
@@ -78,8 +76,6 @@ public class GotoKI extends BaseKI {
 
 	@Override
 	protected KIState updateImpl() {
-		PositionAndDimensionModule positionAndDimensionModule = this.entity.positionAndDimensionModuleCache.get();
-
 		if (this.pathfinderWorker != null && !this.pathfinderWorker.done()) {
 			return KIState.ACTIVE;
 		}
@@ -91,24 +87,23 @@ public class GotoKI extends BaseKI {
 			if (path.isPathNotPossible()) {
 				return KIState.FAILURE;
 			}
-			positionAndDimensionModule.setPath(path);
+			this.entity.setPath(path);
 		}
 
-		if (!positionAndDimensionModule.hasPath()) {
+		if (!this.entity.hasPath()) {
 			return KIState.FAILURE;
 		}
 
-		if (positionAndDimensionModule.reachedEndOfPath()) {
+		if (this.entity.reachedEndOfPath()) {
 			return KIState.SUCCESS;
 		}
 
-		positionAndDimensionModule.continueOnPath();
+		this.entity.continueOnPath();
 		return KIState.ACTIVE;
 	}
 
 	@Override
 	protected void finishImpl() {
-		PositionAndDimensionModule positionAndDimensionModule = this.entity.positionAndDimensionModuleCache.get();
-		positionAndDimensionModule.unsetPath();
+		this.entity.unsetPath();
 	}
 }

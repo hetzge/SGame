@@ -1,12 +1,11 @@
 package de.hetzge.sgame.entity;
 
-import java.util.Set;
+import java.util.Collection;
 
 import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.Util;
 import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
 import de.hetzge.sgame.common.timer.Timer;
-import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 
 public class EntityOnMapThread extends Thread {
 
@@ -28,31 +27,26 @@ public class EntityOnMapThread extends Thread {
 		while (true) {
 			Util.sleep(100);
 			if (updateEntityOnMapTimer.isTime()) {
-				Set<PositionAndDimensionModule> positionAndDimensionModules = this.entityPool.getEntityModulesByModuleClass(PositionAndDimensionModule.class);
-				for (PositionAndDimensionModule positionAndDimensionModule : positionAndDimensionModules) {
-					this.updateEntityOnMap(positionAndDimensionModule);
-					this.updateCollisionOnMap(positionAndDimensionModule);
+				Collection<Entity> entities = this.entityPool.getEntities();
+				for (Entity entity : entities) {
+					this.updateEntityOnMap(entity);
+					this.updateCollisionOnMap(entity);
 				}
 			}
 		}
 	}
 
-	private void updateCollisionOnMap(PositionAndDimensionModule positionAndDimensionModule) {
-		if (positionAndDimensionModule.entity.positionAndDimensionModuleCache.isAvailable()) {
-			PositionAndDimensionModule module = positionAndDimensionModule.entity.positionAndDimensionModuleCache.get();
-
-			IF_Coordinate entityStartCoordinate = this.mapProvider.provide().convertPxXYInCollisionTileXY(positionAndDimensionModule.getPositionA().asPositionImmutableView());
-
-			if (module.isFixed()) {
-				this.mapProvider.provide().getFixEntityCollisionMap().connect(entityStartCoordinate.getIX(), entityStartCoordinate.getIY(), positionAndDimensionModule.getActiveCollisionMap());
-			} else {
-				this.mapProvider.provide().getFlexibleEntityCollisionMap().connect(entityStartCoordinate.getIX(), entityStartCoordinate.getIY(), positionAndDimensionModule.getActiveCollisionMap());
-			}
+	private void updateCollisionOnMap(Entity entity) {
+		IF_Coordinate entityStartCoordinate = this.mapProvider.provide().convertPxXYInCollisionTileXY(entity.getPositionA().asPositionImmutableView());
+		if (entity.isFixedPosition()) {
+			this.mapProvider.provide().getFixEntityCollisionMap().connect(entityStartCoordinate.getIX(), entityStartCoordinate.getIY(), entity.getActiveCollisionMap());
+		} else {
+			this.mapProvider.provide().getFlexibleEntityCollisionMap().connect(entityStartCoordinate.getIX(), entityStartCoordinate.getIY(), entity.getActiveCollisionMap());
 		}
 	}
 
-	private void updateEntityOnMap(PositionAndDimensionModule positionAndDimensionModule) {
-		IF_Coordinate entityCenteredCoordinate = this.mapProvider.provide().convertPxXYInTileXY(positionAndDimensionModule.getCenteredPosition());
-		this.activeEntityMap.connect(entityCenteredCoordinate.getIX(), entityCenteredCoordinate.getIY(), positionAndDimensionModule.getEntityOnMap());
+	private void updateEntityOnMap(Entity entity) {
+		IF_Coordinate entityCenteredCoordinate = this.mapProvider.provide().convertPxXYInTileXY(entity.getCenteredPosition());
+		this.activeEntityMap.connect(entityCenteredCoordinate.getIX(), entityCenteredCoordinate.getIY(), entity.getEntityOnMap());
 	}
 }
