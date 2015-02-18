@@ -5,7 +5,6 @@ import java.util.Set;
 import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.Util;
 import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
-import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 import de.hetzge.sgame.common.timer.Timer;
 import de.hetzge.sgame.entity.module.PositionAndDimensionModule;
 
@@ -41,9 +40,8 @@ public class EntityOnMapThread extends Thread {
 	private void updateCollisionOnMap(PositionAndDimensionModule positionAndDimensionModule) {
 		if (positionAndDimensionModule.entity.positionAndDimensionModuleCache.isAvailable()) {
 			PositionAndDimensionModule module = positionAndDimensionModule.entity.positionAndDimensionModuleCache.get();
-			IF_Rectangle_ImmutableView positionAndDimensionRectangle = module.getPositionAndDimensionRectangle();
 
-			IF_Coordinate entityStartCoordinate = this.mapProvider.provide().convertPxXYInCollisionTileXY(positionAndDimensionRectangle.getPositionA().asPositionImmutableView());
+			IF_Coordinate entityStartCoordinate = this.mapProvider.provide().convertPxXYInCollisionTileXY(positionAndDimensionModule.getPositionA().asPositionImmutableView());
 
 			if (module.isFixed()) {
 				this.mapProvider.provide().getFixEntityCollisionMap().connect(entityStartCoordinate.getIX(), entityStartCoordinate.getIY(), positionAndDimensionModule.getActiveCollisionMap());
@@ -54,8 +52,7 @@ public class EntityOnMapThread extends Thread {
 	}
 
 	private void updateEntityOnMap(PositionAndDimensionModule positionAndDimensionModule) {
-		IF_Rectangle_ImmutableView rectangle = positionAndDimensionModule.getPositionAndDimensionRectangle();
-		IF_Coordinate entityCenteredCoordinate = this.mapProvider.provide().convertPxXYInTileXY(rectangle.getCenteredPosition());
+		IF_Coordinate entityCenteredCoordinate = this.mapProvider.provide().convertPxXYInTileXY(positionAndDimensionModule.getCenteredPosition());
 		this.activeEntityMap.connect(entityCenteredCoordinate.getIX(), entityCenteredCoordinate.getIY(), positionAndDimensionModule.getEntityOnMap());
 	}
 }

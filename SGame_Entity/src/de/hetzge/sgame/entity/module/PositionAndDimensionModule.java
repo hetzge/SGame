@@ -5,23 +5,25 @@ import de.hetzge.sgame.common.PathPosition;
 import de.hetzge.sgame.common.activemap.ActiveMap;
 import de.hetzge.sgame.common.newgeometry.IF_Dimension;
 import de.hetzge.sgame.common.newgeometry.IF_Position;
-import de.hetzge.sgame.common.newgeometry.InterpolateRectangle;
+import de.hetzge.sgame.common.newgeometry.InterpolateXY;
+import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_ImmutableView;
+import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 import de.hetzge.sgame.entity.ActiveEntityMap;
 import de.hetzge.sgame.entity.BaseEntityModule;
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.sync.SyncProperty;
 
-public class PositionAndDimensionModule extends BaseEntityModule {
+public class PositionAndDimensionModule extends BaseEntityModule implements IF_Rectangle_ImmutableView {
 
-	private final SyncProperty<InterpolateRectangle> dimensionSyncProperty = this.createSyncProperty(new InterpolateRectangle());
+	private final SyncProperty<InterpolateXY> positionSyncProperty = this.createSyncProperty(new InterpolateXY());
+	private final SyncProperty<InterpolateXY> dimensionSyncProperty = this.createSyncProperty(new InterpolateXY());
 	private final SyncProperty<Float> speedPerMsSyncProperty = this.createSyncProperty(0.02f);
 	private final SyncProperty<Path> pathSyncProperty = this.createSyncProperty(null);
+
 	private final ActiveMap<Entity> entityOnMap = new ActiveEntityMap().setObjectOnPosition(this.entity, 0, 0);
 	private ActiveMap<Boolean> activeCollisionMap = new ActiveMap<Boolean>().setObjectInArea(true, 5, 5);
-
 	private boolean fixed = false;
-
 	private PathPosition pathPosition;
 
 	public PositionAndDimensionModule(Entity entity) {
@@ -39,7 +41,7 @@ public class PositionAndDimensionModule extends BaseEntityModule {
 	public void setPath(Path path) {
 		this.pathSyncProperty.setValue(path);
 		this.pathPosition = new PathPosition(path, 0);
-		this.dimensionSyncProperty.change( interpolateRectangle -> interpolateRectangle.setCenteredPosition(this.pathPosition.getCurrentPosition(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore())));
+		this.positionSyncProperty.change( position -> position.set(this.pathPosition.getCurrentPosition(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore())));
 	}
 
 	public void unsetPath() {
@@ -49,17 +51,16 @@ public class PositionAndDimensionModule extends BaseEntityModule {
 	}
 
 	public void stopMoving() {
-		IF_Position currentPosition = this.dimensionSyncProperty.getValue().getInterpolatedCenteredPosition();
-		this.dimensionSyncProperty.change( interpolateRectangle -> interpolateRectangle.setCenteredPosition(currentPosition));
+		this.positionSyncProperty.change( position -> position.stop());
 	}
 
 	public void continueOnPath() {
 		if (this.pathPosition != null) {
-			if (this.pathPosition.continueOnPath(this.dimensionSyncProperty.getValue().getInterpolatedCenteredPosition())) {
+			if (this.pathPosition.continueOnPath(this.positionSyncProperty.getValue())) {
 				if (this.entity.renderableModuleCache.isAvailable()) {
 					this.entity.renderableModuleCache.get().setOrientation(this.pathPosition.getOrientationFromWaypointBeforeToNext());
 				}
-				this.dimensionSyncProperty.change( interpolateRectangle -> interpolateRectangle.setCenteredPosition(this.pathPosition.getCurrentPosition(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore())));
+				this.positionSyncProperty.change( position -> position.set(this.pathPosition.getCurrentPosition(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore())));
 			}
 		}
 	}
@@ -69,21 +70,15 @@ public class PositionAndDimensionModule extends BaseEntityModule {
 	}
 
 	public boolean reachedEndOfPath() {
-		return this.pathPosition == null || this.pathPosition.reachedEndOfPath(this.dimensionSyncProperty.getValue().getInterpolatedCenteredPosition());
+		return this.pathPosition == null || this.pathPosition.reachedEndOfPath(this.positionSyncProperty.getValue());
 	}
 
-	public void setPosition(IF_Position position) {
-		this.dimensionSyncProperty.getValue().setCenteredPosition(position);
-		this.dimensionSyncProperty.setChanged();
+	public void setPosition(IF_Position newPosition) {
+		this.positionSyncProperty.change(position -> position.set(newPosition));
 	}
 
-	public void setDimension(IF_Dimension dimension) {
-		this.dimensionSyncProperty.getValue().setDimension(dimension);
-		this.dimensionSyncProperty.setChanged();
-	}
-
-	public IF_Rectangle_ImmutableView getPositionAndDimensionRectangle() {
-		return this.dimensionSyncProperty.getValue();
+	public void setDimension(IF_Dimension newDimension) {
+		this.dimensionSyncProperty.change(dimension -> dimension.set(newDimension));
 	}
 
 	public boolean isFixed() {
@@ -132,5 +127,16 @@ public class PositionAndDimensionModule extends BaseEntityModule {
 	public ActiveMap<Boolean> getActiveCollisionMap() {
 		return this.activeCollisionMap;
 	}
+
+	@Override
+	public IF_Position_ImmutableView getCenteredPosition() {
+		return this.positionSyncProperty.getValue();
+	}
+
+	@Override
+	public IF_Dimension_ImmutableView getDimension() {
+		return this.dimensionSyncProperty.getValue();
+	}
+
 
 }

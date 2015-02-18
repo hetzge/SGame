@@ -57,7 +57,7 @@ public class GotoKI extends BaseKI {
 			return KIState.INIT_FAILURE;
 		}
 
-		IF_Position_ImmutableView entityCenteredPosition = positionAndDimensionModule.getPositionAndDimensionRectangle().getCenteredPosition();
+		IF_Position_ImmutableView entityCenteredPosition = positionAndDimensionModule.getCenteredPosition();
 		IF_Coordinate entityCollisionTilePosition = map.convertPxXYInCollisionTileXY(entityCenteredPosition);
 
 		int startX = entityCollisionTilePosition.getIX();

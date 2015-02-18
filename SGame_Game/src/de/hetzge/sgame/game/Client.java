@@ -65,7 +65,7 @@ public class Client extends BaseGame {
 		Set<Entity> entitiesByType = this.entityPool.getEntitiesByType(EntityType.SILLY_BLOCK);
 		for (Entity entity : entitiesByType) {
 			PositionAndDimensionModule module = entity.getModule(PositionAndDimensionModule.class);
-			IF_Position_ImmutableView position = module.getPositionAndDimensionRectangle().getCenteredPosition();
+			IF_Position_ImmutableView position = module.getCenteredPosition();
 			// System.out.println(position.getStartValue() + " " +
 			// position.getStartTime() + "  <" + position.getX() + " | " +
 			// position.getY() + "> " + position.getEndTime() + " "

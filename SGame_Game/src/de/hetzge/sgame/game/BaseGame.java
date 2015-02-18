@@ -67,7 +67,7 @@ public class BaseGame extends Application {
 			PositionAndDimensionModule positionAndDimensionModule = new PositionAndDimensionModule(entity);
 			positionAndDimensionModule.setDimension(new XY(64f, 64f));
 			positionAndDimensionModule.setFixed(true);
-			positionAndDimensionModule.setCollision(this.onMapService.on(positionAndDimensionModule.getPositionAndDimensionRectangle()).asCollisionArray());
+			positionAndDimensionModule.setCollision(this.onMapService.on(positionAndDimensionModule).asCollisionArray());
 
 			entity.registerModules(renderableModule, positionAndDimensionModule);
 		});

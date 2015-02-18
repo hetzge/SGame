@@ -62,7 +62,7 @@ public class RenderableModule extends BaseEntityModule {
 	public IF_Rectangle_ImmutableView getRenderedRectangle() {
 		PositionAndDimensionModule positionAndDimensionModule = this.entity.getModule(PositionAndDimensionModule.class);
 		if (positionAndDimensionModule != null) {
-			return positionAndDimensionModule.getPositionAndDimensionRectangle();
+			return positionAndDimensionModule;
 		} else {
 			return new Rectangle();
 		}

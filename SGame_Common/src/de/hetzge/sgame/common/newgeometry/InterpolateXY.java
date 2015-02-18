@@ -2,10 +2,7 @@ package de.hetzge.sgame.common.newgeometry;
 
 import de.hetzge.sgame.common.Util;
 
-public class InterpolateXY implements IF_XY {
-
-	private float startX;
-	private float startY;
+public class InterpolateXY extends XY {
 
 	private float endX;
 	private float endY;
@@ -17,7 +14,7 @@ public class InterpolateXY implements IF_XY {
 		this(new XY(0f), 0L, new XY(0f), 0L);
 	}
 
-	public InterpolateXY(IF_XY value){
+	public InterpolateXY(IF_XY value) {
 		this(value, System.currentTimeMillis(), value, System.currentTimeMillis());
 	}
 
@@ -26,33 +23,50 @@ public class InterpolateXY implements IF_XY {
 	}
 
 	public InterpolateXY(IF_XY start, long startTimeInMs, IF_XY end, long endTimeInMs) {
+		super(start.getX(), start.getY());
+		this.set(start, startTimeInMs, end, endTimeInMs);
+	}
+
+	public void set(IF_XY start, long startTimeInMs, IF_XY end, long endTimeInMs) {
+		this.x = start.getX();
+		this.y = start.getY();
+
 		this.startTimeInMs = startTimeInMs;
 		this.endTimeInMs = endTimeInMs;
-
-		this.startX = start.getX();
-		this.startY = start.getY();
 
 		this.endX = end.getX();
 		this.endY = end.getY();
 	}
 
-	public IF_XY getInterpolatedXY() {
-		return new XY(this.getX(), this.getY());
+	public void set(IF_XY start, IF_XY end, long timeSpanInMs) {
+		this.set(start, System.currentTimeMillis(), end, System.currentTimeMillis() + timeSpanInMs);
+	}
+
+	public void set(IF_XY end, long timeSpanInMs) {
+		this.set(this, System.currentTimeMillis(), end, System.currentTimeMillis() + timeSpanInMs);
+	}
+
+	public void set(IF_XY position){
+		this.set(position, position, 0);
+	}
+
+	public void stop(){
+		this.set(this, 0);
 	}
 
 	@Override
 	public float getX() {
-		return Util.interpolateFloat(this.startX, this.startTimeInMs, this.endX, this.endTimeInMs);
+		return Util.interpolateFloat(this.x, this.startTimeInMs, this.endX, this.endTimeInMs);
 	}
 
 	@Override
 	public float getY() {
-		return Util.interpolateFloat(this.startY, this.startTimeInMs, this.endY, this.endTimeInMs);
+		return Util.interpolateFloat(this.y, this.startTimeInMs, this.endY, this.endTimeInMs);
 	}
 
 	@Override
 	public <T extends IF_XY> T setX(float x) {
-		this.startX = x;
+		this.x = x;
 		this.endX = x;
 		this.startTimeInMs = System.currentTimeMillis();
 		this.endTimeInMs = System.currentTimeMillis();
@@ -61,7 +75,7 @@ public class InterpolateXY implements IF_XY {
 
 	@Override
 	public <T extends IF_XY> T setY(float y) {
-		this.startY = y;
+		this.y = y;
 		this.endY = y;
 		this.startTimeInMs = System.currentTimeMillis();
 		this.endTimeInMs = System.currentTimeMillis();

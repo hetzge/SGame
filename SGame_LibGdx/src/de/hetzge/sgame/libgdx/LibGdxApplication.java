@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import de.hetzge.sgame.common.newgeometry.XY;
+import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableContext;
 import de.hetzge.sgame.render.RenderConfig;
 import de.hetzge.sgame.render.RenderPool;
@@ -99,6 +101,11 @@ public class LibGdxApplication implements ApplicationListener {
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
 			this.camera.translate(0f, 3f);
+		}
+
+		if(Gdx.input.isButtonPressed(Buttons.LEFT)){
+			IF_Position_ImmutableView mouseClickPosition = new XY(Gdx.input.getX(), Gdx.input.getY()).add(this.mapViewport.getPositionA());
+			System.out.println("You clicked " + mouseClickPosition.getX() + "/" + mouseClickPosition.getY());
 		}
 
 		this.fpsLogger.log();

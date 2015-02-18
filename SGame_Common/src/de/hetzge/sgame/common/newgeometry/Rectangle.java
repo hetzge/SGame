@@ -2,7 +2,6 @@ package de.hetzge.sgame.common.newgeometry;
 
 import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_MutableView;
 
 public class Rectangle implements IF_Rectangle_MutableView {
@@ -53,16 +52,6 @@ public class Rectangle implements IF_Rectangle_MutableView {
 	@Override
 	public IF_Dimension_ImmutableView getDimension() {
 		return new XY(this.width, this.height);
-	}
-
-	@Override
-	public IF_Rectangle_ImmutableView asRectangleImmutableView() {
-		return this;
-	}
-
-	@Override
-	public IF_Rectangle_MutableView asRectangleMutableView() {
-		return this;
 	}
 
 	@Override

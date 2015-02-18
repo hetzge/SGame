@@ -9,8 +9,8 @@ import de.hetzge.sgame.common.newgeometry.views.IF_Position_MutableView;
 
 public class XY implements IF_Position, IF_Dimension, IF_Coordinate {
 
-	private float x;
-	private float y;
+	protected float x;
+	protected float y;
 
 	public XY(float value) {
 		this.x = value;

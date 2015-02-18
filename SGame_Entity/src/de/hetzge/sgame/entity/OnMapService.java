@@ -1,5 +1,8 @@
 package de.hetzge.sgame.entity;
 
+import java.util.List;
+import java.util.function.Predicate;
+
 import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.Util;
@@ -178,12 +181,18 @@ public class OnMapService {
 
 	public IF_Position_ImmutableView findPositionAround(Entity around, Entity entity) {
 		if (around.positionAndDimensionModuleCache.isAvailable() && entity.positionAndDimensionModuleCache.isAvailable()) {
-			IF_Rectangle_ImmutableView aroundRectangle = around.positionAndDimensionModuleCache.get().getPositionAndDimensionRectangle();
-			IF_Rectangle_ImmutableView entityRectangle = entity.positionAndDimensionModuleCache.get().getPositionAndDimensionRectangle();
+			IF_Rectangle_ImmutableView aroundRectangle = around.positionAndDimensionModuleCache.get();
+			IF_Rectangle_ImmutableView entityRectangle = entity.positionAndDimensionModuleCache.get();
 			return this.on(aroundRectangle).findCollisionPositionAround(this.on(entityRectangle));
 		} else {
 			throw new IllegalArgumentException("The given entities (or one of them) has no position to evaluate position arround.");
 		}
+	}
+
+	public List<Entity> findEntitiesAround(Predicate<Entity> filter, int radius, int max){
+
+
+		return null;
 	}
 
 }

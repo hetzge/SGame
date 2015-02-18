@@ -1,12 +1,12 @@
 package de.hetzge.sgame.common.newgeometry;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
 import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_View;
 
-public interface IF_Rectangle extends IF_Rectangle_View {
+public interface IF_Rectangle extends Serializable{
 
 	// TODO getAx() ... optimieren 
 	IF_Position_ImmutableView getPositionA();
