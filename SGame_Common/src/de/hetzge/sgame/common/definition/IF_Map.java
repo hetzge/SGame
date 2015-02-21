@@ -75,4 +75,8 @@ public interface IF_Map {
 		return position.copy().divide(new XY(this.getTileSize()));
 	}
 
+	public default boolean isOnCollisionMap(int x, int y){
+		return x >= 0 && y >= 0 && x < this.getWidthInCollisionTiles() && y < this.getHeightInCollisionTiles();
+	}
+
 }

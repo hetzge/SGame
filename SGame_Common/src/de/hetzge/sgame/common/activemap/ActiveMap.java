@@ -15,7 +15,7 @@ public class ActiveMap<TYPE> implements Serializable {
 
 	private class ActiveNode<TYPE> implements Serializable {
 
-		private transient FastCollection<ActiveNode<TYPE>> connectors = new FastSet<ActiveNode<TYPE>>().parallel();
+		private transient FastCollection<ActiveNode<TYPE>> connectors = new FastSet<ActiveNode<TYPE>>().shared();
 		private transient ActiveNode<TYPE> connectedWith;
 
 		private final int x;
@@ -68,7 +68,7 @@ public class ActiveMap<TYPE> implements Serializable {
 		}
 
 		public FastCollection<TYPE> getConnectedObjects() {
-			FastCollection<TYPE> result = new FastSet<TYPE>().parallel();
+			FastCollection<TYPE> result = new FastSet<TYPE>().shared();
 			for (ActiveNode<TYPE> activeNode : this.getLazyConnectors()) {
 				result.add(activeNode.getObject());
 			}
@@ -81,7 +81,7 @@ public class ActiveMap<TYPE> implements Serializable {
 		 */
 		public FastCollection<ActiveNode<TYPE>> getLazyConnectors() {
 			if (this.connectors == null) {
-				this.connectors = new FastSet<ActiveNode<TYPE>>().parallel();
+				this.connectors = new FastSet<ActiveNode<TYPE>>().shared();
 			}
 			return this.connectors;
 		}
@@ -89,7 +89,7 @@ public class ActiveMap<TYPE> implements Serializable {
 
 	// private final ActiveNode<TYPE>[][] nodes;
 
-	private final Map<IF_Coordinate, ActiveNode<TYPE>> nodesByXY = new FastMap<IF_Coordinate, ActiveNode<TYPE>>().parallel();
+	private final Map<IF_Coordinate, ActiveNode<TYPE>> nodesByXY = new FastMap<IF_Coordinate, ActiveNode<TYPE>>().shared();
 
 	public ActiveMap() {
 	}

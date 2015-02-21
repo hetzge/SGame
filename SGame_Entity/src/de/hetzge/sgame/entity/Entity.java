@@ -11,12 +11,12 @@ import de.hetzge.sgame.common.activemap.ActiveMap;
 import de.hetzge.sgame.common.application.Application;
 import de.hetzge.sgame.common.definition.IF_EntityType;
 import de.hetzge.sgame.common.newgeometry.IF_Dimension;
-import de.hetzge.sgame.common.newgeometry.IF_Position;
 import de.hetzge.sgame.common.newgeometry.InterpolateXY;
 import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 import de.hetzge.sgame.entity.ki.EntityKI;
+import de.hetzge.sgame.render.DefaultAnimationKey;
 import de.hetzge.sgame.render.IF_AnimationKey;
 import de.hetzge.sgame.render.RenderableKey;
 import de.hetzge.sgame.sync.SyncPool;
@@ -40,7 +40,7 @@ public class Entity implements Serializable, IF_Rectangle_ImmutableView {
 	private final SyncProperty<Path> pathSyncProperty = this.createSyncProperty(null);
 
 	private final ActiveMap<Entity> entityOnMap = new ActiveEntityMap().setObjectOnPosition(this, 0, 0);
-	private ActiveMap<Boolean> activeCollisionMap = new ActiveMap<Boolean>().setObjectInArea(true, 5, 5);
+	private ActiveMap<Boolean> activeCollisionMap = new ActiveMap<Boolean>();
 	private boolean fixed = false;
 	private PathPosition pathPosition;
 
@@ -130,12 +130,14 @@ public class Entity implements Serializable, IF_Rectangle_ImmutableView {
 		this.pathSyncProperty.setValue(path);
 		this.pathPosition = new PathPosition(path, 0);
 		this.positionSyncProperty.change(position -> position.set(this.pathPosition.getCurrentPosition(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore())));
+		this.setAnimationKey(DefaultAnimationKey.WALK);
 	}
 
 	public void unsetPath() {
 		this.pathSyncProperty.setValue(null);
 		this.pathPosition = null;
 		this.stopMoving();
+		this.setAnimationKey(DefaultAnimationKey.DEFAULT);
 	}
 
 	public void stopMoving() {
@@ -145,9 +147,7 @@ public class Entity implements Serializable, IF_Rectangle_ImmutableView {
 	public void continueOnPath() {
 		if (this.pathPosition != null) {
 			if (this.pathPosition.continueOnPath(this.positionSyncProperty.getValue())) {
-
 				this.setOrientation(this.pathPosition.getOrientationFromWaypointBeforeToNext());
-
 				this.positionSyncProperty.change(position -> position.set(this.pathPosition.getCurrentPosition(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore())));
 			}
 		}
@@ -161,8 +161,12 @@ public class Entity implements Serializable, IF_Rectangle_ImmutableView {
 		return this.pathPosition == null || this.pathPosition.reachedEndOfPath(this.positionSyncProperty.getValue());
 	}
 
-	public void setPosition(IF_Position newPosition) {
+	public void setPosition(IF_Position_ImmutableView newPosition) {
 		this.positionSyncProperty.change(position -> position.set(newPosition));
+	}
+
+	public void setPositionA(IF_Position_ImmutableView newPosition){
+		this.setPosition(newPosition.copy().add(this.getHalfDimension().asPositionImmutableView()));
 	}
 
 	public void setDimension(IF_Dimension newDimension) {
@@ -194,7 +198,7 @@ public class Entity implements Serializable, IF_Rectangle_ImmutableView {
 	 */
 	public void setCollision(boolean[][] collision) {
 		if (collision.length == 0) {
-			return;
+			throw new IllegalStateException("try to set empty collision");
 		}
 
 		int collisionWidthInTiles = collision.length;
@@ -265,6 +269,6 @@ public class Entity implements Serializable, IF_Rectangle_ImmutableView {
 
 	public RenderableKey getRenderableKey() {
 		return this.renderableKeySyncProperty.getValue();
-	}	
+	}
 
 }

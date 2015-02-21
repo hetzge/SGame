@@ -9,7 +9,7 @@ import de.hetzge.sgame.sync.message.SyncMessage;
 
 public class SyncPool {
 
-	private final Map<String, SyncProperty<?>> syncProperties = new FastMap<String, SyncProperty<?>>().parallel();
+	private final Map<String, SyncProperty<?>> syncProperties = new FastMap<String, SyncProperty<?>>().shared();
 
 	public <T> SyncProperty<T> createAndRegisterSyncProperty(T value) {
 		SyncProperty<T> syncProperty = new SyncProperty<T>(value);

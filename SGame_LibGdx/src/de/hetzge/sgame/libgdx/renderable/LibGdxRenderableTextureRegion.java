@@ -23,6 +23,19 @@ public class LibGdxRenderableTextureRegion implements IF_RenderableWrapper<LibGd
 	}
 
 	public static void render(TextureRegion textureRegion, LibGdxRenderableContext context, IF_RenderInformation onScreen) {
+		if(context == null){
+			throw new IllegalStateException("context is null");
+		}
+
+		if(textureRegion == null){
+			throw new IllegalStateException("textureRegion is null");
+		}
+
+		if(onScreen == null){
+			throw new IllegalStateException("onScreen is null");
+		}
+
+
 		IF_Rectangle_ImmutableView rectangle = onScreen.getRenderedRectangle();
 
 		IF_Position_ImmutableView positionA = rectangle.getPositionA();

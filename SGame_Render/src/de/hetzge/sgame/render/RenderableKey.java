@@ -7,10 +7,6 @@ import de.hetzge.sgame.common.definition.IF_EntityType;
 
 public class RenderableKey implements Serializable {
 
-	private static enum DefaultAnimationKey implements IF_AnimationKey, Serializable {
-		DEFAULT;
-	}
-
 	private static enum DefaultEntitiyType implements IF_EntityType, Serializable {
 		DEFAULT;
 	}
@@ -55,25 +51,33 @@ public class RenderableKey implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (this.getClass() != obj.getClass())
+		}
+		if (this.getClass() != obj.getClass()) {
 			return false;
+		}
 		RenderableKey other = (RenderableKey) obj;
 		if (this.animationKey == null) {
-			if (other.animationKey != null)
+			if (other.animationKey != null) {
 				return false;
-		} else if (!this.animationKey.equals(other.animationKey))
+			}
+		} else if (!this.animationKey.equals(other.animationKey)) {
 			return false;
+		}
 		if (this.entityType == null) {
-			if (other.entityType != null)
+			if (other.entityType != null) {
 				return false;
-		} else if (!this.entityType.equals(other.entityType))
+			}
+		} else if (!this.entityType.equals(other.entityType)) {
 			return false;
-		if (this.orientation != other.orientation)
+		}
+		if (this.orientation != other.orientation) {
 			return false;
+		}
 		return true;
 	}
 

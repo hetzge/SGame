@@ -1,5 +1,7 @@
 package de.hetzge.sgame.entity;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -12,7 +14,7 @@ import de.hetzge.sgame.common.newgeometry.XY;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 
-public class OnMapService {
+public class EntityOnMapService {
 
 	public class On {
 
@@ -34,7 +36,7 @@ public class OnMapService {
 		private final int heightInTiles;
 
 		public On(IF_Rectangle_ImmutableView rectangle) {
-			IF_Map map = OnMapService.this.mapProvider.provide();
+			IF_Map map = EntityOnMapService.this.mapProvider.provide();
 
 			this.rectangle = rectangle;
 
@@ -147,7 +149,7 @@ public class OnMapService {
 		}
 
 		private IF_Position_ImmutableView findCollisionPositionAroundRow(int startX, int startY, int endX, int endY, int width, int height, On other) {
-			IF_Map map = OnMapService.this.mapProvider.provide();
+			IF_Map map = EntityOnMapService.this.mapProvider.provide();
 
 			Integer[] xValues = Util.valuesInsideOut(startX, endX);
 			Integer[] yValues = Util.valuesInsideOut(startY, endY);
@@ -156,13 +158,13 @@ public class OnMapService {
 				outer: for (Integer y : yValues) {
 					for (int ix = 0; ix < width; ix++) {
 						for (int iy = 0; iy < height; iy++) {
-							boolean collision = OnMapService.this.mapProvider.provide().getFixEntityCollisionMap().isCollision(x + ix, y + iy);
-							if (collision) {
+							boolean collision = EntityOnMapService.this.mapProvider.provide().getFixEntityCollisionMap().isCollision(x + ix, y + iy);
+							if (collision || !map.isOnCollisionMap(x + ix, y + iy)) {
 								continue outer;
 							}
 						}
 					}
-					return new XY(map.convertCollisionTileInPx(startX) + map.convertCollisionTileInPx(width) / 2, map.convertCollisionTileInPx(startY) + map.convertCollisionTileInPx(height) / 2);
+					return new XY(map.convertCollisionTileInPx(x) + map.convertCollisionTileInPx(width) / 2, map.convertCollisionTileInPx(y) + map.convertCollisionTileInPx(height) / 2);
 				}
 			}
 			return null;
@@ -170,9 +172,11 @@ public class OnMapService {
 	}
 
 	private final IF_MapProvider mapProvider;
+	private final ActiveEntityMap activeEntityMap;
 
-	public OnMapService(IF_MapProvider mapProvider) {
+	public EntityOnMapService(IF_MapProvider mapProvider, ActiveEntityMap activeEntityMap) {
 		this.mapProvider = mapProvider;
+		this.activeEntityMap = activeEntityMap;
 	}
 
 	public On on(IF_Rectangle_ImmutableView rectangle) {
@@ -183,10 +187,29 @@ public class OnMapService {
 		return this.on(around).findCollisionPositionAround(this.on(entity));
 	}
 
-	public List<Entity> findEntitiesAround(Predicate<Entity> filter, int radius, int max){
+	public List<Entity> findEntitiesAround(Entity around, Predicate<Entity> filter, int radius, int max) {
+		List<Entity> result = new LinkedList<>();
 
+		IF_Coordinate coordinate = this.mapProvider.provide().convertPxXYInCollisionTileXY(around.getCenteredPosition());
+		Orientation[] orientations = new Orientation[] { Orientation.NORTH, Orientation.EAST, Orientation.SOUTH, Orientation.WEST };
 
-		return null;
+		mainLoop: for (int i = 0; i < radius * 4; i++) {
+			Orientation nextOrientation = orientations[i % 4];
+			int add = (int) (Math.floor(i / 2) + 1);
+			for (int a = 0; a < add; a++) {
+				coordinate.add(nextOrientation.orientationFactor);
+				Collection<Entity> connectedObjects = this.activeEntityMap.getConnectedObjects(coordinate.getIX(), coordinate.getIY());
+				for (Entity entity : connectedObjects) {
+					if (filter.test(entity) && !entity.equals(around)) {
+						result.add(entity);
+						if (result.size() >= max) {
+							break mainLoop;
+						}
+					}
+				}
+			}
+		}
+
+		return result;
 	}
-
 }

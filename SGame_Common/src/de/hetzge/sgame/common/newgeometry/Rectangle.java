@@ -29,13 +29,13 @@ public class Rectangle implements IF_Rectangle_MutableView {
 
 	@Override
 	public void setPositionA(IF_Position_ImmutableView position) {
-		this.x = position.getFX();
-		this.y = position.getFY();
+		this.setCenteredPosition(position.copy().add(this.getHalfDimension().asPositionImmutableView()));
 	}
 
 	@Override
 	public void setCenteredPosition(IF_Position_ImmutableView position) {
-		this.setPositionA(position.copy().substract(this.getHalfDimension().asPositionImmutableView()));
+		this.x = position.getFX();
+		this.y = position.getFY();
 	}
 
 	@Override
@@ -52,6 +52,13 @@ public class Rectangle implements IF_Rectangle_MutableView {
 	@Override
 	public IF_Dimension_ImmutableView getDimension() {
 		return new XY(this.width, this.height);
+	}
+
+	@Override
+	public <T extends IF_Rectangle> T copy() {
+		IF_Position_ImmutableView centeredPosition = this.getCenteredPosition();
+		IF_Dimension_ImmutableView dimension = this.getDimension();
+		return (T) new Rectangle(centeredPosition, dimension);
 	}
 
 	@Override

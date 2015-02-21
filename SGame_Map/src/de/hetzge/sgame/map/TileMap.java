@@ -136,7 +136,7 @@ public class TileMap implements IF_Map, Serializable {
 		this.widthInTiles = this.tmxMap.getWidth();
 		this.heightInTiles = this.tmxMap.getHeight();
 		this.tileSize = this.tmxMap.getTileWidth();
-		this.collisionTileFactor = 3;
+		this.collisionTileFactor = 2;
 		this.tiles = new TileMap.Tile[this.widthInTiles][this.heightInTiles];
 
 		List<Layer> layers = this.tmxMap.getLayers();

@@ -6,10 +6,9 @@ import de.hetzge.sgame.common.application.Application;
 import de.hetzge.sgame.common.newgeometry.XY;
 import de.hetzge.sgame.entity.EntityFactory;
 import de.hetzge.sgame.entity.EntityModule;
+import de.hetzge.sgame.entity.EntityOnMapService;
 import de.hetzge.sgame.entity.EntityPool;
-import de.hetzge.sgame.entity.OnMapService;
 import de.hetzge.sgame.entity.ki.EntityKI;
-import de.hetzge.sgame.game.Definition.AnimationKey;
 import de.hetzge.sgame.game.Definition.EntityType;
 import de.hetzge.sgame.map.MapModule;
 import de.hetzge.sgame.message.MessageModule;
@@ -27,7 +26,7 @@ public class BaseGame extends Application {
 	protected final NetworkConfig networkConfig;
 	protected final EntityFactory entityFactory;
 	protected final EntityPool entityPool;
-	protected final OnMapService onMapService;
+	protected final EntityOnMapService onMapService;
 
 	public BaseGame(Class<? extends BootstrapperBundle> bootstrapperBundle) {
 		super(bootstrapperBundle);
@@ -39,15 +38,15 @@ public class BaseGame extends Application {
 		this.entityFactory = this.get(EntityFactory.class);
 		this.entityPool = this.get(EntityPool.class);
 		this.messageModule = this.get(MessageModule.class);
-		this.onMapService = this.get(OnMapService.class);
+		this.onMapService = this.get(EntityOnMapService.class);
 
 		this.modulePool.registerModules(this.mapModule, this.networkModule, this.syncModule, this.entityModule, this.messageModule);
 
 		this.entityFactory.registerFactory(EntityType.SILLY_BLOCK, (entity) -> {
-			entity.setAnimationKey(AnimationKey.WALK);
 			entity.setEntityKey(EntityType.SILLY_BLOCK);
 			entity.setOrientation(Orientation.SOUTH);
-			entity.setDimension(new XY(32f, 48f));
+			entity.setDimension(new XY(40f, 40f));
+			entity.setCollision(this.onMapService.on(entity).asCollisionArray());
 			entity.setEntityKI(new EntityKI(entity));
 		});
 

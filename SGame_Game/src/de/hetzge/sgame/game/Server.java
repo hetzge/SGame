@@ -12,7 +12,7 @@ public class Server extends BaseGame {
 		super(ServerBootstrapperBundle.class);
 		this.networkConfig.peerRole = PeerRole.SERVER;
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 10; i++) {
 			this.entityFactory.build(EntityType.SILLY_BLOCK, (entity) -> {
 				entity.setPosition(new XY((float) Math.random() * 100 + 100, (float) Math.random() * 100 + 100));
 				// module.set(new Position((float) Math.random() * 1000, (float)
@@ -20,11 +20,15 @@ public class Server extends BaseGame {
 			});
 		}
 
-		for (int i = 0; i < 50; i++) {
-			this.entityFactory.build(EntityType.TREE, (entity) -> {
-				entity.setPosition(new XY((float) Math.random() * 1000 + 200, (float) Math.random() * 1000 + 200));
-			});
-		}
+		this.entityFactory.build(EntityType.TREE, (entity) -> {
+			entity.setPositionA(new XY(0f, 0f));
+		});
+
+		//				for (int i = 0; i < 50; i++) {
+		//					this.entityFactory.build(EntityType.TREE, (entity) -> {
+		//						entity.setPosition(new XY((float) Math.random() * 1000 + 200, (float) Math.random() * 1000 + 200));
+		//					});
+		//				}
 
 		// TODO Server sollte keine Render abhängigkeit haben ?!
 		this.modulePool.registerModule(this.get(RenderModule.class));

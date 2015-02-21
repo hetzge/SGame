@@ -11,6 +11,7 @@ import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.entity.ki.BaseKI;
+import de.hetzge.sgame.render.DefaultAnimationKey;
 
 public class GotoKI extends BaseKI {
 
@@ -90,11 +91,10 @@ public class GotoKI extends BaseKI {
 			this.entity.setPath(path);
 		}
 
-		if (!this.entity.hasPath()) {
-			return KIState.FAILURE;
-		}
-
 		if (this.entity.reachedEndOfPath()) {
+			Log.KI.debug("Entity " + this.entity + " reached end of path");
+			this.entity.unsetPath();
+			this.entity.setAnimationKey(DefaultAnimationKey.IDLE);
 			return KIState.SUCCESS;
 		}
 

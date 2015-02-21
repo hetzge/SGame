@@ -3,6 +3,8 @@ package de.hetzge.sgame.map;
 import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.definition.IF_Callback;
 import de.hetzge.sgame.common.definition.IF_Module;
+import de.hetzge.sgame.common.newgeometry.Rectangle;
+import de.hetzge.sgame.common.newgeometry.XY;
 import de.hetzge.sgame.map.message.TileMapMessage;
 import de.hetzge.sgame.map.message.TileMapMessageHandler;
 import de.hetzge.sgame.message.MessageConfig;
@@ -13,7 +15,6 @@ import de.hetzge.sgame.render.IF_RenderableLoader;
 import de.hetzge.sgame.render.PredefinedRenderId;
 import de.hetzge.sgame.render.RenderService;
 import de.hetzge.sgame.render.Viewport;
-import de.hetzge.sgame.common.newgeometry.Rectangle;
 
 
 public class MapModule implements IF_Module, IF_Renderable<IF_RenderableContext> {
@@ -72,7 +73,21 @@ public class MapModule implements IF_Module, IF_Renderable<IF_RenderableContext>
 			for (int cx = 0; cx < this.getTileMap().getCollisionTileFactor(); cx++) {
 				for (int cy = 0; cy < this.getTileMap().getCollisionTileFactor(); cy++) {
 					if (this.getTileMap().getFixEntityCollisionMap().isCollision(tileX * this.getTileMap().getCollisionTileFactor() + cx, tileY * this.getTileMap().getCollisionTileFactor() + cy)) {
-						this.renderService.render(context, new Rectangle(tileX * this.getTileMap().getTileSize() + cx * this.getTileMap().getCollisionTileSize(), tileY * this.getTileMap().getTileSize() + cy * this.getTileMap().getCollisionTileSize(), this.getTileMap().getCollisionTileSize(), this.getTileMap().getCollisionTileSize()), PredefinedRenderId.RECTANGLE);
+
+						Rectangle collisionTileRectangle = new Rectangle();
+						collisionTileRectangle.setDimension(new XY(this.getTileMap().getCollisionTileSize(), this.getTileMap().getCollisionTileSize()));
+						collisionTileRectangle.setPositionA(new XY(tileX * this.getTileMap().getTileSize() + cx * this.getTileMap().getCollisionTileSize(), tileY * this.getTileMap().getTileSize() + cy * this.getTileMap().getCollisionTileSize()));
+
+						this.renderService.render(context, collisionTileRectangle, PredefinedRenderId.RECTANGLE);
+					}
+
+					if (this.getTileMap().getFlexibleEntityCollisionMap().isCollision(tileX * this.getTileMap().getCollisionTileFactor() + cx, tileY * this.getTileMap().getCollisionTileFactor() + cy)) {
+
+						Rectangle collisionTileRectangle = new Rectangle();
+						collisionTileRectangle.setDimension(new XY(this.getTileMap().getCollisionTileSize(), this.getTileMap().getCollisionTileSize()));
+						collisionTileRectangle.setPositionA(new XY(tileX * this.getTileMap().getTileSize() + cx * this.getTileMap().getCollisionTileSize(), tileY * this.getTileMap().getTileSize() + cy * this.getTileMap().getCollisionTileSize()));
+
+						this.renderService.render(context, collisionTileRectangle, PredefinedRenderId.RECTANGLE);
 					}
 				}
 			}

@@ -86,7 +86,7 @@ public class LibGdxApplication implements ApplicationListener {
 		this.shapeRenderer.end();
 
 		// sync viewport with camera
-		this.mapViewport.setPositionA(new XY(this.camera.position.x, this.camera.position.y));
+		this.mapViewport.setCenteredPosition(new XY(this.camera.position.x, this.camera.position.y));
 		this.mapViewport.setDimension(new XY(this.camera.viewportWidth, this.camera.viewportHeight));
 
 		// TEMP

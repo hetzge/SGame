@@ -14,6 +14,16 @@ public final class Util {
 		}
 	}
 
+	public static boolean[][] createTrueBooleanArray(int width, int height){
+		boolean[][] booleanArray = new boolean[width][height];
+		for (int x = 0; x < booleanArray.length; x++) {
+			for (int y = 0; y < booleanArray.length; y++) {
+				booleanArray[x][y] = true;
+			}
+		}
+		return booleanArray;
+	}
+
 	public static Integer[] valuesInsideOut(int start, int end) {
 		if (start == end) {
 			return new Integer[] { start };

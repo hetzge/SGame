@@ -2,7 +2,7 @@ package de.hetzge.sgame.entity.ki.high;
 
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.entity.Entity;
-import de.hetzge.sgame.entity.OnMapService;
+import de.hetzge.sgame.entity.EntityOnMapService;
 import de.hetzge.sgame.entity.ki.BaseKI;
 import de.hetzge.sgame.entity.ki.KICallback;
 import de.hetzge.sgame.entity.ki.low.FindFixEntityKI;
@@ -11,7 +11,7 @@ import de.hetzge.sgame.entity.ki.low.WaitKI;
 
 public class SillyGotoKI extends BaseKI {
 
-	private final OnMapService onMapService = this.get(OnMapService.class);
+	private final EntityOnMapService onMapService = this.get(EntityOnMapService.class);
 
 	public SillyGotoKI(Entity entity) {
 		super(entity);

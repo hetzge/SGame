@@ -13,7 +13,11 @@ public class LibGdxRenderableAnimation implements IF_RenderableWrapper<LibGdxRen
 	private final Animation animation;
 
 	public LibGdxRenderableAnimation(String path, int frameWidth, int frameHeight, int startFrameX, int startFrameY, int endFrameX, int endFrameY) {
-		this(LibGdxUtil.loadAnimation(path, frameWidth, frameHeight, startFrameX, startFrameY, endFrameX, endFrameY));
+		this(path, frameWidth, frameHeight, startFrameX, startFrameY, endFrameX, endFrameY, false);
+	}
+
+	public LibGdxRenderableAnimation(String path, int frameWidth, int frameHeight, int startFrameX, int startFrameY, int endFrameX, int endFrameY, boolean flipHorizontal) {
+		this(LibGdxUtil.loadAnimation(path, frameWidth, frameHeight, startFrameX, startFrameY, endFrameX, endFrameY, flipHorizontal));
 	}
 
 	public LibGdxRenderableAnimation(Animation animation) {

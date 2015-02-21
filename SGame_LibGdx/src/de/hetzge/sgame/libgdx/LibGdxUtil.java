@@ -20,6 +20,10 @@ public final class LibGdxUtil {
 	}
 
 	public static Animation loadAnimation(String path, int frameWidth, int frameHeight, int startFrameX, int startFrameY, int endFrameX, int endFrameY) {
+		return LibGdxUtil.loadAnimation(path, frameWidth, frameHeight, startFrameX, startFrameY, endFrameX, endFrameY, false);
+	}
+
+	public static Animation loadAnimation(String path, int frameWidth, int frameHeight, int startFrameX, int startFrameY, int endFrameX, int endFrameY, boolean flipHorizontal) {
 		Texture texture = new Texture(Gdx.files.internal(path));
 		TextureRegion[][] textureRegions = TextureRegion.split(texture, frameWidth, frameHeight);
 
@@ -27,11 +31,11 @@ public final class LibGdxUtil {
 		int heightInFrames = endFrameY - startFrameY + 1;
 
 		TextureRegion[] animationFrames = new TextureRegion[widthInFrames * heightInFrames];
-		for (int x = 0; x < widthInFrames; x++) {
-			for (int y = 0; y < heightInFrames; y++) {
-				TextureRegion textureRegion = textureRegions[startFrameY + y - 1][startFrameX + x - 1];
-				textureRegion.flip(false, true);
-				animationFrames[y * (widthInFrames - 1) + x] = textureRegion;
+		for (int x = 1; x <= widthInFrames; x++) {
+			for (int y = 1; y <= heightInFrames; y++) {
+				TextureRegion textureRegion = textureRegions[startFrameY + y - 2][startFrameX + x - 2];
+				textureRegion.flip(flipHorizontal, true);
+				animationFrames[(y - 1) * (widthInFrames ) + (x - 1)] = textureRegion;
 			}
 		}
 		return new Animation(0.5f, animationFrames);

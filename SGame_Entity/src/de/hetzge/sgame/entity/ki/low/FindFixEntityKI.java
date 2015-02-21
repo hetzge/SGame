@@ -1,17 +1,17 @@
 package de.hetzge.sgame.entity.ki.low;
 
-import java.util.Collection;
+import java.util.List;
 
 import de.hetzge.sgame.common.Log;
 import de.hetzge.sgame.entity.Entity;
-import de.hetzge.sgame.entity.EntityPool;
+import de.hetzge.sgame.entity.EntityOnMapService;
 import de.hetzge.sgame.entity.ki.BaseKI;
 
 public class FindFixEntityKI extends BaseKI {
 
 	// TODO funktion in service auslagern
 
-	private final EntityPool entityPool = this.get(EntityPool.class);
+	private final EntityOnMapService onMapService = this.get(EntityOnMapService.class);
 	private Entity result;
 
 	public FindFixEntityKI(Entity entity) {
@@ -27,12 +27,10 @@ public class FindFixEntityKI extends BaseKI {
 
 	@Override
 	protected KIState updateImpl() {
-		Collection<Entity> entities = this.entityPool.getEntities();
-		for (Entity entity : entities) {
-			if (entity.isFixedPosition() && Math.random() > 0.5d) {
-				this.result = entity;
-				return KIState.SUCCESS;
-			}
+		List<Entity> foundEntitiesAround = this.onMapService.findEntitiesAround(this.entity, Entity::isFixedPosition, 30, 1);
+		if(!foundEntitiesAround.isEmpty()){
+			this.result = foundEntitiesAround.get(0);
+			return KIState.SUCCESS;
 		}
 		return KIState.FAILURE;
 	}

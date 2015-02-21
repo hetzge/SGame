@@ -19,10 +19,10 @@ import de.hetzge.sgame.render.Viewport;
 
 public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 
-	private final FastCollection<Entity> entities = new FastTable<Entity>().parallel();
-	private final FastMap<String, Entity> entitiesById = new FastMap<String, Entity>().parallel();
-	private final FastMap<Class<? extends BaseEntityModule>, FastSet<Entity>> entitiesByModule = new FastMap<Class<? extends BaseEntityModule>, FastSet<Entity>>().parallel();
-	private final FastMap<IF_EntityType, Set<Entity>> entitiesByType = new FastMap<IF_EntityType, Set<Entity>>().parallel();
+	private final FastCollection<Entity> entities = new FastTable<Entity>().shared();
+	private final FastMap<String, Entity> entitiesById = new FastMap<String, Entity>().shared();
+	private final FastMap<Class<? extends BaseEntityModule>, FastSet<Entity>> entitiesByModule = new FastMap<Class<? extends BaseEntityModule>, FastSet<Entity>>().shared();
+	private final FastMap<IF_EntityType, Set<Entity>> entitiesByType = new FastMap<IF_EntityType, Set<Entity>>().shared();
 	private final FastMap<Class<? extends BaseEntityModule>, FastSet<BaseEntityModule>> entityModulesByModuleClass = new FastMap<Class<? extends BaseEntityModule>, FastSet<BaseEntityModule>>().parallel();
 
 	private final ActiveEntityMap activeEntityMap;
