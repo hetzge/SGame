@@ -123,7 +123,7 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 		this.viewport.iterateVisibleTiles((int x, int y) -> {
 			Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(x, y);
 			for (Entity entity : entities) {
-				this.renderService.render(context, entity, entity.getRenderableKey());
+				this.renderService.render(context, entity.getRenderRectangle(), entity.getRenderableKey());
 			}
 
 			// TODO return null weg machen
@@ -137,10 +137,10 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 		this.viewport.iterateVisibleTiles((int x, int y) -> {
 			Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(x, y);
 			for (Entity entity : entities) {
-				this.renderService.render(context, entity, PredefinedRenderId.RECTANGLE);
+				this.renderService.render(context, entity.getRealRectangle(), PredefinedRenderId.RECTANGLE);
 				Path path = entity.getPath();
 				if (path != null) {
-					this.renderService.render(context, entity, PredefinedRenderId.LINE);
+					this.renderService.render(context, entity.getRenderRectangle(), PredefinedRenderId.LINE);
 				}
 			}
 

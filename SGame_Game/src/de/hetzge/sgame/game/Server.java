@@ -12,16 +12,16 @@ public class Server extends BaseGame {
 		super(ServerBootstrapperBundle.class);
 		this.networkConfig.peerRole = PeerRole.SERVER;
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			this.entityFactory.build(EntityType.SILLY_BLOCK, (entity) -> {
-				entity.setPosition(new XY((float) Math.random() * 100 + 100, (float) Math.random() * 100 + 100));
+				entity.setCenteredPosition(new XY((float) Math.random() * 1000 + 100, (float) Math.random() * 1000 + 100));
 				// module.set(new Position((float) Math.random() * 1000, (float)
 				// Math.random() * 800), 50000);
 			});
 		}
 
 		this.entityFactory.build(EntityType.TREE, (entity) -> {
-			entity.setPositionA(new XY(0f, 0f));
+			entity.setPositionA(new XY(500f, 500f));
 		});
 
 		//				for (int i = 0; i < 50; i++) {

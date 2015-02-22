@@ -8,8 +8,10 @@ import de.hetzge.sgame.common.PathfinderThread;
 import de.hetzge.sgame.common.PathfinderThread.PathfinderWorker;
 import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
+import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.entity.Entity;
+import de.hetzge.sgame.entity.EntityOnMapService;
 import de.hetzge.sgame.entity.ki.BaseKI;
 import de.hetzge.sgame.render.DefaultAnimationKey;
 
@@ -22,6 +24,7 @@ public class GotoKI extends BaseKI {
 	private final IF_MapProvider mapProvider = this.get(IF_MapProvider.class);
 	private final AStarService aStarService = this.get(AStarService.class);
 	private final PathfinderThread pathfinderThread = this.get(PathfinderThread.class);
+	private final EntityOnMapService entityOnMapService = this.get(EntityOnMapService.class);
 
 	public GotoKI(Entity entity, IF_Position_ImmutableView goalPosition) {
 		super(entity);
@@ -56,9 +59,7 @@ public class GotoKI extends BaseKI {
 			return KIState.INIT_FAILURE;
 		}
 
-		IF_Position_ImmutableView entityCenteredPosition = this.entity.getCenteredPosition();
-		IF_Coordinate entityCollisionTilePosition = map.convertPxXYInCollisionTileXY(entityCenteredPosition);
-
+		IF_Coordinate_ImmutableView entityCollisionTilePosition = this.entityOnMapService.entityCollisionTileCenterCoordinate(this.entity);
 		int startX = entityCollisionTilePosition.getIX();
 		int startY = entityCollisionTilePosition.getIY();
 
@@ -93,7 +94,6 @@ public class GotoKI extends BaseKI {
 
 		if (this.entity.reachedEndOfPath()) {
 			Log.KI.debug("Entity " + this.entity + " reached end of path");
-			this.entity.unsetPath();
 			this.entity.setAnimationKey(DefaultAnimationKey.IDLE);
 			return KIState.SUCCESS;
 		}

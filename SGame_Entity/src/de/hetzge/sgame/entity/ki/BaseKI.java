@@ -86,9 +86,9 @@ public abstract class BaseKI implements IF_DependencyInjection {
 
 	protected abstract boolean condition();
 
-	protected abstract KIState updateImpl();
-
 	protected abstract KIState initImpl();
+
+	protected abstract KIState updateImpl();
 
 	protected abstract void finishImpl();
 

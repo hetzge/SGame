@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.Util;
-import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
+import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
 import de.hetzge.sgame.common.timer.Timer;
 
 public class EntityOnMapThread extends Thread {
@@ -12,12 +12,14 @@ public class EntityOnMapThread extends Thread {
 	private final EntityPool entityPool;
 	private final IF_MapProvider mapProvider;
 	private final ActiveEntityMap activeEntityMap;
+	private final EntityOnMapService entityOnMapService;
 
-	public EntityOnMapThread(EntityPool entityPool, IF_MapProvider mapProvider, ActiveEntityMap activeEntityMap) {
+	public EntityOnMapThread(EntityPool entityPool, IF_MapProvider mapProvider, ActiveEntityMap activeEntityMap, EntityOnMapService entityOnMapService) {
 		super("entity_on_map_thread");
 		this.entityPool = entityPool;
 		this.mapProvider = mapProvider;
 		this.activeEntityMap = activeEntityMap;
+		this.entityOnMapService = entityOnMapService;
 	}
 
 	@Override
@@ -37,7 +39,7 @@ public class EntityOnMapThread extends Thread {
 	}
 
 	private void updateCollisionOnMap(Entity entity) {
-		IF_Coordinate entityStartCoordinate = this.mapProvider.provide().convertPxXYInCollisionTileXY(entity.getPositionA().asPositionImmutableView());
+		IF_Coordinate_ImmutableView entityStartCoordinate = this.entityOnMapService.entityCollisionTileStartCoordinate(entity);
 		if (entity.isFixedPosition()) {
 			this.mapProvider.provide().getFixEntityCollisionMap().connect(entityStartCoordinate.getIX(), entityStartCoordinate.getIY(), entity.getActiveCollisionMap());
 		} else {
@@ -46,7 +48,7 @@ public class EntityOnMapThread extends Thread {
 	}
 
 	private void updateEntityOnMap(Entity entity) {
-		IF_Coordinate entityCenteredCoordinate = this.mapProvider.provide().convertPxXYInTileXY(entity.getCenteredPosition());
+		IF_Coordinate_ImmutableView entityCenteredCoordinate = this.entityOnMapService.entityCollisionTileCenterCoordinate(entity);
 		this.activeEntityMap.connect(entityCenteredCoordinate.getIX(), entityCenteredCoordinate.getIY(), entity.getEntityOnMap());
 	}
 }

@@ -7,6 +7,7 @@ import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.PathPosition;
 import de.hetzge.sgame.common.UUID;
+import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.activemap.ActiveMap;
 import de.hetzge.sgame.common.application.Application;
 import de.hetzge.sgame.common.definition.IF_EntityType;
@@ -22,7 +23,43 @@ import de.hetzge.sgame.render.RenderableKey;
 import de.hetzge.sgame.sync.SyncPool;
 import de.hetzge.sgame.sync.SyncProperty;
 
-public class Entity implements Serializable, IF_Rectangle_ImmutableView {
+public class Entity implements Serializable {
+
+	public class RenderRectangle implements IF_Rectangle_ImmutableView {
+
+		/**
+		 * The dimension of the entity on the screen.
+		 */
+		private final SyncProperty<InterpolateXY> dimensionSyncProperty = Entity.this.createSyncProperty(new InterpolateXY());
+
+		@Override
+		public IF_Position_ImmutableView getCenteredPosition() {
+			return Entity.this.centeredPositionSyncProperty.getValue();
+		}
+
+		@Override
+		public IF_Dimension_ImmutableView getDimension() {
+			return this.dimensionSyncProperty.getValue();
+		}
+	}
+
+	public class RealRectangle implements IF_Rectangle_ImmutableView {
+
+		/**
+		 * The real dimension of the entity in the virtual world.
+		 */
+		private final SyncProperty<InterpolateXY> realDimensionSyncProperty = Entity.this.createSyncProperty(new InterpolateXY());
+
+		@Override
+		public IF_Position_ImmutableView getCenteredPosition() {
+			return Entity.this.centeredPositionSyncProperty.getValue();
+		}
+
+		@Override
+		public IF_Dimension_ImmutableView getDimension() {
+			return this.realDimensionSyncProperty.getValue();
+		}
+	}
 
 	/*
 	 * Base entity properties
@@ -34,13 +71,19 @@ public class Entity implements Serializable, IF_Rectangle_ImmutableView {
 	/*
 	 * Dimension and movement properties
 	 */
-	private final SyncProperty<InterpolateXY> positionSyncProperty = this.createSyncProperty(new InterpolateXY());
-	private final SyncProperty<InterpolateXY> dimensionSyncProperty = this.createSyncProperty(new InterpolateXY());
+
+	/**
+	 * The centered position of the entity on the map.
+	 */
+	private final SyncProperty<InterpolateXY> centeredPositionSyncProperty = this.createSyncProperty(new InterpolateXY());
+
 	private final SyncProperty<Float> speedPerMsSyncProperty = this.createSyncProperty(0.02f);
 	private final SyncProperty<Path> pathSyncProperty = this.createSyncProperty(null);
 
+	private final RenderRectangle renderRectangle = new RenderRectangle();
+	private final RealRectangle realRectangle = new RealRectangle();
 	private final ActiveMap<Entity> entityOnMap = new ActiveEntityMap().setObjectOnPosition(this, 0, 0);
-	private ActiveMap<Boolean> activeCollisionMap = new ActiveMap<Boolean>();
+	private ActiveCollisionMap activeCollisionMap = new ActiveCollisionMap(0, 0);
 	private boolean fixed = false;
 	private PathPosition pathPosition;
 
@@ -129,7 +172,7 @@ public class Entity implements Serializable, IF_Rectangle_ImmutableView {
 	public void setPath(Path path) {
 		this.pathSyncProperty.setValue(path);
 		this.pathPosition = new PathPosition(path, 0);
-		this.positionSyncProperty.change(position -> position.set(this.pathPosition.getCurrentPosition(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore())));
+		this.centeredPositionSyncProperty.change(position -> position.set(this.pathPosition.getCurrentPosition(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore())));
 		this.setAnimationKey(DefaultAnimationKey.WALK);
 	}
 
@@ -141,14 +184,14 @@ public class Entity implements Serializable, IF_Rectangle_ImmutableView {
 	}
 
 	public void stopMoving() {
-		this.positionSyncProperty.change(position -> position.stop());
+		this.centeredPositionSyncProperty.change(position -> position.stop());
 	}
 
 	public void continueOnPath() {
 		if (this.pathPosition != null) {
-			if (this.pathPosition.continueOnPath(this.positionSyncProperty.getValue())) {
+			if (this.pathPosition.continueOnPath(this.centeredPositionSyncProperty.getValue())) {
 				this.setOrientation(this.pathPosition.getOrientationFromWaypointBeforeToNext());
-				this.positionSyncProperty.change(position -> position.set(this.pathPosition.getCurrentPosition(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore())));
+				this.centeredPositionSyncProperty.change(position -> position.set(this.pathPosition.getCurrentPosition(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore())));
 			}
 		}
 	}
@@ -158,19 +201,31 @@ public class Entity implements Serializable, IF_Rectangle_ImmutableView {
 	}
 
 	public boolean reachedEndOfPath() {
-		return this.pathPosition == null || this.pathPosition.reachedEndOfPath(this.positionSyncProperty.getValue());
+		return this.pathPosition == null || this.pathPosition.reachedEndOfPath(this.centeredPositionSyncProperty.getValue());
 	}
 
-	public void setPosition(IF_Position_ImmutableView newPosition) {
-		this.positionSyncProperty.change(position -> position.set(newPosition));
+	public void setCenteredPosition(IF_Position_ImmutableView newPosition) {
+		this.centeredPositionSyncProperty.change(position -> position.set(newPosition));
 	}
 
-	public void setPositionA(IF_Position_ImmutableView newPosition){
-		this.setPosition(newPosition.copy().add(this.getHalfDimension().asPositionImmutableView()));
+	public void setPositionA(IF_Position_ImmutableView newPosition) {
+		this.setCenteredPosition(newPosition.copy().add(this.renderRectangle.getHalfDimension().asPositionImmutableView()));
 	}
 
 	public void setDimension(IF_Dimension newDimension) {
-		this.dimensionSyncProperty.change(dimension -> dimension.set(newDimension));
+		this.renderRectangle.dimensionSyncProperty.change(dimension -> dimension.set(newDimension));
+	}
+
+	public void setRealDimension(IF_Dimension newDimension) {
+		this.realRectangle.realDimensionSyncProperty.change(dimension -> dimension.set(newDimension));
+	}
+
+	public RenderRectangle getRenderRectangle() {
+		return this.renderRectangle;
+	}
+
+	public RealRectangle getRealRectangle() {
+		return this.realRectangle;
 	}
 
 	public boolean isFixedPosition() {
@@ -204,7 +259,7 @@ public class Entity implements Serializable, IF_Rectangle_ImmutableView {
 		int collisionWidthInTiles = collision.length;
 		int collisionHeightInTiles = collision[0].length;
 
-		ActiveMap<Boolean> activeMap = new ActiveMap<>();
+		ActiveCollisionMap activeMap = new ActiveCollisionMap(collisionWidthInTiles, collisionHeightInTiles);
 
 		for (int x = 0; x < collisionWidthInTiles; x++) {
 			for (int y = 0; y < collisionHeightInTiles; y++) {
@@ -216,18 +271,8 @@ public class Entity implements Serializable, IF_Rectangle_ImmutableView {
 		this.activeCollisionMap = activeMap;
 	}
 
-	public ActiveMap<Boolean> getActiveCollisionMap() {
+	public ActiveCollisionMap getActiveCollisionMap() {
 		return this.activeCollisionMap;
-	}
-
-	@Override
-	public IF_Position_ImmutableView getCenteredPosition() {
-		return this.positionSyncProperty.getValue();
-	}
-
-	@Override
-	public IF_Dimension_ImmutableView getDimension() {
-		return this.dimensionSyncProperty.getValue();
 	}
 
 	/**

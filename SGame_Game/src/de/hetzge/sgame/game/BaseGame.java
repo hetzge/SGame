@@ -46,15 +46,16 @@ public class BaseGame extends Application {
 			entity.setEntityKey(EntityType.SILLY_BLOCK);
 			entity.setOrientation(Orientation.SOUTH);
 			entity.setDimension(new XY(40f, 40f));
-			entity.setCollision(this.onMapService.on(entity).asCollisionArray());
+			entity.setCollision(this.onMapService.on(entity.getRealRectangle()).asCollisionArray());
 			entity.setEntityKI(new EntityKI(entity));
 		});
 
 		this.entityFactory.registerFactory(EntityType.TREE, (entity) -> {
 			entity.setEntityKey(EntityType.TREE);
 			entity.setDimension(new XY(64f, 64f));
+			entity.setRealDimension(new XY(40f, 40f));
 			entity.setFixedPosition(true);
-			entity.setCollision(this.onMapService.on(entity).asCollisionArray());
+			entity.setCollision(this.onMapService.on(entity.getRealRectangle()).asCollisionArray());
 		});
 
 	}

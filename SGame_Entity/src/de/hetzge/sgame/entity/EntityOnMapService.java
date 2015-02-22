@@ -8,13 +8,58 @@ import java.util.function.Predicate;
 import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.Util;
+import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
 import de.hetzge.sgame.common.newgeometry.XY;
+import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 
 public class EntityOnMapService {
+
+	public class IgnoreEntityCollisionWrapper implements IF_Collision {
+
+		private final IF_Collision collision;
+
+		private final int ignoreCollisionX;
+		private final int ignoreCollisionY;
+
+		private final int ignoreCollisionWidth;
+		private final int ignoreCollisionHeight;
+
+		public IgnoreEntityCollisionWrapper(IF_Collision collision, Entity ignoreEntity) {
+			this.collision = collision;
+
+			IF_Coordinate_ImmutableView entityCollisionTileStartCoordinate = EntityOnMapService.this.entityCollisionTileStartCoordinate(ignoreEntity);
+			this.ignoreCollisionX = entityCollisionTileStartCoordinate.getIX();
+			this.ignoreCollisionY = entityCollisionTileStartCoordinate.getIY();
+
+			this.ignoreCollisionWidth = ignoreEntity.getActiveCollisionMap().getWidthInTiles();
+			this.ignoreCollisionHeight = ignoreEntity.getActiveCollisionMap().getHeightInTiles();
+		}
+
+		@Override
+		public int getWidthInTiles() {
+			return this.collision.getWidthInTiles();
+		}
+
+		@Override
+		public int getHeightInTiles() {
+			return this.collision.getHeightInTiles();
+		}
+
+		@Override
+		public boolean isCollision(int x, int y) {
+			return this.collision.isCollision(x, y) && !(x >= this.ignoreCollisionX && y >= this.ignoreCollisionY && x < this.ignoreCollisionX + this.ignoreCollisionWidth && y < this.ignoreCollisionY + this.ignoreCollisionHeight);
+		}
+
+		@Override
+		public void setCollision(int x, int y, boolean collision) {
+			this.collision.setCollision(x, y, collision);
+		}
+
+	}
 
 	public class On {
 
@@ -183,14 +228,17 @@ public class EntityOnMapService {
 		return new On(rectangle);
 	}
 
+	/*
+	 * TODO ACHTUNG: Verwendet die größe des Entity, nicht die Collision
+	 */
 	public IF_Position_ImmutableView findPositionAround(Entity around, Entity entity) {
-		return this.on(around).findCollisionPositionAround(this.on(entity));
+		return this.on(around.getRealRectangle()).findCollisionPositionAround(this.on(entity.getRealRectangle()));
 	}
 
 	public List<Entity> findEntitiesAround(Entity around, Predicate<Entity> filter, int radius, int max) {
 		List<Entity> result = new LinkedList<>();
 
-		IF_Coordinate coordinate = this.mapProvider.provide().convertPxXYInCollisionTileXY(around.getCenteredPosition());
+		IF_Coordinate coordinate = this.mapProvider.provide().convertPxXYInCollisionTileXY(around.getRealRectangle().getCenteredPosition());
 		Orientation[] orientations = new Orientation[] { Orientation.NORTH, Orientation.EAST, Orientation.SOUTH, Orientation.WEST };
 
 		mainLoop: for (int i = 0; i < radius * 4; i++) {
@@ -211,5 +259,13 @@ public class EntityOnMapService {
 		}
 
 		return result;
+	}
+
+	public IF_Coordinate_ImmutableView entityCollisionTileStartCoordinate(Entity entity) {
+		return this.mapProvider.provide().convertPxXYInCollisionTileXY(entity.getRealRectangle().getPositionA().asPositionImmutableView());
+	}
+
+	public IF_Coordinate_ImmutableView entityCollisionTileCenterCoordinate(Entity entity) {
+		return this.mapProvider.provide().convertPxXYInTileXY(entity.getRealRectangle().getCenteredPosition());
 	}
 }
