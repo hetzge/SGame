@@ -1,8 +1,9 @@
 package de.hetzge.sgame.render;
 
 import se.jbee.inject.bind.BinderModule;
+import de.hetzge.sgame.common.IF_DependencyInjection;
 
-public class RenderBinderModule extends BinderModule {
+public class RenderBinderModule extends BinderModule implements IF_DependencyInjection {
 
 	@Override
 	protected void declare() {

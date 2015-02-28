@@ -55,6 +55,8 @@ public class GotoEntityKI extends BaseKI {
 		int goalX = goalEntityCollisionTilePosition.getIX();
 		int goalY = goalEntityCollisionTilePosition.getIY();
 
+
+
 		this.pathfinderWorker = this.pathfinderThread.new PathfinderWorker() {
 			@Override
 			public Path findPath() {

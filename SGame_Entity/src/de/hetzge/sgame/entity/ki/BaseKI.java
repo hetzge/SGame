@@ -75,7 +75,7 @@ public abstract class BaseKI implements IF_DependencyInjection {
 	}
 
 	public void finish() {
-
+		this.finishImpl();
 	}
 
 	private void callCallback(KIState state) {

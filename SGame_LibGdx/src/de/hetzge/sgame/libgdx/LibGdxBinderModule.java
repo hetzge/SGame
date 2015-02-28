@@ -1,6 +1,7 @@
 package de.hetzge.sgame.libgdx;
 
 import se.jbee.inject.bind.BinderModule;
+import de.hetzge.sgame.render.IF_DrawService;
 import de.hetzge.sgame.render.IF_RenderableFactory;
 import de.hetzge.sgame.render.IF_RenderableLoader;
 
@@ -13,6 +14,8 @@ public class LibGdxBinderModule extends BinderModule {
 		this.bind(LibGdxModule.class).to(LibGdxModule.class);
 		this.bind(IF_RenderableFactory.class).to(LibGdxRenderableFactory.class);
 		this.bind(IF_RenderableLoader.class).to(LibGdxRenderableLoader.class);
+		this.bind(LibGdxDrawService.class).to(LibGdxDrawService.class);
+		this.bind(IF_DrawService.class).to(LibGdxDrawService.class);
 	}
 
 }

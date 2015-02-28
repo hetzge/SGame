@@ -16,6 +16,16 @@ public class Rectangle implements IF_Rectangle_MutableView {
 		this(0f, 0f, 0f, 0f);
 	}
 
+	public Rectangle(IF_Position_ImmutableView positionA, IF_Position_ImmutableView positionD){
+		IF_Dimension_ImmutableView dimension = positionA.copy().dif(positionD).abs();
+
+		this.x = (positionA.getFX() < positionD.getFX() ? positionA.getFX() : positionD.getFX()) + dimension.getWidth() / 2;
+		this.y = (positionA.getFY() < positionD.getFY() ? positionA.getFY() : positionD.getFY()) + dimension.getHeight() / 2;
+
+		this.width = dimension.getWidth();
+		this.height = dimension.getHeight();
+	}
+
 	public Rectangle(IF_Position_ImmutableView position, IF_Dimension_ImmutableView dimension) {
 		this(position.getFX(), position.getFY(), dimension.getWidth(), dimension.getHeight());
 	}

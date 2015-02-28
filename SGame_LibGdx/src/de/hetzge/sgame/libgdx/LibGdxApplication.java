@@ -36,13 +36,15 @@ public class LibGdxApplication implements ApplicationListener {
 	private final RenderPool renderPool;
 	private final Viewport mapViewport;
 	private final RenderableRessourcePool renderableRessourcePool;
+	private final LibGdxDrawService libGdxDrawService;
 
-	public LibGdxApplication(RenderConfig renderConfig, RenderPool renderPool, Viewport mapViewport, RenderableRessourcePool renderableRessourcePool) {
+	public LibGdxApplication(RenderConfig renderConfig, RenderPool renderPool, Viewport mapViewport, RenderableRessourcePool renderableRessourcePool, LibGdxDrawService libGdxDrawService) {
 		this.fpsLogger = new FPSLogger();
 		this.renderConfig = renderConfig;
 		this.renderPool = renderPool;
 		this.mapViewport = mapViewport;
 		this.renderableRessourcePool = renderableRessourcePool;
+		this.libGdxDrawService = libGdxDrawService;
 	}
 
 	@Override
@@ -51,6 +53,8 @@ public class LibGdxApplication implements ApplicationListener {
 		this.batch = new SpriteBatch();
 		this.shapeRenderer = new ShapeRenderer();
 		this.filledShapeRenderer = new ShapeRenderer();
+		this.libGdxDrawService.setLineShapeRenderer(this.shapeRenderer);
+		this.libGdxDrawService.setFilledShapeRenderer(this.filledShapeRenderer);
 		this.libGdxRenderableContext = new LibGdxRenderableContext(this.batch, this.shapeRenderer, this.filledShapeRenderer);
 		this.camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -103,7 +107,7 @@ public class LibGdxApplication implements ApplicationListener {
 			this.camera.translate(0f, 3f);
 		}
 
-		if(Gdx.input.isButtonPressed(Buttons.LEFT)){
+		if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
 			IF_Position_ImmutableView mouseClickPosition = new XY(Gdx.input.getX(), Gdx.input.getY()).add(this.mapViewport.getPositionA());
 			System.out.println("You clicked " + mouseClickPosition.getX() + "/" + mouseClickPosition.getY());
 		}
@@ -111,6 +115,8 @@ public class LibGdxApplication implements ApplicationListener {
 		this.fpsLogger.log();
 		// System.out.println(RenderUtil.renderCount);
 		RenderService.renderCount = 0;
+
+
 
 		LibGdxConfig.INSTANCE.stateTime += Gdx.graphics.getDeltaTime();
 	}

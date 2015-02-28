@@ -2,6 +2,8 @@ package de.hetzge.sgame.common;
 
 import java.util.ArrayList;
 
+import de.hetzge.sgame.common.newgeometry.IF_XY;
+
 public final class Util {
 
 	private Util() {
@@ -14,7 +16,7 @@ public final class Util {
 		}
 	}
 
-	public static boolean[][] createTrueBooleanArray(int width, int height){
+	public static boolean[][] createTrueBooleanArray(int width, int height) {
 		boolean[][] booleanArray = new boolean[width][height];
 		for (int x = 0; x < booleanArray.length; x++) {
 			for (int y = 0; y < booleanArray.length; y++) {
@@ -104,6 +106,10 @@ public final class Util {
 		}
 		float valueSpan = endValue - startValue;
 		return startValue + valueSpan * interpolationTimeSpanDoneInPercent;
+	}
+
+	public static String toString(IF_XY xy) {
+		return xy.getX() + "|" + xy.getY();
 	}
 
 	public static void main(String[] args) {

@@ -9,15 +9,9 @@ import javolution.util.FastCollection;
 import javolution.util.FastMap;
 import javolution.util.FastSet;
 import javolution.util.FastTable;
-import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.definition.IF_EntityType;
-import de.hetzge.sgame.render.IF_Renderable;
-import de.hetzge.sgame.render.IF_RenderableContext;
-import de.hetzge.sgame.render.PredefinedRenderId;
-import de.hetzge.sgame.render.RenderService;
-import de.hetzge.sgame.render.Viewport;
 
-public class EntityPool implements IF_Renderable<IF_RenderableContext> {
+public class EntityPool  {
 
 	private final FastCollection<Entity> entities = new FastTable<Entity>().shared();
 	private final FastMap<String, Entity> entitiesById = new FastMap<String, Entity>().shared();
@@ -25,14 +19,7 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 	private final FastMap<IF_EntityType, Set<Entity>> entitiesByType = new FastMap<IF_EntityType, Set<Entity>>().shared();
 	private final FastMap<Class<? extends BaseEntityModule>, FastSet<BaseEntityModule>> entityModulesByModuleClass = new FastMap<Class<? extends BaseEntityModule>, FastSet<BaseEntityModule>>().parallel();
 
-	private final ActiveEntityMap activeEntityMap;
-	private final Viewport viewport;
-	private final RenderService renderService;
-
-	public EntityPool(ActiveEntityMap activeEntityMap, Viewport viewport, RenderService renderService) {
-		this.activeEntityMap = activeEntityMap;
-		this.viewport = viewport;
-		this.renderService = renderService;
+	public EntityPool() {
 	}
 
 	public void addEntity(Entity entity) {
@@ -115,43 +102,6 @@ public class EntityPool implements IF_Renderable<IF_RenderableContext> {
 		for (Entity entity : this.entities) {
 			entity.update();
 		}
-	}
-
-	@Override
-	public void render(IF_RenderableContext context) {
-
-		this.viewport.iterateVisibleTiles((int x, int y) -> {
-			Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(x, y);
-			for (Entity entity : entities) {
-				this.renderService.render(context, entity.getRenderRectangle(), entity.getRenderableKey());
-			}
-
-			// TODO return null weg machen
-			return null;
-		});
-	}
-
-	@Override
-	public void renderShapes(IF_RenderableContext context) {
-
-		this.viewport.iterateVisibleTiles((int x, int y) -> {
-			Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(x, y);
-			for (Entity entity : entities) {
-				this.renderService.render(context, entity.getRealRectangle(), PredefinedRenderId.RECTANGLE);
-				Path path = entity.getPath();
-				if (path != null) {
-					this.renderService.render(context, entity.getRenderRectangle(), PredefinedRenderId.LINE);
-				}
-			}
-
-			// TODO return null weg machen
-			return null;
-		});
-
-	}
-
-	@Override
-	public void renderFilledShapes(IF_RenderableContext context) {
 	}
 
 }

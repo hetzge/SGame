@@ -48,7 +48,7 @@ public class EntityOnMapThread extends Thread {
 	}
 
 	private void updateEntityOnMap(Entity entity) {
-		IF_Coordinate_ImmutableView entityCenteredCoordinate = this.entityOnMapService.entityCollisionTileCenterCoordinate(entity);
+		IF_Coordinate_ImmutableView entityCenteredCoordinate = this.entityOnMapService.entityTileCenterCoordinate(entity);
 		this.activeEntityMap.connect(entityCenteredCoordinate.getIX(), entityCenteredCoordinate.getIY(), entity.getEntityOnMap());
 	}
 }

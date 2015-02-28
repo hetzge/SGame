@@ -27,10 +27,12 @@ public class EntityModule implements IF_Module, IF_Renderable<IF_RenderableConte
 	public final IF_MapProvider mapProvider;
 	public final MessageHandlerPool messageHandlerPool;
 	public final MessageConfig messageConfig;
+	private final EntityRenderer entityRenderer;
 
-	public EntityModule(EntityOnMapThread entityOnMapThread, EntityPool entityPool, EntityFactory entityFactory, EntityConfig entityConfig, ActiveEntityMap activeEntityMap, IF_MapProvider mapProvider, MessageHandlerPool messageHandlerPool, MessageConfig messageConfig) {
+	public EntityModule(EntityOnMapThread entityOnMapThread, EntityPool entityPool, EntityRenderer entityRenderer, EntityFactory entityFactory, EntityConfig entityConfig, ActiveEntityMap activeEntityMap, IF_MapProvider mapProvider, MessageHandlerPool messageHandlerPool, MessageConfig messageConfig) {
 		this.entityOnMapThread = entityOnMapThread;
 		this.entityPool = entityPool;
+		this.entityRenderer = entityRenderer;
 		this.entityFactory = entityFactory;
 		this.entityConfig = entityConfig;
 		this.activeEntityMap = activeEntityMap;
@@ -63,17 +65,17 @@ public class EntityModule implements IF_Module, IF_Renderable<IF_RenderableConte
 
 	@Override
 	public void render(IF_RenderableContext context) {
-		this.entityPool.render(context);
+		this.entityRenderer.render(context);
 	}
 
 	@Override
 	public void renderShapes(IF_RenderableContext context) {
-		this.entityPool.renderShapes(context);
+		this.entityRenderer.renderShapes(context);
 	}
 
 	@Override
 	public void renderFilledShapes(IF_RenderableContext context) {
-		this.entityPool.renderFilledShapes(context);
+		this.entityRenderer.renderFilledShapes(context);
 	}
 
 }

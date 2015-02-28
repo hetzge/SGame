@@ -266,6 +266,10 @@ public class EntityOnMapService {
 	}
 
 	public IF_Coordinate_ImmutableView entityCollisionTileCenterCoordinate(Entity entity) {
+		return this.mapProvider.provide().convertPxXYInCollisionTileXY(entity.getRealRectangle().getCenteredPosition());
+	}
+
+	public IF_Coordinate_ImmutableView entityTileCenterCoordinate(Entity entity){
 		return this.mapProvider.provide().convertPxXYInTileXY(entity.getRealRectangle().getCenteredPosition());
 	}
 }

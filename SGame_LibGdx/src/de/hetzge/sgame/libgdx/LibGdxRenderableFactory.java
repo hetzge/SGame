@@ -303,7 +303,7 @@ public class LibGdxRenderableFactory implements IF_RenderableFactory, Applicatio
 
 			@Override
 			public IF_Rectangle_ImmutableView getRenderedRectangle() {
-				return new Rectangle(new XY(100, 100), new XY(100, 100));
+				return new Rectangle(new XY(100, 100), new XY(100, 100).asDimensionImmutableView());
 			}
 
 			@Override

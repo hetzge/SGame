@@ -45,6 +45,7 @@ public class BaseGame extends Application {
 		this.entityFactory.registerFactory(EntityType.SILLY_BLOCK, (entity) -> {
 			entity.setEntityKey(EntityType.SILLY_BLOCK);
 			entity.setOrientation(Orientation.SOUTH);
+			entity.setRealDimension(new XY(10f, 10f));
 			entity.setDimension(new XY(40f, 40f));
 			entity.setCollision(this.onMapService.on(entity.getRealRectangle()).asCollisionArray());
 			entity.setEntityKI(new EntityKI(entity));

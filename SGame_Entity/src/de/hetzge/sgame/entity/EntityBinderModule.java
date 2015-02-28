@@ -23,6 +23,7 @@ public class EntityBinderModule extends BinderModule {
 		this.bind(ActiveEntityMap.class).to(ActiveEntityMap.class);
 		this.bind(EntityOnMapThread.class).to(EntityOnMapThread.class);
 		this.bind(EntityOnMapService.class).to(EntityOnMapService.class);
+		this.bind(EntityRenderer.class).to(EntityRenderer.class);
 
 		this.per(Scoped.INJECTION).bind(SillyWalkerKI.class).to(SillyWalkerKI.class);
 		this.per(Scoped.INJECTION).bind(CollectorKI.class).to(CollectorKI.class);

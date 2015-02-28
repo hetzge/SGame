@@ -51,7 +51,7 @@ public class InterpolateXY extends XY {
 	}
 
 	public void stop(){
-		this.set(this, 0);
+		this.set(this, this, 0);
 	}
 
 	@Override
