@@ -27,10 +27,8 @@ public class SillyGotoKI extends BaseKI {
 
 		this.changeActiveKI(findFixEntityKI, new KICallback() {
 			{
-				this.on(KIState.FAILURE, () -> SillyGotoKI.this.changeActiveKI(new WaitKI(SillyGotoKI.this.entity, 5000), new KICallback()));
-				this.on(KIState.SUCCESS, () -> {
-					SillyGotoKI.this.changeActiveKI(new GotoEntityKI(SillyGotoKI.this.entity, (findFixEntityKI.getResult())));
-				});
+				this.on(KIState.FAILURE, () -> SillyGotoKI.this.changeActiveKI(new WaitKI(SillyGotoKI.this.entity, 5000)));
+				this.on(KIState.SUCCESS, () -> SillyGotoKI.this.changeActiveKI(new GotoEntityKI(SillyGotoKI.this.entity, (findFixEntityKI.getResult()))));
 			}
 		});
 		return KIState.ACTIVE;

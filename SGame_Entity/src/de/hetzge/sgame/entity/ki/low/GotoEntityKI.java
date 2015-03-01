@@ -42,7 +42,6 @@ public class GotoEntityKI extends BaseKI {
 
 	@Override
 	protected KIState initImpl() {
-
 		IF_Map map = this.mapProvider.provide();
 		ActiveCollisionMap fixEntityCollisionMap = map.getFixEntityCollisionMap();
 		IgnoreEntityCollisionWrapper ignoreEntityCollisionWrapper = this.entityOnMapService.new IgnoreEntityCollisionWrapper(fixEntityCollisionMap, this.gotoEntity);
@@ -54,8 +53,6 @@ public class GotoEntityKI extends BaseKI {
 		IF_Coordinate_ImmutableView goalEntityCollisionTilePosition = this.entityOnMapService.entityCollisionTileCenterCoordinate(this.gotoEntity);
 		int goalX = goalEntityCollisionTilePosition.getIX();
 		int goalY = goalEntityCollisionTilePosition.getIY();
-
-
 
 		this.pathfinderWorker = this.pathfinderThread.new PathfinderWorker() {
 			@Override

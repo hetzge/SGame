@@ -50,14 +50,13 @@ public abstract class BaseKI implements IF_DependencyInjection {
 		}
 	}
 
-	// TODO mal mit einem durchspielen
 	public KIState update() {
 		if (this.activeKI != null) {
 			KIState state = this.activeKI.update();
 			BaseKI activeKIBefore = this.activeKI;
-			this.callCallback(state);
+			this.callCallback(state); // here could ki change
 			if (KIState.FINISH_STATES.contains(state)) {
-				this.activeKI.finish();
+				activeKIBefore.finish();
 				if (this.activeKI == activeKIBefore) {
 					this.activeKI = null;
 					this.activeCallback = null;

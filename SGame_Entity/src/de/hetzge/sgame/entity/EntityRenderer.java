@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import de.hetzge.sgame.common.IF_DependencyInjection;
 import de.hetzge.sgame.common.Path;
+import de.hetzge.sgame.entity.Entity.RenderRectangle;
 import de.hetzge.sgame.render.IF_DrawService;
 import de.hetzge.sgame.render.IF_Renderable;
 import de.hetzge.sgame.render.IF_RenderableContext;
@@ -28,11 +29,12 @@ public class EntityRenderer implements IF_Renderable<IF_RenderableContext>, IF_D
 
 	@Override
 	public void render(IF_RenderableContext context) {
-
 		this.viewport.iterateVisibleTiles((int x, int y) -> {
 			Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(x, y);
 			for (Entity entity : entities) {
-				this.renderService.render(context, entity.getRenderRectangle(), entity.getRenderableKey());
+				RenderRectangle renderRectangle = entity.getRenderRectangle();
+				this.renderService.render(context, renderRectangle, entity.getRenderableKey());
+				this.drawService.printText(renderRectangle.getCenteredPosition(), "...");
 			}
 
 			// TODO return null weg machen
@@ -62,6 +64,5 @@ public class EntityRenderer implements IF_Renderable<IF_RenderableContext>, IF_D
 	@Override
 	public void renderFilledShapes(IF_RenderableContext context) {
 	}
-
 
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -55,8 +56,12 @@ public class LibGdxApplication implements ApplicationListener {
 		this.filledShapeRenderer = new ShapeRenderer();
 		this.libGdxDrawService.setLineShapeRenderer(this.shapeRenderer);
 		this.libGdxDrawService.setFilledShapeRenderer(this.filledShapeRenderer);
+		this.libGdxDrawService.setFontSpriteBatch(this.batch);
 		this.libGdxRenderableContext = new LibGdxRenderableContext(this.batch, this.shapeRenderer, this.filledShapeRenderer);
 		this.camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+		BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal("assets/font.fnt"), true);
+		this.libGdxDrawService.setBitmapFont(bitmapFont);
 
 		for (Consumer<RenderableRessourcePool> consumer : this.renderConfig.initRenderableConsumers) {
 			consumer.accept(this.renderableRessourcePool);

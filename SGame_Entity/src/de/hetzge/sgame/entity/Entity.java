@@ -12,6 +12,7 @@ import de.hetzge.sgame.common.activemap.ActiveMap;
 import de.hetzge.sgame.common.application.Application;
 import de.hetzge.sgame.common.definition.IF_EntityType;
 import de.hetzge.sgame.common.newgeometry.IF_Dimension;
+import de.hetzge.sgame.common.newgeometry.IF_Position;
 import de.hetzge.sgame.common.newgeometry.InterpolateXY;
 import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
@@ -172,7 +173,7 @@ public class Entity implements Serializable {
 	public void setPath(Path path) {
 		this.pathSyncProperty.setValue(path);
 		this.pathPosition = new PathPosition(path, 0);
-		this.centeredPositionSyncProperty.change(position -> position.set(this.pathPosition.getCurrentPosition(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore())));
+		this.centeredPositionSyncProperty.change(position -> position.set(this.pathPosition.getCurrentPosition(), this.calculateDurationForDistanceInMilliseconds(this.pathPosition.getDistanceToWaypointBefore())));
 		this.setAnimationKey(DefaultAnimationKey.WALK);
 	}
 
@@ -181,6 +182,7 @@ public class Entity implements Serializable {
 		this.pathPosition = null;
 		this.stopMoving();
 		this.setAnimationKey(DefaultAnimationKey.DEFAULT);
+		System.out.println("Stop");
 	}
 
 	public void stopMoving() {
@@ -188,15 +190,19 @@ public class Entity implements Serializable {
 	}
 
 	public void continueOnPath() {
-		if (this.pathPosition != null) {
-			if (this.pathPosition.continueOnPath(this.centeredPositionSyncProperty.getValue())) {
-				this.setOrientation(this.pathPosition.getOrientationFromWaypointBeforeToNext());
-				this.centeredPositionSyncProperty.change(position -> position.set(this.pathPosition.getCurrentPosition(), this.calculateDurationForDistance(this.pathPosition.getDistanceToWaypointBefore())));
-			}
+		if (!this.hasPath()) {
+			return;
+		}
+		if (this.pathPosition.continueOnPath(this.centeredPositionSyncProperty.getValue())) {
+			this.setOrientation(this.pathPosition.getOrientationFromWaypointBeforeToNext());
+			IF_Position currentWaypoint = this.pathPosition.getCurrentPosition();
+			float distanceToCurrentWaypoint = this.pathPosition.getDistanceToWaypointBefore();
+			long durationForDistance = this.calculateDurationForDistanceInMilliseconds(distanceToCurrentWaypoint);
+			this.centeredPositionSyncProperty.change(position -> position.set(currentWaypoint, durationForDistance));
 		}
 	}
 
-	private long calculateDurationForDistance(float distance) {
+	private long calculateDurationForDistanceInMilliseconds(float distance) {
 		return (long) (distance / this.speedPerMsSyncProperty.getValue());
 	}
 

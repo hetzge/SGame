@@ -73,8 +73,12 @@ public class PathPosition implements Serializable {
 		return waypointBefore.distance(this.getCurrentPosition());
 	}
 
+	public float getDistanceToCurrentWaypoint(IF_Position position){
+		return this.getCurrentPosition().distance(position);
+	}
+
 	public boolean continueOnPath(IF_Position position) {
-		if (!this.isOnEndOfPath() && this.getCurrentPosition().distance(position) < 1F) {
+		if (!this.isOnEndOfPath() && this.getDistanceToCurrentWaypoint(position) < 1F) {
 			this.moveForward();
 			return true;
 		}

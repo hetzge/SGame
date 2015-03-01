@@ -9,4 +9,6 @@ public interface IF_DrawService {
 
 	void drawRectangle(IF_Rectangle_ImmutableView rectangle);
 
+	void printText(IF_Position_ImmutableView position, String text);
+
 }
