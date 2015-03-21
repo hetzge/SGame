@@ -26,6 +26,10 @@ public class GotoKI extends BaseKI {
 	private final PathfinderThread pathfinderThread = this.get(PathfinderThread.class);
 	private final EntityOnMapService entityOnMapService = this.get(EntityOnMapService.class);
 
+	public GotoKI(Entity entity, IF_Coordinate_ImmutableView goalCollisionTileCoordinate) {
+		this(entity, goalCollisionTileCoordinate.getIX(), goalCollisionTileCoordinate.getIY());
+	}
+
 	public GotoKI(Entity entity, IF_Position_ImmutableView goalPosition) {
 		super(entity);
 

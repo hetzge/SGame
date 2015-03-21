@@ -75,6 +75,10 @@ public interface IF_Map {
 		return position.copy().divide(new XY(this.getTileSize()));
 	}
 
+	public default boolean isFixOrFlexibleCollision(int x, int y){
+		return this.getFixEntityCollisionMap().isCollision(x, y) || this.getFlexibleEntityCollisionMap().isCollision(x, y);
+	}
+
 	public default boolean isOnCollisionMap(int x, int y){
 		return x >= 0 && y >= 0 && x < this.getWidthInCollisionTiles() && y < this.getHeightInCollisionTiles();
 	}

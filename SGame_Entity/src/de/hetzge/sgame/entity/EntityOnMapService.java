@@ -235,7 +235,7 @@ public class EntityOnMapService {
 		return this.on(around.getRealRectangle()).findCollisionPositionAround(this.on(entity.getRealRectangle()));
 	}
 
-	public List<Entity> findEntitiesAround(Entity around, Predicate<Entity> filter, int radius, int max) {
+	public List<Entity> findEntitiesInAreaAround(Entity around, Predicate<Entity> filter, int radius, int max) {
 		List<Entity> result = new LinkedList<>();
 
 		IF_Coordinate coordinate = this.mapProvider.provide().convertPxXYInCollisionTileXY(around.getRealRectangle().getCenteredPosition());
@@ -261,6 +261,29 @@ public class EntityOnMapService {
 		return result;
 	}
 
+	/**
+	 *  fix and flexibel collision map will be checked 
+	 */
+	public IF_Coordinate_ImmutableView findFreePositionAroundEntity(Entity entity) {
+		IF_Map map = this.mapProvider.provide();
+		IF_Coordinate_ImmutableView collisionTileCoordinate = this.entityCollisionTileCenterCoordinate(entity);
+
+		for (Orientation orientation : Orientation.Simple) {
+			int x = collisionTileCoordinate.getIX() + orientation.orientationFactor.getIX();
+			int y = collisionTileCoordinate.getIY() + orientation.orientationFactor.getIY();
+			if (!map.isOnCollisionMap(x, y)) {
+				continue;
+			}
+			boolean fixCollision = map.getFixEntityCollisionMap().isCollision(x, y);
+			boolean flexibleCollision = map.getFlexibleEntityCollisionMap().isCollision(x, y);
+			if (!fixCollision && !flexibleCollision) {
+				return new XY(x, y);
+			}
+		}
+
+		return null;
+	}
+
 	public IF_Coordinate_ImmutableView entityCollisionTileStartCoordinate(Entity entity) {
 		return this.mapProvider.provide().convertPxXYInCollisionTileXY(entity.getRealRectangle().getPositionA().asPositionImmutableView());
 	}
@@ -269,7 +292,7 @@ public class EntityOnMapService {
 		return this.mapProvider.provide().convertPxXYInCollisionTileXY(entity.getRealRectangle().getCenteredPosition());
 	}
 
-	public IF_Coordinate_ImmutableView entityTileCenterCoordinate(Entity entity){
+	public IF_Coordinate_ImmutableView entityTileCenterCoordinate(Entity entity) {
 		return this.mapProvider.provide().convertPxXYInTileXY(entity.getRealRectangle().getCenteredPosition());
 	}
 }

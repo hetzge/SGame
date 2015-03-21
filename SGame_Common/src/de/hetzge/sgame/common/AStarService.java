@@ -107,47 +107,39 @@ public final class AStarService {
 		int nextX;
 		int nextY;
 
-		while (x != goalX && y != goalY) {
+		while (x != goalX || y != goalY) {
 
 			nextX = x - 1;
 			nextY = y;
-			if (nextX > 0 && rating[nextX][nextY] > 0) {
-				if (rating[nextX][nextY] < maxValue) {
-					maxValue = rating[nextX][nextY];
-					nextSelectionX = nextX;
-					nextSelectionY = nextY;
-				}
+			if (this.checkNext(nextX, nextY, goalX, goalY, rating, maxValue, mapWidthInCollisionTiles, mapHeightInCollisionTiles)) {
+				maxValue = rating[nextX][nextY];
+				nextSelectionX = nextX;
+				nextSelectionY = nextY;
 			}
 
 			nextX = x;
 			nextY = y - 1;
-			if (nextY > 0 && rating[nextX][nextY] > 0) {
-				if (rating[nextX][nextY] < maxValue) {
-					maxValue = rating[nextX][nextY];
-					nextSelectionX = nextX;
-					nextSelectionY = nextY;
-				}
-			}
+			if (this.checkNext(nextX, nextY, goalX, goalY, rating, maxValue, mapWidthInCollisionTiles, mapHeightInCollisionTiles)) {
+				maxValue = rating[nextX][nextY];
+				nextSelectionX = nextX;
+				nextSelectionY = nextY;
+			} 
 
 			nextX = x + 1;
 			nextY = y;
-			if (nextX < mapWidthInCollisionTiles && rating[nextX][nextY] > 0) {
-				if (rating[nextX][nextY] < maxValue) {
-					maxValue = rating[nextX][nextY];
-					nextSelectionX = nextX;
-					nextSelectionY = nextY;
-				}
-			}
+			if (this.checkNext(nextX, nextY, goalX, goalY, rating, maxValue, mapWidthInCollisionTiles, mapHeightInCollisionTiles)) {
+				maxValue = rating[nextX][nextY];
+				nextSelectionX = nextX;
+				nextSelectionY = nextY;
+			} 
 
 			nextX = x;
 			nextY = y + 1;
-			if (nextY < mapHeightInCollisionTiles && rating[nextX][nextY] > 0) {
-				if (rating[nextX][nextY] < maxValue) {
-					maxValue = rating[nextX][nextY];
-					nextSelectionX = nextX;
-					nextSelectionY = nextY;
-				}
-			}
+			if (this.checkNext(nextX, nextY, goalX, goalY, rating, maxValue, mapWidthInCollisionTiles, mapHeightInCollisionTiles)) {
+				maxValue = rating[nextX][nextY];
+				nextSelectionX = nextX;
+				nextSelectionY = nextY;
+			} 
 
 			if (nextSelectionX == x && nextSelectionY == y) {
 				throw new IllegalStateException("Path not possible from (" + x + "|" + y + ") with goal (" + goalX + "|" + goalY + ") on size (" + rating.length + "|" + rating[0].length + ")\n" + Util.toMapString(rating, x, y));
@@ -161,6 +153,10 @@ public final class AStarService {
 		}
 
 		return result;
+	}
+
+	private boolean checkNext(int nextX, int nextY, int goalX, int goalY, int[][] rating, int maxValue, int mapWidthInCollisionTiles, int mapHeightInCollisionTiles){
+		return (nextX == goalX && nextY == goalY) || (nextX > 0 && nextX < mapWidthInCollisionTiles && nextY > 0 && nextY < mapHeightInCollisionTiles && rating[nextX][nextY] > 0 && rating[nextX][nextY] < maxValue);
 	}
 
 	public Path findPath(IF_Collision mapCollision, int startX, int startY, int goalX, int goalY, boolean[][] collision) {

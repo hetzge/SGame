@@ -51,4 +51,5 @@ public class EntityOnMapThread extends Thread {
 		IF_Coordinate_ImmutableView entityCenteredCoordinate = this.entityOnMapService.entityTileCenterCoordinate(entity);
 		this.activeEntityMap.connect(entityCenteredCoordinate.getIX(), entityCenteredCoordinate.getIY(), entity.getEntityOnMap());
 	}
+
 }

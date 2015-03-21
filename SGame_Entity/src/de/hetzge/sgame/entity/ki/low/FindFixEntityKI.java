@@ -27,7 +27,7 @@ public class FindFixEntityKI extends BaseKI {
 
 	@Override
 	protected KIState updateImpl() {
-		List<Entity> foundEntitiesAround = this.onMapService.findEntitiesAround(this.entity, Entity::isFixedPosition, 100, 1);
+		List<Entity> foundEntitiesAround = this.onMapService.findEntitiesInAreaAround(this.entity, Entity::isFixedPosition, 100, 1);
 		if(!foundEntitiesAround.isEmpty()){
 			this.result = foundEntitiesAround.get(0);
 			return KIState.SUCCESS;

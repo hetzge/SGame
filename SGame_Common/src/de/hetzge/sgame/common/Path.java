@@ -7,18 +7,19 @@ import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
 import de.hetzge.sgame.common.newgeometry.IF_Position;
 import de.hetzge.sgame.common.newgeometry.XY;
+import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
 
 public class Path implements Serializable {
 
 	private final IF_Map map;
 
-	private final IF_Coordinate start;
-	private final IF_Coordinate goal;
+	private final IF_Coordinate_ImmutableView start;
+	private final IF_Coordinate_ImmutableView goal;
 
 	private float[] x;
 	private float[] y;
 
-	public Path(IF_Coordinate start, IF_Coordinate goal, List<? extends IF_Coordinate> path, IF_Map map) {
+	public Path(IF_Coordinate_ImmutableView start, IF_Coordinate_ImmutableView goal, List<? extends IF_Coordinate_ImmutableView> path, IF_Map map) {
 		this.map = map;
 		this.start = start;
 		this.goal = goal;
@@ -27,17 +28,17 @@ public class Path implements Serializable {
 			this.y = new float[path.size()];
 		}
 		for (int i = 0; i < path.size(); i++) {
-			IF_Coordinate position = path.get(i);
+			IF_Coordinate_ImmutableView position = path.get(i);
 			this.x[i] = position.getX();
 			this.y[i] = position.getY();
 		}
 	}
 
-	public IF_Coordinate getStartCollisionCoordinate() {
+	public IF_Coordinate_ImmutableView getStartCollisionCoordinate() {
 		return this.start;
 	}
 
-	public IF_Coordinate getGoalCollisionCoordinate() {
+	public IF_Coordinate_ImmutableView getGoalCollisionCoordinate() {
 		return this.goal;
 	}
 
@@ -54,7 +55,7 @@ public class Path implements Serializable {
 	}
 
 	public IF_Position getPathPosition(int i){
-		return this.map.convertCollisionTileXYInPxXY(this.getPathCollisionCoordinate(i));
+		return this.map.convertCollisionTileXYInPxXY(this.getPathCollisionCoordinate(i)); // TODO Mitte im Tile
 	}
 
 	public int getPathLength() {

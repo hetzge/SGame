@@ -127,43 +127,8 @@ public class Entity implements Serializable {
 		}
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-		return result;
-	}
-
 	private <T> SyncProperty<T> createSyncProperty(T value) {
 		return Application.INJECTOR.resolve(Dependency.dependency(SyncPool.class)).createAndRegisterSyncProperty(value);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (this.getClass() != obj.getClass()) {
-			return false;
-		}
-		Entity other = (Entity) obj;
-		if (this.id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!this.id.equals(other.id)) {
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return this.id;
 	}
 
 	/*
@@ -182,7 +147,14 @@ public class Entity implements Serializable {
 		this.pathPosition = null;
 		this.stopMoving();
 		this.setAnimationKey(DefaultAnimationKey.DEFAULT);
-		System.out.println("Stop");
+	}
+
+	public boolean isMoving(){
+		return !this.fixed && this.centeredPositionSyncProperty.getValue().hasFinished();
+	}
+
+	public boolean isNotMovingNotFixedEntity(){
+		return !this.isFixedPosition() && !this.isMoving();
 	}
 
 	public void stopMoving() {
@@ -320,6 +292,41 @@ public class Entity implements Serializable {
 
 	public RenderableKey getRenderableKey() {
 		return this.renderableKeySyncProperty.getValue();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (this.getClass() != obj.getClass()) {
+			return false;
+		}
+		Entity other = (Entity) obj;
+		if (this.id == null) {
+			if (other.id != null) {
+				return false;
+			}
+		} else if (!this.id.equals(other.id)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return this.id;
 	}
 
 }

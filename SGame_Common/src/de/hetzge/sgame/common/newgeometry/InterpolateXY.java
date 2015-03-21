@@ -28,14 +28,21 @@ public class InterpolateXY extends XY {
 	}
 
 	public void set(IF_XY start, long startTimeInMs, IF_XY end, long endTimeInMs) {
-		this.x = start.getX();
-		this.y = start.getY();
+
+		float startX = start.getX();
+		float startY = start.getY();
+
+		float endX = end.getX();
+		float endY = end.getY();
+
+		this.x = startX;
+		this.y = startY;
+
+		this.endX = endX;
+		this.endY = endY;
 
 		this.startTimeInMs = startTimeInMs;
 		this.endTimeInMs = endTimeInMs;
-
-		this.endX = end.getX();
-		this.endY = end.getY();
 	}
 
 	public void set(IF_XY start, IF_XY end, long timeSpanInMs) {
@@ -62,6 +69,10 @@ public class InterpolateXY extends XY {
 	@Override
 	public float getY() {
 		return Util.interpolateFloat(this.y, this.startTimeInMs, this.endY, this.endTimeInMs);
+	}
+
+	public boolean hasFinished(){
+		return System.currentTimeMillis() > this.endTimeInMs;
 	}
 
 	@Override

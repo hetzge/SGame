@@ -63,6 +63,7 @@ public interface IF_XY extends Serializable {
 
 	/**
 	 * befindet sich <Orientation>lich von <other> 
+	 * nur einfache Orientation
 	 */
 	public default Orientation orientationToOther(IF_XY other) {
 		IF_XY dif = other.copy().dif(this);
