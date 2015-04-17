@@ -17,8 +17,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/SGame_Common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SGame_Message"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SGame_Sync"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SGame_Render"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SGame_Network"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

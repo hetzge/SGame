@@ -24,7 +24,7 @@ public class EntityOnMapThread extends Thread {
 
 	@Override
 	public void run() {
-		Timer updateEntityOnMapTimer = new Timer(1000);
+		Timer updateEntityOnMapTimer = new Timer(100);
 
 		while (true) {
 			Util.sleep(100);

@@ -3,6 +3,7 @@ package de.hetzge.sgame.common;
 import org.nustaq.serialization.FSTConfiguration;
 
 import se.jbee.inject.bind.BinderModule;
+import de.hetzge.sgame.common.service.MoveOnMapService;
 
 public class CommonBinderModule extends BinderModule {
 
@@ -15,6 +16,7 @@ public class CommonBinderModule extends BinderModule {
 		this.bind(FSTConfiguration.class).to((produced, injected) -> {
 			return FSTConfiguration.getDefaultConfiguration();
 		});
+		this.bind(MoveOnMapService.class).to(MoveOnMapService.class);
 	}
 
 }

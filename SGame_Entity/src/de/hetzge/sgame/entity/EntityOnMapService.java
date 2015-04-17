@@ -1,5 +1,6 @@
 package de.hetzge.sgame.entity;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,12 +8,14 @@ import java.util.function.Predicate;
 
 import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.Orientation;
-import de.hetzge.sgame.common.Util;
+import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
+import de.hetzge.sgame.common.definition.IF_ReserveMap;
 import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
 import de.hetzge.sgame.common.newgeometry.XY;
 import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
+import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_MutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 
@@ -119,120 +122,83 @@ public class EntityOnMapService {
 			return collisionArray;
 		}
 
-		public IF_Position_ImmutableView findCollisionPositionAround(On other) {
-			Orientation orientation = other.rectangle.getCenteredPosition().orientationToOther(this.rectangle.getCenteredPosition());
-			switch (orientation) {
-			case EAST:
-				return this.findCollisionPositionAround(other, Orientation.EAST, Orientation.NORTH, Orientation.SOUTH, Orientation.WEST);
-			case NORTH:
-				return this.findCollisionPositionAround(other, Orientation.NORTH, Orientation.EAST, Orientation.WEST, Orientation.SOUTH);
-			case SOUTH:
-				return this.findCollisionPositionAround(other, Orientation.SOUTH, Orientation.EAST, Orientation.SOUTH, Orientation.WEST, Orientation.NORTH);
-			case WEST:
-				return this.findCollisionPositionAround(other, Orientation.WEST, Orientation.NORTH, Orientation.SOUTH, Orientation.EAST);
-			default:
-				throw new IllegalStateException();
-			}
-		}
+		/**
+		 * Checks if around a entity is a non colliding coordinate. Return null
+		 * if no coordinate is found.
+		 */
+		public IF_Coordinate_ImmutableView findEmptyCoordinateAround(Predicate<IF_Coordinate_ImmutableView>... predicates) {
+			List<Predicate<IF_Coordinate_ImmutableView>> predicatesList = Arrays.asList(predicates);
+			IF_Coordinate_MutableView coordinate = new XY(0, 0);
 
-		private IF_Position_ImmutableView findCollisionPositionAround(On other, Orientation... orientations) {
-			for (Orientation orientation : orientations) {
-				IF_Position_ImmutableView result = null;
-				switch (orientation) {
-				case EAST:
-					result = this.findCollisionPositionAroundRight(other);
-					break;
-				case NORTH:
-					result = this.findCollisionPositionAroundTop(other);
-					break;
-				case SOUTH:
-					result = this.findCollisionPositionAroundBottom(other);
-					break;
-				case WEST:
-					result = this.findCollisionPositionAroundLeft(other);
-					break;
-				default:
-					throw new IllegalStateException();
-				}
-				if (result != null) {
-					return result;
+			int positionToCheckCount = (this.widthInCollisionTiles + 2) * 2 + this.heightInCollisionTiles * 2;
+			int[] xs = new int[positionToCheckCount];
+			int[] ys = new int[positionToCheckCount];
+
+			int i = 0;
+			for (int x = this.startCollisionTileX - 1, y = this.startCollisionTileY - 1; x <= this.endCollisionTileX + 1; x++, i++) {
+				xs[i] = x;
+				ys[i] = y;
+			}
+			for (int x = this.startCollisionTileX - 1, y = this.endCollisionTileY + 1; x <= this.endCollisionTileX + 1; x++, i++) {
+				xs[i] = x;
+				ys[i] = y;
+			}
+			for (int x = this.startCollisionTileX - 1, y = this.startCollisionTileY; y <= this.endCollisionTileY; y++, i++) {
+				xs[i] = x;
+				ys[i] = y;
+			}
+			for (int x = this.endCollisionTileX + 1, y = this.startCollisionTileY; y <= this.endCollisionTileY; y++, i++) {
+				xs[i] = x;
+				ys[i] = y;
+			}
+
+			for (int i2 = 0; i2 < xs.length; i2++) {
+				coordinate.setIX(xs[i2]);
+				coordinate.setIY(ys[i2]);
+				boolean isCollision = this.checkCollisionCoordinate(predicatesList, coordinate);
+				if (!isCollision) {
+					return coordinate;
 				}
 			}
+
 			return null;
 		}
 
-		private IF_Position_ImmutableView findCollisionPositionAroundTop(On other) {
-			int startX = this.startCollisionTileX - other.widthInCollisionTiles;
-			int startY = this.startCollisionTileY - other.heightInCollisionTiles;
-			int endX = this.endCollisionTileX + other.widthInCollisionTiles;
-			int endY = startY;
-			return this.findCollisionPositionAroundRow(startX, startY, endX, endY, other.widthInCollisionTiles, other.heightInCollisionTiles, other);
-		}
+		private boolean checkCollisionCoordinate(List<Predicate<IF_Coordinate_ImmutableView>> predicatesList, IF_Coordinate_ImmutableView coordinate) {
+			int x = coordinate.getIX();
+			int y = coordinate.getIY();
 
-		private IF_Position_ImmutableView findCollisionPositionAroundBottom(On other) {
-			int startX = this.startCollisionTileX - other.widthInCollisionTiles;
-			int startY = this.endCollisionTileY + 1;
-			int endX = this.endCollisionTileX + other.widthInCollisionTiles;
-			int endY = startY;
-			return this.findCollisionPositionAroundRow(startX, startY, endX, endY, other.widthInCollisionTiles, other.heightInCollisionTiles, other);
-		}
-
-		private IF_Position_ImmutableView findCollisionPositionAroundLeft(On other) {
-			int startX = this.startCollisionTileX - other.widthInCollisionTiles;
-			int startY = this.startCollisionTileY - other.heightInCollisionTiles;
-			int endX = startX;
-			int endY = this.endCollisionTileY + 1;
-			return this.findCollisionPositionAroundRow(startX, startY, endX, endY, other.widthInCollisionTiles, other.heightInCollisionTiles, other);
-		}
-
-		private IF_Position_ImmutableView findCollisionPositionAroundRight(On other) {
-			int startX = this.endCollisionTileX + 1;
-			int startY = this.startCollisionTileY - other.heightInCollisionTiles;
-			int endX = startX;
-			int endY = this.endCollisionTileY + 1;
-			return this.findCollisionPositionAroundRow(startX, startY, endX, endY, other.widthInCollisionTiles, other.heightInCollisionTiles, other);
-		}
-
-		private IF_Position_ImmutableView findCollisionPositionAroundRow(int startX, int startY, int endX, int endY, int width, int height, On other) {
-			IF_Map map = EntityOnMapService.this.mapProvider.provide();
-
-			Integer[] xValues = Util.valuesInsideOut(startX, endX);
-			Integer[] yValues = Util.valuesInsideOut(startY, endY);
-
-			for (Integer x : xValues) {
-				outer: for (Integer y : yValues) {
-					for (int ix = 0; ix < width; ix++) {
-						for (int iy = 0; iy < height; iy++) {
-							boolean collision = EntityOnMapService.this.mapProvider.provide().getFixEntityCollisionMap().isCollision(x + ix, y + iy);
-							if (collision || !map.isOnCollisionMap(x + ix, y + iy)) {
-								continue outer;
-							}
-						}
-					}
-					return new XY(map.convertCollisionTileInPx(x) + map.convertCollisionTileInPx(width) / 2, map.convertCollisionTileInPx(y) + map.convertCollisionTileInPx(height) / 2);
-				}
+			boolean isOnCollisionMap = EntityOnMapService.this.mapProvider.provide().isOnCollisionMap(x, y);
+			if (isOnCollisionMap) {
+				boolean isCollision = this.anyPredicateMatch(predicatesList, coordinate);
+				return isCollision;
+			} else {
+				return true;
 			}
-			return null;
 		}
+
+		private boolean anyPredicateMatch(List<Predicate<IF_Coordinate_ImmutableView>> predicatesList, IF_Coordinate_ImmutableView coordinate) {
+			return predicatesList.stream().anyMatch(predicate -> predicate.test(coordinate));
+		}
+
 	}
+
+	public final Predicate<IF_Coordinate_ImmutableView> CHECK_FIXED_COLLISION = coordinate -> this.mapProvider.provide().getFixEntityCollisionMap().isCollision(coordinate.getIX(), coordinate.getIY());
+	public final Predicate<IF_Coordinate_ImmutableView> CHECK_FLEXIBLE_COLLISION = coordinate -> this.mapProvider.provide().getFlexibleEntityCollisionMap().isCollision(coordinate.getIX(), coordinate.getIY());
+	public final Predicate<IF_Coordinate_ImmutableView> CHECK_RESERVERD = coordinate -> this.reserveMap.isReserved(coordinate);
 
 	private final IF_MapProvider mapProvider;
 	private final ActiveEntityMap activeEntityMap;
+	private final IF_ReserveMap reserveMap;
 
-	public EntityOnMapService(IF_MapProvider mapProvider, ActiveEntityMap activeEntityMap) {
+	public EntityOnMapService(IF_MapProvider mapProvider, ActiveEntityMap activeEntityMap, IF_ReserveMap reserveMap) {
 		this.mapProvider = mapProvider;
 		this.activeEntityMap = activeEntityMap;
+		this.reserveMap = reserveMap;
 	}
 
 	public On on(IF_Rectangle_ImmutableView rectangle) {
 		return new On(rectangle);
-	}
-
-	/*
-	 * TODO ACHTUNG: Verwendet die größe des Entity, nicht die Collision
-	 */
-	public IF_Position_ImmutableView findPositionAround(Entity around, Entity entity) {
-		return this.on(around.getRealRectangle()).findCollisionPositionAround(this.on(entity.getRealRectangle()));
 	}
 
 	public List<Entity> findEntitiesInAreaAround(Entity around, Predicate<Entity> filter, int radius, int max) {
@@ -262,28 +228,8 @@ public class EntityOnMapService {
 	}
 
 	/**
-	 *  fix and flexibel collision map will be checked 
+	 * The top left corner of the entity rectangle as collision coordinate.
 	 */
-	public IF_Coordinate_ImmutableView findFreePositionAroundEntity(Entity entity) {
-		IF_Map map = this.mapProvider.provide();
-		IF_Coordinate_ImmutableView collisionTileCoordinate = this.entityCollisionTileCenterCoordinate(entity);
-
-		for (Orientation orientation : Orientation.Simple) {
-			int x = collisionTileCoordinate.getIX() + orientation.orientationFactor.getIX();
-			int y = collisionTileCoordinate.getIY() + orientation.orientationFactor.getIY();
-			if (!map.isOnCollisionMap(x, y)) {
-				continue;
-			}
-			boolean fixCollision = map.getFixEntityCollisionMap().isCollision(x, y);
-			boolean flexibleCollision = map.getFlexibleEntityCollisionMap().isCollision(x, y);
-			if (!fixCollision && !flexibleCollision) {
-				return new XY(x, y);
-			}
-		}
-
-		return null;
-	}
-
 	public IF_Coordinate_ImmutableView entityCollisionTileStartCoordinate(Entity entity) {
 		return this.mapProvider.provide().convertPxXYInCollisionTileXY(entity.getRealRectangle().getPositionA().asPositionImmutableView());
 	}
@@ -294,5 +240,9 @@ public class EntityOnMapService {
 
 	public IF_Coordinate_ImmutableView entityTileCenterCoordinate(Entity entity) {
 		return this.mapProvider.provide().convertPxXYInTileXY(entity.getRealRectangle().getCenteredPosition());
+	}
+
+	public Path getPathTo(Entity entity, IF_Coordinate_ImmutableView goalCollisionCoordinate) {
+		return new Path(this.entityCollisionTileStartCoordinate(entity), goalCollisionCoordinate, Arrays.asList(goalCollisionCoordinate), this.mapProvider.provide());
 	}
 }

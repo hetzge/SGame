@@ -22,8 +22,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/SGame_LibGdx"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SGame_Map"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SGame_Network"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SGame_Sync"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SGame_Message"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SGame_Render"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -10,10 +10,9 @@ import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
 import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
-import de.hetzge.sgame.entity.Entity;
+import de.hetzge.sgame.common.service.MoveOnMapService;
 import de.hetzge.sgame.entity.EntityOnMapService;
 import de.hetzge.sgame.entity.ki.BaseKI;
-import de.hetzge.sgame.render.DefaultAnimationKey;
 
 public class GotoKI extends BaseKI {
 
@@ -25,42 +24,73 @@ public class GotoKI extends BaseKI {
 	private final AStarService aStarService = this.get(AStarService.class);
 	private final PathfinderThread pathfinderThread = this.get(PathfinderThread.class);
 	private final EntityOnMapService entityOnMapService = this.get(EntityOnMapService.class);
+	private final MoveOnMapService moveOnMapService = this.get(MoveOnMapService.class);
 
-	public GotoKI(Entity entity, IF_Coordinate_ImmutableView goalCollisionTileCoordinate) {
-		this(entity, goalCollisionTileCoordinate.getIX(), goalCollisionTileCoordinate.getIY());
+	public GotoKI(IF_Coordinate_ImmutableView goalCollisionTileCoordinate) {
+		this(goalCollisionTileCoordinate.getIX(), goalCollisionTileCoordinate.getIY());
 	}
 
-	public GotoKI(Entity entity, IF_Position_ImmutableView goalPosition) {
-		super(entity);
-
+	public GotoKI(IF_Position_ImmutableView goalPosition) {
 		IF_Coordinate collisionTileGoal = this.mapProvider.provide().convertPxXYInCollisionTileXY(goalPosition);
 		this.collisionTileGoalX = collisionTileGoal.getIX();
 		this.collisionTileGoalY = collisionTileGoal.getIY();
 
-		Log.KI.debug("Created GotoKI for entity " + entity + " to " + this.collisionTileGoalX + "/" + this.collisionTileGoalY);
+		Log.KI.debug("Created GotoKI for entity " + this.entity + " to " + this.collisionTileGoalX + "/" + this.collisionTileGoalY);
 	}
 
-	public GotoKI(Entity entity, int collisionTileGoalX, int collisionTileGoalY) {
-		super(entity);
-
+	public GotoKI(int collisionTileGoalX, int collisionTileGoalY) {
 		this.collisionTileGoalX = collisionTileGoalX;
 		this.collisionTileGoalY = collisionTileGoalY;
 
-		Log.KI.debug("Created GotoKI for entity " + entity + " to " + collisionTileGoalX + "/" + collisionTileGoalY);
+		Log.KI.debug("Created GotoKI for entity " + this.entity + " to " + collisionTileGoalX + "/" + collisionTileGoalY);
 	}
 
 	@Override
-	protected boolean condition() {
+	protected boolean callImpl() {
+		if (this.isNotInitialized()) {
+			return this.init();
+		} else {
+			return this.update();
+		}
+	}
+
+	private boolean isNotInitialized() {
+		return this.pathfinderWorker == null;
+	}
+
+	private boolean update() {
+		if (this.pathfinderWorker != null && !this.pathfinderWorker.done()) {
+			return true;
+		}
+
+		if (this.pathfinderWorker != null && this.pathfinderWorker.done()) {
+			Path path = this.pathfinderWorker.get();
+			Log.KI.debug("Found path for entity " + this.entity + ": " + path);
+			this.pathfinderWorker = null;
+			if (path.isPathNotPossible()) {
+				this.activeKICallback.onFailure();
+				return false;
+			}
+			this.moveOnMapService.setPath(this.entity, path);
+		}
+
+		this.moveOnMapService.move(this.entity);
+		boolean goalReached = this.moveOnMapService.reachedGoal(this.entity);
+		if (goalReached) {
+			this.activeKICallback.onSuccess();
+			return false;
+		}
+
 		return true;
 	}
 
-	@Override
-	protected KIState initImpl() {
+	private boolean init() {
 		IF_Map map = this.mapProvider.provide();
 
 		// test if goal is empty
 		if (map.getFixEntityCollisionMap().isCollision(this.collisionTileGoalX, this.collisionTileGoalY)) {
-			return KIState.INIT_FAILURE;
+			this.activeKICallback.onFailure();
+			return false;
 		}
 
 		IF_Coordinate_ImmutableView entityCollisionTilePosition = this.entityOnMapService.entityCollisionTileCenterCoordinate(this.entity);
@@ -73,41 +103,10 @@ public class GotoKI extends BaseKI {
 				// TODO replace with pathfind util
 				// TODO check direct way
 				// TODO entity collision
-				return GotoKI.this.aStarService.findPath(map.getFixEntityCollisionMap(), startX, startY, GotoKI.this.collisionTileGoalX, GotoKI.this.collisionTileGoalY, new boolean[0][0]);
+				return GotoKI.this.aStarService.findPath(map, startX, startY, GotoKI.this.collisionTileGoalX, GotoKI.this.collisionTileGoalY);
 			}
 		};
 
-		return KIState.ACTIVE;
-	}
-
-	@Override
-	protected KIState updateImpl() {
-		if (this.pathfinderWorker != null && !this.pathfinderWorker.done()) {
-			return KIState.ACTIVE;
-		}
-
-		if (this.pathfinderWorker != null && this.pathfinderWorker.done()) {
-			Path path = this.pathfinderWorker.get();
-			Log.KI.debug("Found path for entity " + this.entity + ": " + path);
-			this.pathfinderWorker = null;
-			if (path.isPathNotPossible()) {
-				return KIState.FAILURE;
-			}
-			this.entity.setPath(path);
-		}
-
-		if (this.entity.reachedEndOfPath()) {
-			Log.KI.debug("Entity " + this.entity + " reached end of path");
-			this.entity.setAnimationKey(DefaultAnimationKey.IDLE);
-			return KIState.SUCCESS;
-		}
-
-		this.entity.continueOnPath();
-		return KIState.ACTIVE;
-	}
-
-	@Override
-	protected void finishImpl() {
-		this.entity.unsetPath();
+		return true;
 	}
 }

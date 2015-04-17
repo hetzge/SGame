@@ -14,39 +14,22 @@ public class FindFixEntityKI extends BaseKI {
 	private final EntityOnMapService onMapService = this.get(EntityOnMapService.class);
 	private Entity result;
 
-	public FindFixEntityKI(Entity entity) {
-		super(entity);
-
-		Log.KI.debug("Created FindFixEntityKI for entity " + entity);
+	public FindFixEntityKI() {
+		Log.KI.debug("Created FindFixEntityKI for entity " + this.entity);
 	}
 
 	@Override
-	protected boolean condition() {
-		return true;
-	}
-
-	@Override
-	protected KIState updateImpl() {
+	protected boolean callImpl() {
 		List<Entity> foundEntitiesAround = this.onMapService.findEntitiesInAreaAround(this.entity, Entity::isFixedPosition, 100, 1);
-		if(!foundEntitiesAround.isEmpty()){
+		if (!foundEntitiesAround.isEmpty()) {
 			this.result = foundEntitiesAround.get(0);
-			return KIState.SUCCESS;
+			this.activeKICallback.onSuccess();
 		}
-		return KIState.FAILURE;
-	}
-
-	@Override
-	protected KIState initImpl() {
-		return KIState.ACTIVE;
-	}
-
-	@Override
-	protected void finishImpl() {
-
+		this.activeKICallback.onFailure();
+		return false;
 	}
 
 	public Entity getResult() {
 		return this.result;
 	}
-
 }

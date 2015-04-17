@@ -1,94 +1,69 @@
 package de.hetzge.sgame.entity.ki;
 
-import java.util.EnumSet;
-
 import de.hetzge.sgame.common.IF_DependencyInjection;
 import de.hetzge.sgame.common.Log;
 import de.hetzge.sgame.entity.Entity;
 
 public abstract class BaseKI implements IF_DependencyInjection {
 
-	private static final KICallback EMPTY_KI_CALLBACK = new KICallback();
-
-	protected enum KIState {
-		SUCCESS, FAILURE, ACTIVE, INIT_FAILURE;
-		public static final EnumSet<KIState> FINISH_STATES = EnumSet.of(SUCCESS, FAILURE);
-	}
-
-	protected class LogKICallback extends KICallback {
-		public LogKICallback() {
-			this.on(KIState.FAILURE, () -> System.out.println("FAILURE"));
-			this.on(KIState.INIT_FAILURE, () -> System.out.println("INIT_FAILURE"));
-			this.on(KIState.SUCCESS, () -> System.out.println("SUCCESS"));
+	public static final BaseKICallback EMPTY_KI_CALLBACK = new BaseKICallback() {
+	};
+	public static final BaseKICallback LOG_KI_CALLBACK = new BaseKICallback() {
+		@Override
+		public void onInitialize() {
+			System.out.println("KI -> INIT");
 		}
-	}
 
-	protected final Entity entity;
+		@Override
+		public void onFailure() {
+			System.out.println("KI -> FAILURE");
+		}
 
-	private KICallback activeCallback;
-	private BaseKI activeKI;
+		@Override
+		public void onSuccess() {
+			System.out.println("KI -> SUCCESS");
+		}
+	};
 
-	public BaseKI(Entity entity) {
-		this.entity = entity;
-	}
+	protected Entity entity;
+	protected BaseKI parent;
+	protected BaseKI activeKI;
+	protected BaseKICallback activeKICallback;
 
-	protected void changeActiveKI(BaseKI activceKI) {
+	public void changeActiveKI(BaseKI activceKI) {
 		this.changeActiveKI(activceKI, BaseKI.EMPTY_KI_CALLBACK);
 	}
 
-	protected void changeActiveKI(BaseKI activeKI, KICallback callback) {
-
+	protected void changeActiveKI(BaseKI activeKI, BaseKICallback callback) {
 		Log.KI.debug("Change KI for entity " + this.entity + " to " + activeKI);
 
-		if (activeKI.condition()) {
-			this.activeKI = activeKI;
-			this.activeCallback = callback;
-			KIState state = this.activeKI.init();
-			this.callCallback(state);
-		} else {
-			this.callCallback(KIState.INIT_FAILURE);
-		}
+		activeKI.parent = this;
+		activeKI.entity = this.entity;
+
+		this.activeKI = activeKI;
+		this.activeKICallback = callback;
+		this.activeKICallback.onInitialize();
 	}
 
-	public KIState update() {
+	public boolean call() {
 		if (this.activeKI != null) {
-			KIState state = this.activeKI.update();
+			boolean active = this.activeKI.call();
 			BaseKI activeKIBefore = this.activeKI;
-			this.callCallback(state); // here could ki change
-			if (KIState.FINISH_STATES.contains(state)) {
-				activeKIBefore.finish();
+			if (!active) {
 				if (this.activeKI == activeKIBefore) {
 					this.activeKI = null;
-					this.activeCallback = null;
+					this.activeKICallback = null;
 				}
-				return KIState.ACTIVE;
 			}
-			return state;
+			return true;
 		} else {
-			return this.updateImpl();
+			return this.callImpl();
 		}
 	}
 
-	private KIState init() {
-		return this.initImpl();
-	}
-
-	public void finish() {
-		this.finishImpl();
-	}
-
-	private void callCallback(KIState state) {
-		if (this.activeCallback != null) {
-			this.activeCallback.call(state);
-		}
-	}
-
-	protected abstract boolean condition();
-
-	protected abstract KIState initImpl();
-
-	protected abstract KIState updateImpl();
-
-	protected abstract void finishImpl();
+	/**
+	 * Return true if the ki is still active or false if the ki is finish
+	 */
+	protected abstract boolean callImpl();
 
 }

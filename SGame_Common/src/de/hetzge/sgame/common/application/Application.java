@@ -3,6 +3,7 @@ package de.hetzge.sgame.common.application;
 import se.jbee.inject.Injector;
 import se.jbee.inject.bootstrap.Bootstrap;
 import se.jbee.inject.bootstrap.BootstrapperBundle;
+import de.hetzge.sgame.common.FPS;
 import de.hetzge.sgame.common.IF_DependencyInjection;
 import de.hetzge.sgame.common.ModulePool;
 import de.hetzge.sgame.common.Util;
@@ -28,7 +29,6 @@ public abstract class Application implements IF_DependencyInjection {
 	}
 
 	public void init() {
-
 		this.modulePool.init();
 	}
 
@@ -37,6 +37,7 @@ public abstract class Application implements IF_DependencyInjection {
 	}
 
 	public void update() {
+		FPS.update();
 		if (this.updateTimer.isTime()) {
 			this.modulePool.update();
 		}

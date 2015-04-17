@@ -2,6 +2,7 @@ package de.hetzge.sgame.map;
 
 import se.jbee.inject.bind.BinderModule;
 import de.hetzge.sgame.common.IF_MapProvider;
+import de.hetzge.sgame.common.definition.IF_ReserveMap;
 import de.hetzge.sgame.map.message.TileMapMessageHandler;
 import de.hetzge.sgame.render.Viewport;
 
@@ -15,6 +16,7 @@ public class MapBinderModule extends BinderModule {
 		this.bind(Viewport.class).to(Viewport.class);
 		this.bind(IF_MapProvider.class).to(TileMapProvider.class);
 		this.bind(TileMapMessageHandler.class).to(TileMapMessageHandler.class);
+		this.bind(IF_ReserveMap.class).to(ReservedMap.class);
 	}
 
 }

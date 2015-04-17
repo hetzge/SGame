@@ -1,28 +1,29 @@
 package de.hetzge.sgame.entity.ki.low;
 
-import java.util.Collection;
-import java.util.EnumSet;
-
 import de.hetzge.sgame.common.AStarService;
 import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.Log;
-import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.PathfinderThread;
 import de.hetzge.sgame.common.PathfinderThread.PathfinderWorker;
 import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.definition.IF_Map;
-import de.hetzge.sgame.common.newgeometry.IF_XY;
+import de.hetzge.sgame.common.definition.IF_ReserveMap;
 import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
-import de.hetzge.sgame.entity.ActiveEntityMap;
+import de.hetzge.sgame.common.service.MoveOnMapService;
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.entity.EntityOnMapService;
 import de.hetzge.sgame.entity.EntityOnMapService.IgnoreEntityCollisionWrapper;
+import de.hetzge.sgame.entity.EntityOnMapService.On;
+import de.hetzge.sgame.entity.EntityUtil;
 import de.hetzge.sgame.entity.ki.BaseKI;
+import de.hetzge.sgame.entity.ki.BaseKICallback;
 
 public class GotoEntityKI extends BaseKI {
+
+	public abstract class Callback implements BaseKICallback {
+
+	}
 
 	private final Entity gotoEntity;
 
@@ -30,23 +31,31 @@ public class GotoEntityKI extends BaseKI {
 	private final EntityOnMapService entityOnMapService = this.get(EntityOnMapService.class);
 	private final AStarService aStarService = this.get(AStarService.class);
 	private final PathfinderThread pathfinderThread = this.get(PathfinderThread.class);
+	private final MoveOnMapService moveOnMapService = this.get(MoveOnMapService.class);
+	private final IF_ReserveMap reserveMap = this.get(IF_ReserveMap.class);
 
 	private PathfinderWorker pathfinderWorker;
 
-	public GotoEntityKI(Entity entity, Entity gotoEntity) {
-		super(entity);
+	public GotoEntityKI(Entity gotoEntity) {
 		this.gotoEntity = gotoEntity;
 
-		Log.KI.debug("Created GotoKI for entity " + entity + " to " + gotoEntity);
+		Log.KI.debug("Created GotoKI for entity " + this.entity + " to " + gotoEntity);
 	}
 
 	@Override
-	protected boolean condition() {
-		return this.isFarAwayEnought();
+	protected boolean callImpl() {
+		if (isNotInitialized()) {
+			return this.init();
+		} else {
+			return this.update();
+		}
 	}
 
-	@Override
-	protected KIState initImpl() {
+	private boolean isNotInitialized() {
+		return this.pathfinderWorker == null;
+	}
+
+	private boolean init() {
 		IF_Map map = this.mapProvider.provide();
 		ActiveCollisionMap fixEntityCollisionMap = map.getFixEntityCollisionMap();
 		IgnoreEntityCollisionWrapper ignoreEntityCollisionWrapper = this.entityOnMapService.new IgnoreEntityCollisionWrapper(fixEntityCollisionMap, this.gotoEntity);
@@ -55,121 +64,46 @@ public class GotoEntityKI extends BaseKI {
 		int startX = entityCollisionTilePosition.getIX();
 		int startY = entityCollisionTilePosition.getIY();
 
-		IF_Coordinate_ImmutableView goalEntityCollisionTilePosition = this.entityOnMapService.entityCollisionTileCenterCoordinate(this.gotoEntity);
-		int goalX = goalEntityCollisionTilePosition.getIX();
-		int goalY = goalEntityCollisionTilePosition.getIY();
+		On on = this.entityOnMapService.on(this.gotoEntity.getRealRectangle());
+		IF_Coordinate_ImmutableView goalCollisionCoordinate = on.findEmptyCoordinateAround(this.entityOnMapService.CHECK_FLEXIBLE_COLLISION, this.entityOnMapService.CHECK_RESERVERD);
+		if (goalCollisionCoordinate == null) {
+			this.activeKICallback.onFailure();
+			return false;
+		}
+		this.reserveMap.reserve(goalCollisionCoordinate, this.entity);
+
+		int goalX = goalCollisionCoordinate.getIX();
+		int goalY = goalCollisionCoordinate.getIY();
 
 		this.pathfinderWorker = this.pathfinderThread.new PathfinderWorker() {
 			@Override
 			public Path findPath() {
-				// TODO entity collision
-				return GotoEntityKI.this.aStarService.findPath(ignoreEntityCollisionWrapper, startX, startY, goalX, goalY, new boolean[0][0]);
+				return GotoEntityKI.this.aStarService.findPath(map, ignoreEntityCollisionWrapper, startX, startY, goalX, goalY);
 			}
 		};
-
-		return KIState.ACTIVE;
+		return true;
 	}
 
-	@Override
-	protected KIState updateImpl() {
-
+	private boolean update() {
 		if (this.pathfinderWorker != null && this.pathfinderWorker.done()) {
 			Path path = this.pathfinderWorker.get();
 			this.pathfinderWorker = null;
 			if (path.isPathNotPossible()) {
-				return KIState.FAILURE;
+				this.activeKICallback.onFailure();
+				return false;
 			}
-			this.entity.setPath(path);
+			this.moveOnMapService.setPath(this.entity, path);
 		}
 
-		if (!this.isFarAwayEnought()) {
-			return KIState.SUCCESS;
+		this.moveOnMapService.move(this.entity);
+		boolean goalReached = this.moveOnMapService.reachedGoal(this.entity);
+		if (goalReached) {
+			System.out.println("Is near enought: " + EntityUtil.isNearEnought(this.entity, this.gotoEntity));
+			this.activeKICallback.onSuccess();
+			return false;
 		}
 
-		this.entity.continueOnPath();
-		return KIState.ACTIVE;
-	}
-
-	@Override
-	protected void finishImpl() {
-		if (!this.canStayHere()) {
-			this.changePosition();
-		}
-		this.entity.unsetPath();
-	}
-
-	private void changePosition() {
-		IF_Coordinate_ImmutableView coordinate = this.findChangePosition();
-		if (coordinate != null) {
-			this.changeActiveKI(new GotoKI(this.entity, coordinate));
-		}
-	}
-
-	/**
-	 * Search a position around current position which is not nearer on the
-	 * goal. Return null if no position found.
-	 */
-	private IF_Coordinate_ImmutableView findChangePosition() {
-		IF_Map map = this.mapProvider.provide();
-
-		IF_Position_ImmutableView entityPosition = this.entity.getRealRectangle().getCenteredPosition();
-		IF_Position_ImmutableView gotoEntityPosition = this.gotoEntity.getRealRectangle().getCenteredPosition();
-		IF_Coordinate_ImmutableView entityCollisionTileCenterCoordinate = this.entityOnMapService.entityCollisionTileCenterCoordinate(this.entity);
-
-		Orientation orientationToOther = entityPosition.orientationToOther(gotoEntityPosition);
-
-		EnumSet<Orientation> checkOrientations;
-		if (orientationToOther.isVertical()) {
-			checkOrientations = EnumSet.copyOf(Orientation.Horizontal);
-		} else if (orientationToOther.isHorizontal()) {
-			checkOrientations = EnumSet.copyOf(Orientation.Vertical);
-		} else {
-			throw new IllegalStateException();
-		}
-		checkOrientations.add(orientationToOther);
-
-		for (Orientation orientation : checkOrientations) {
-			IF_Coordinate_ImmutableView coordinate = entityCollisionTileCenterCoordinate.copy().add(orientation.orientationFactor);
-
-			int x = coordinate.getIX();
-			int y = coordinate.getIY();
-			boolean collision = map.isFixOrFlexibleCollision(x, y);
-
-			if (!collision) {
-				return coordinate;
-			}
-		}
-
-		return null;
-	}
-
-	private boolean canStayHere() {
-		IF_Coordinate_ImmutableView entityCollisionTileCenterCoordinate = this.entityOnMapService.entityCollisionTileCenterCoordinate(this.entity);
-
-		int x = entityCollisionTileCenterCoordinate.getIX();
-		int y = entityCollisionTileCenterCoordinate.getIY();
-		Collection<Entity> entitiesOnMapPosition = this.get(ActiveEntityMap.class).getConnectedObjects(x, y);
-		boolean otherFlexibleEntityOnMapPosition = entitiesOnMapPosition.stream().anyMatch(this::otherFlexibleEntityPredicate);
-
-		return !otherFlexibleEntityOnMapPosition;
-	}
-
-	private boolean otherFlexibleEntityPredicate(Entity entity) {
-		return !entity.isFixedPosition() && !entity.equals(this.entity);
-	}
-
-	private boolean isFarAwayEnought() {
-		IF_Position_ImmutableView centeredEntityPosition = this.entity.getRealRectangle().getCenteredPosition();
-		IF_Position_ImmutableView centeredGotoEntityPosition = this.gotoEntity.getRenderRectangle().getCenteredPosition();
-
-		IF_XY absoluteDif = centeredEntityPosition.dif(centeredGotoEntityPosition).abs();
-		IF_Dimension_ImmutableView entityHalfDimension = this.entity.getRealRectangle().getHalfDimension();
-		IF_Dimension_ImmutableView gotoEntityHalfDimension = this.gotoEntity.getRealRectangle().getHalfDimension();
-
-		boolean isNearHorizontal = absoluteDif.getX() < entityHalfDimension.getWidth() + gotoEntityHalfDimension.getWidth() + this.mapProvider.provide().getCollisionTileSize();
-		boolean isNearVertical = absoluteDif.getY() < entityHalfDimension.getHeight() + gotoEntityHalfDimension.getHeight() + this.mapProvider.provide().getCollisionTileSize();
-
-		return !isNearHorizontal || !isNearVertical;
+		return true;
 	}
 
 }

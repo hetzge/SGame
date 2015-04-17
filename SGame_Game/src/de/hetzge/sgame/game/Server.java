@@ -1,5 +1,9 @@
 package de.hetzge.sgame.game;
 
+import de.hetzge.sgame.common.AStarService;
+import de.hetzge.sgame.common.DummyMap;
+import de.hetzge.sgame.common.Path;
+import de.hetzge.sgame.common.Util;
 import de.hetzge.sgame.common.newgeometry.XY;
 import de.hetzge.sgame.entity.ki.KIModule;
 import de.hetzge.sgame.game.Definition.EntityType;
@@ -12,7 +16,7 @@ public class Server extends BaseGame {
 		super(ServerBootstrapperBundle.class);
 		this.networkConfig.peerRole = PeerRole.SERVER;
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 30; i++) {
 			this.entityFactory.build(EntityType.SILLY_BLOCK, (entity) -> {
 				entity.setCenteredPosition(new XY((float) Math.random() * 1000 + 100, (float) Math.random() * 1000 + 100));
 				// module.set(new Position((float) Math.random() * 1000, (float)
@@ -37,7 +41,15 @@ public class Server extends BaseGame {
 
 	public static void main(String[] args) {
 		Server server = new Server();
+
+		AStarService aStarService = server.get(AStarService.class);
+		Path path = aStarService.findPath(new DummyMap(), 10, 10, 10, 11);
+		// TODO fix problem
+
+		System.out.println(Util.toString(path));
 		server.start();
+
+
 	}
 
 	@Override

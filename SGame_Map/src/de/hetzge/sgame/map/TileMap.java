@@ -18,8 +18,6 @@ public class TileMap implements IF_Map, Serializable {
 
 	public class Tile extends Rectangle {
 
-		// Rectangle interface auch verwenden
-
 		private final int tileId;
 
 		private final int x;
@@ -95,7 +93,7 @@ public class TileMap implements IF_Map, Serializable {
 	}
 
 	private final Tile[][] tiles;
-	private final int tileSize;
+	private final float tileSize;
 	private final int collisionTileFactor;
 	private final int widthInTiles;
 	private final int heightInTiles;

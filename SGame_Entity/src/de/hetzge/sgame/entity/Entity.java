@@ -11,12 +11,15 @@ import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.activemap.ActiveMap;
 import de.hetzge.sgame.common.application.Application;
 import de.hetzge.sgame.common.definition.IF_EntityType;
+import de.hetzge.sgame.common.definition.IF_MapMoveable;
 import de.hetzge.sgame.common.newgeometry.IF_Dimension;
 import de.hetzge.sgame.common.newgeometry.IF_Position;
 import de.hetzge.sgame.common.newgeometry.InterpolateXY;
+import de.hetzge.sgame.common.newgeometry.XY;
 import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
+import de.hetzge.sgame.common.service.MoveOnMapService;
 import de.hetzge.sgame.entity.ki.EntityKI;
 import de.hetzge.sgame.render.DefaultAnimationKey;
 import de.hetzge.sgame.render.IF_AnimationKey;
@@ -24,7 +27,7 @@ import de.hetzge.sgame.render.RenderableKey;
 import de.hetzge.sgame.sync.SyncPool;
 import de.hetzge.sgame.sync.SyncProperty;
 
-public class Entity implements Serializable {
+public class Entity implements Serializable, IF_MapMoveable {
 
 	public class RenderRectangle implements IF_Rectangle_ImmutableView {
 
@@ -76,9 +79,9 @@ public class Entity implements Serializable {
 	/**
 	 * The centered position of the entity on the map.
 	 */
-	private final SyncProperty<InterpolateXY> centeredPositionSyncProperty = this.createSyncProperty(new InterpolateXY());
+	private final SyncProperty<IF_Position> centeredPositionSyncProperty = this.createSyncProperty(new XY(0f));
 
-	private final SyncProperty<Float> speedPerMsSyncProperty = this.createSyncProperty(0.02f);
+	private final SyncProperty<Float> speedPerTickSyncProperty = this.createSyncProperty(1f);
 	private final SyncProperty<Path> pathSyncProperty = this.createSyncProperty(null);
 
 	private final RenderRectangle renderRectangle = new RenderRectangle();
@@ -123,7 +126,7 @@ public class Entity implements Serializable {
 
 	public void updateKI() {
 		if (this.entityKI != null) {
-			this.entityKI.update();
+			this.entityKI.call();
 		}
 	}
 
@@ -135,55 +138,48 @@ public class Entity implements Serializable {
 	 * Dimension and movement methods
 	 */
 
+	/**
+	 * Don't call this directly. Use
+	 * {@link MoveOnMapService#setPath(IF_MapMoveable, Path)} instead.
+	 */
+	@Override
 	public void setPath(Path path) {
 		this.pathSyncProperty.setValue(path);
 		this.pathPosition = new PathPosition(path, 0);
-		this.centeredPositionSyncProperty.change(position -> position.set(this.pathPosition.getCurrentPosition(), this.calculateDurationForDistanceInMilliseconds(this.pathPosition.getDistanceToWaypointBefore())));
 		this.setAnimationKey(DefaultAnimationKey.WALK);
 	}
 
+	/**
+	 * Don't call this directly. Use
+	 * {@link MoveOnMapService#unsetPath(IF_MapMoveable)} instead.
+	 */
+	@Override
 	public void unsetPath() {
 		this.pathSyncProperty.setValue(null);
 		this.pathPosition = null;
-		this.stopMoving();
 		this.setAnimationKey(DefaultAnimationKey.DEFAULT);
 	}
 
-	public boolean isMoving(){
-		return !this.fixed && this.centeredPositionSyncProperty.getValue().hasFinished();
-	}
-
-	public boolean isNotMovingNotFixedEntity(){
-		return !this.isFixedPosition() && !this.isMoving();
-	}
-
-	public void stopMoving() {
-		this.centeredPositionSyncProperty.change(position -> position.stop());
-	}
-
-	public void continueOnPath() {
-		if (!this.hasPath()) {
-			return;
-		}
-		if (this.pathPosition.continueOnPath(this.centeredPositionSyncProperty.getValue())) {
-			this.setOrientation(this.pathPosition.getOrientationFromWaypointBeforeToNext());
-			IF_Position currentWaypoint = this.pathPosition.getCurrentPosition();
-			float distanceToCurrentWaypoint = this.pathPosition.getDistanceToWaypointBefore();
-			long durationForDistance = this.calculateDurationForDistanceInMilliseconds(distanceToCurrentWaypoint);
-			this.centeredPositionSyncProperty.change(position -> position.set(currentWaypoint, durationForDistance));
-		}
-	}
-
-	private long calculateDurationForDistanceInMilliseconds(float distance) {
-		return (long) (distance / this.speedPerMsSyncProperty.getValue());
-	}
-
-	public boolean reachedEndOfPath() {
-		return this.pathPosition == null || this.pathPosition.reachedEndOfPath(this.centeredPositionSyncProperty.getValue());
+	@Override
+	public IF_Position_ImmutableView getCenteredPosition() {
+		return this.centeredPositionSyncProperty.getValue();
 	}
 
 	public void setCenteredPosition(IF_Position_ImmutableView newPosition) {
-		this.centeredPositionSyncProperty.change(position -> position.set(newPosition));
+		this.centeredPositionSyncProperty.getValue().setFX(newPosition.getFX());
+		this.centeredPositionSyncProperty.getValue().setFY(newPosition.getFY());
+		this.centeredPositionSyncProperty.setChanged();
+	}
+
+	@Override
+	public void move(Orientation orientation, float distanceInPixel) {
+		XY orientationFactorOptimized = orientation.orientationFactorOptimized;
+		float fx = this.centeredPositionSyncProperty.getValue().getFX();
+		this.centeredPositionSyncProperty.getValue().setFX(fx + orientationFactorOptimized.getFX() * distanceInPixel);
+		float fy = this.centeredPositionSyncProperty.getValue().getFY();
+		this.centeredPositionSyncProperty.getValue().setFY(fy + orientationFactorOptimized.getFY() * distanceInPixel);
+		this.centeredPositionSyncProperty.setChanged();
+		this.setOrientation(orientation);
 	}
 
 	public void setPositionA(IF_Position_ImmutableView newPosition) {
@@ -218,8 +214,13 @@ public class Entity implements Serializable {
 		return this.pathSyncProperty.getValue();
 	}
 
-	public boolean hasPath() {
-		return this.getPath() != null && this.pathPosition != null;
+	public Orientation getOrientation() {
+		return this.renderableKeySyncProperty.getValue().orientation;
+	}
+
+	@Override
+	public PathPosition getPathPosition() {
+		return this.pathPosition;
 	}
 
 	public ActiveMap<Entity> getEntityOnMap() {
@@ -292,6 +293,12 @@ public class Entity implements Serializable {
 
 	public RenderableKey getRenderableKey() {
 		return this.renderableKeySyncProperty.getValue();
+	}
+
+	@Override
+	public float getSpeed() {
+		Float speed = this.speedPerTickSyncProperty.getValue();
+		return speed != null ? speed : 0f;
 	}
 
 	@Override

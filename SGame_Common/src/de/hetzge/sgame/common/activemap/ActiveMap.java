@@ -13,10 +13,10 @@ import de.hetzge.sgame.common.newgeometry.XY;
 
 public class ActiveMap<TYPE> implements Serializable {
 
-	private class ActiveNode<TYPE> implements Serializable {
+	private class ActiveNode implements Serializable {
 
-		private transient FastCollection<ActiveNode<TYPE>> connectors = new FastSet<ActiveNode<TYPE>>().shared();
-		private transient ActiveNode<TYPE> connectedWith;
+		private transient FastCollection<ActiveNode> connectors = new FastSet<ActiveNode>().shared();
+		private transient ActiveNode connectedWith;
 
 		private final int x;
 		private final int y;
@@ -33,7 +33,7 @@ public class ActiveMap<TYPE> implements Serializable {
 			this.y = y;
 		}
 
-		public void connectTo(ActiveNode<TYPE> activeNode) {
+		public void connectTo(ActiveNode activeNode) {
 			if (activeNode != this.connectedWith) {
 				if (this.connectedWith != null) {
 					this.connectedWith.removeConnection(this);
@@ -47,8 +47,8 @@ public class ActiveMap<TYPE> implements Serializable {
 			if (this.connectedWith != null) {
 				this.connectedWith.removeConnection(this);
 			}
-			FastCollection<ActiveNode<TYPE>> connectors = this.getLazyConnectors();
-			for (ActiveNode<TYPE> activeNode : connectors) {
+			FastCollection<ActiveNode> connectors = this.getLazyConnectors();
+			for (ActiveNode activeNode : connectors) {
 				activeNode.connectedWith = null;
 			}
 			if (this.getLazyConnectors().isEmpty()) {
@@ -56,7 +56,7 @@ public class ActiveMap<TYPE> implements Serializable {
 			}
 		}
 
-		private void removeConnection(ActiveNode<TYPE> activeNode) {
+		private void removeConnection(ActiveNode activeNode) {
 			this.getLazyConnectors().remove(activeNode);
 			if (this.getLazyConnectors().isEmpty()) {
 				ActiveMap.this.nodesByXY.remove(new XY(this.x, this.y));
@@ -69,7 +69,7 @@ public class ActiveMap<TYPE> implements Serializable {
 
 		public FastCollection<TYPE> getConnectedObjects() {
 			FastCollection<TYPE> result = new FastSet<TYPE>().shared();
-			for (ActiveNode<TYPE> activeNode : this.getLazyConnectors()) {
+			for (ActiveNode activeNode : this.getLazyConnectors()) {
 				result.add(activeNode.getObject());
 			}
 			return result;
@@ -79,9 +79,9 @@ public class ActiveMap<TYPE> implements Serializable {
 		 * method is needed because after serialization the connectors set is
 		 * null
 		 */
-		public FastCollection<ActiveNode<TYPE>> getLazyConnectors() {
+		public FastCollection<ActiveNode> getLazyConnectors() {
 			if (this.connectors == null) {
-				this.connectors = new FastSet<ActiveNode<TYPE>>().shared();
+				this.connectors = new FastSet<ActiveNode>().shared();
 			}
 			return this.connectors;
 		}
@@ -89,25 +89,29 @@ public class ActiveMap<TYPE> implements Serializable {
 
 	// private final ActiveNode<TYPE>[][] nodes;
 
-	private final Map<IF_Coordinate, ActiveNode<TYPE>> nodesByXY = new FastMap<IF_Coordinate, ActiveNode<TYPE>>().shared();
+	private final Map<IF_Coordinate, ActiveNode> nodesByXY = new FastMap<IF_Coordinate, ActiveNode>().shared();
 
 	public ActiveMap() {
+	}
+
+	public ActiveMap(TYPE object) {
+		this.setObjectOnPosition(object, 0, 0);
 	}
 
 	/**
 	 * connects the activeMap to the current one at the given position
 	 */
 	public void connect(int startX, int startY, ActiveMap<TYPE> activeMap) {
-		for (Map.Entry<IF_Coordinate, ActiveNode<TYPE>> entry : activeMap.nodesByXY.entrySet()) {
+		for (Map.Entry<IF_Coordinate, ActiveNode> entry : activeMap.nodesByXY.entrySet()) {
 			activeMap.getActiveNode(entry.getKey().getIX(), entry.getKey().getIY()).connectTo(this.getActiveNode(startX + entry.getKey().getIX(), startY + entry.getKey().getIY()));
 		}
 	}
 
-	private ActiveNode<TYPE> getActiveNode(int x, int y) {
+	private ActiveNode getActiveNode(int x, int y) {
 		XY xy = new XY(x, y);
-		ActiveNode<TYPE> activeNode = this.nodesByXY.get(xy);
+		ActiveNode activeNode = this.nodesByXY.get(xy);
 		if (activeNode == null) {
-			activeNode = new ActiveNode<>(x, y);
+			activeNode = new ActiveNode(x, y);
 			this.nodesByXY.put(xy, activeNode);
 		}
 		return activeNode;
@@ -142,8 +146,8 @@ public class ActiveMap<TYPE> implements Serializable {
 	}
 
 	public void unchain() {
-		Collection<ActiveMap<TYPE>.ActiveNode<TYPE>> activeNodes = this.nodesByXY.values();
-		for (ActiveNode<TYPE> activeNode : activeNodes) {
+		Collection<ActiveNode> activeNodes = this.nodesByXY.values();
+		for (ActiveNode activeNode : activeNodes) {
 			activeNode.unchain();
 		}
 	}
