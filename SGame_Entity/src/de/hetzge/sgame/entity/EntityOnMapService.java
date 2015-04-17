@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import de.hetzge.sgame.common.IF_MapProvider;
@@ -241,4 +242,75 @@ public class EntityOnMapService {
 	public Path getPathTo(Entity entity, IF_Coordinate_ImmutableView goalCollisionCoordinate) {
 		return new Path(this.entityCollisionTileStartCoordinate(entity), goalCollisionCoordinate, Arrays.asList(goalCollisionCoordinate), this.mapProvider.provide());
 	}
+
+	public Entity circleSearch(IF_Coordinate_ImmutableView source, int radius, Set<Entity> ignore, Predicator<Entity> predicator) {
+		List<Entity> result = this.circleSearch(source, radius, ignore, predicator, 1);
+		if (result != null && !result.isEmpty()) {
+			return result.get(0);
+		} else {
+			return null;
+		}
+	}
+
+
+	// TODO test this
+	public List<Entity> circleSearch(IF_Coordinate_ImmutableView source, int radius, Set<Entity> ignore, Predicator<Entity> predicator, int maxResult) {
+		int counter = 0;
+		int counterGoal = 2 * radius + 1;
+		int currentRadius = 0;
+		IF_Coordinate_ImmutableView currentCoordinate = (IF_Coordinate_ImmutableView) source.copy();
+		Orientation orientation = Orientation.NORTH;
+
+		List<Entity> entities = new LinkedList<>();
+
+		List<Entity> foundEntities = this.checkCoordinate(ignore, predicator, currentCoordinate, maxResult - entities.size());
+		if (foundEntities != null) {
+			entities.addAll(foundEntities);
+			if (foundEntities.size() >= maxResult) {
+				return entities;
+			}
+		}
+
+		while (true) {
+			for (int i = 0; i < 2; i++) {
+				for (int j = 0; j < currentRadius; j++) {
+					currentCoordinate.add(orientation.orientationFactor);
+					orientation = orientation.nextSimple();
+					counter++;
+
+					foundEntities = this.checkCoordinate(ignore, predicator, currentCoordinate, maxResult - entities.size());
+					if (foundEntities != null) {
+						entities.addAll(foundEntities);
+						if (foundEntities.size() >= maxResult) {
+							return entities;
+						}
+					}
+
+					if (counter >= counterGoal) {
+						return null;
+					}
+				}
+			}
+			radius++;
+		}
+	}
+
+	private List<Entity> checkCoordinate(Set<Entity> ignore, Predicator<Entity> predicator, IF_Coordinate_ImmutableView currentCoordinate, int maxResult) {
+		List<Entity> result = null;
+		Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(currentCoordinate.getIX(), currentCoordinate.getIY());
+		for (Entity entity : entities) {
+			boolean match = predicator.all(entity);
+			if (match && ignore != null && !ignore.contains(entity)) {
+				if (result == null) {
+					result = new LinkedList<>();
+				}
+				result.add(entity);
+				if (result.size() >= maxResult) {
+					return result;
+				}
+			}
+		}
+		return result;
+	}
+
 }

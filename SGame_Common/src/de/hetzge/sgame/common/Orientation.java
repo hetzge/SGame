@@ -46,20 +46,34 @@ public enum Orientation {
 		}
 	}
 
-	public boolean isSimple(){
+	public boolean isSimple() {
 		return Orientation.Simple.contains(this);
 	}
 
-	public boolean isDiagonal(){
+	public boolean isDiagonal() {
 		return Orientation.Diagonal.contains(this);
 	}
 
-	public boolean isVertical(){
+	public boolean isVertical() {
 		return Orientation.Vertical.contains(this);
 	}
 
-	public boolean isHorizontal(){
+	public boolean isHorizontal() {
 		return Orientation.Horizontal.contains(this);
 	}
 
+	public Orientation nextSimple() {
+		switch (this) {
+		case EAST:
+			return SOUTH;
+		case NORTH:
+			return EAST;
+		case SOUTH:
+			return WEST;
+		case WEST:
+			return NORTH;
+		default:
+			throw new IllegalAccessError("The method nextSimple should only be used on simple orientations.");
+		}
+	}
 }
