@@ -55,7 +55,4 @@ public final class LogUtil {
 		return Log.VOID;
 	}
 
-	public static org.apache.log4j.Logger createJLVLogger(String name) {
-		return org.apache.log4j.Logger.getLogger(name);
-	}
 }

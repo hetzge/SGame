@@ -16,7 +16,7 @@ public class Server extends BaseGame {
 		super(ServerBootstrapperBundle.class);
 		this.networkConfig.peerRole = PeerRole.SERVER;
 
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 1; i++) {
 			this.entityFactory.build(EntityType.SILLY_BLOCK, (entity) -> {
 				entity.setCenteredPosition(new XY((float) Math.random() * 1000 + 100, (float) Math.random() * 1000 + 100));
 				// module.set(new Position((float) Math.random() * 1000, (float)

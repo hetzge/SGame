@@ -15,7 +15,7 @@ public class FindFixEntityKI extends BaseKI {
 	private Entity result;
 
 	public FindFixEntityKI() {
-		Log.KI.debug("Created FindFixEntityKI for entity " + this.entity);
+		Log.KI.info("Created FindFixEntityKI for entity " + this.entity);
 	}
 
 	@Override
@@ -24,9 +24,11 @@ public class FindFixEntityKI extends BaseKI {
 		if (!foundEntitiesAround.isEmpty()) {
 			this.result = foundEntitiesAround.get(0);
 			this.activeKICallback.onSuccess();
+			return false;
+		} else {
+			this.activeKICallback.onFailure();
+			return false;
 		}
-		this.activeKICallback.onFailure();
-		return false;
 	}
 
 	public Entity getResult() {

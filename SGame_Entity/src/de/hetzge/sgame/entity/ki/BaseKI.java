@@ -10,11 +10,6 @@ public abstract class BaseKI implements IF_DependencyInjection {
 	};
 	public static final BaseKICallback LOG_KI_CALLBACK = new BaseKICallback() {
 		@Override
-		public void onInitialize() {
-			System.out.println("KI -> INIT");
-		}
-
-		@Override
 		public void onFailure() {
 			System.out.println("KI -> FAILURE");
 		}
@@ -35,24 +30,22 @@ public abstract class BaseKI implements IF_DependencyInjection {
 	}
 
 	protected void changeActiveKI(BaseKI activeKI, BaseKICallback callback) {
-		Log.KI.debug("Change KI for entity " + this.entity + " to " + activeKI);
+		Log.KI.info("Change KI for entity " + this.entity + " to " + activeKI);
 
 		activeKI.parent = this;
 		activeKI.entity = this.entity;
 
 		this.activeKI = activeKI;
-		this.activeKICallback = callback;
-		this.activeKICallback.onInitialize();
+		this.activeKI.activeKICallback = callback;
 	}
 
 	public boolean call() {
 		if (this.activeKI != null) {
-			boolean active = this.activeKI.call();
 			BaseKI activeKIBefore = this.activeKI;
+			boolean active = this.activeKI.call();
 			if (!active) {
 				if (this.activeKI == activeKIBefore) {
 					this.activeKI = null;
-					this.activeKICallback = null;
 				}
 			}
 			return true;

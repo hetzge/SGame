@@ -20,6 +20,7 @@ import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 import de.hetzge.sgame.common.service.MoveOnMapService;
+import de.hetzge.sgame.entity.item.Container;
 import de.hetzge.sgame.entity.ki.EntityKI;
 import de.hetzge.sgame.render.DefaultAnimationKey;
 import de.hetzge.sgame.render.IF_AnimationKey;
@@ -80,7 +81,6 @@ public class Entity implements Serializable, IF_MapMoveable {
 	 * The centered position of the entity on the map.
 	 */
 	private final SyncProperty<IF_Position> centeredPositionSyncProperty = this.createSyncProperty(new XY(0f));
-
 	private final SyncProperty<Float> speedPerTickSyncProperty = this.createSyncProperty(1f);
 	private final SyncProperty<Path> pathSyncProperty = this.createSyncProperty(null);
 
@@ -90,6 +90,26 @@ public class Entity implements Serializable, IF_MapMoveable {
 	private ActiveCollisionMap activeCollisionMap = new ActiveCollisionMap(0, 0);
 	private boolean fixed = false;
 	private PathPosition pathPosition;
+
+	/*
+	 * Container properties
+	 */
+
+	/**
+	 * This container describes the the needs of the entity.
+	 */
+	private final Container containerNeeds = new Container();
+
+	/**
+	 * This container describes the items that can taken by other entities.
+	 */
+	private final Container containerProvides = new Container();
+
+	/**
+	 * This container describes the items the entity is carrying with him. As
+	 * example to transport to a other entity.
+	 */
+	private final Container containerHas = new Container();
 
 	/*
 	 * Renderable properties
@@ -299,6 +319,18 @@ public class Entity implements Serializable, IF_MapMoveable {
 	public float getSpeed() {
 		Float speed = this.speedPerTickSyncProperty.getValue();
 		return speed != null ? speed : 0f;
+	}
+
+	public Container getContainerHas() {
+		return this.containerHas;
+	}
+
+	public Container getContainerNeeds() {
+		return this.containerNeeds;
+	}
+
+	public Container getContainerProvides() {
+		return this.containerProvides;
 	}
 
 	@Override

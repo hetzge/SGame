@@ -35,14 +35,14 @@ public class GotoKI extends BaseKI {
 		this.collisionTileGoalX = collisionTileGoal.getIX();
 		this.collisionTileGoalY = collisionTileGoal.getIY();
 
-		Log.KI.debug("Created GotoKI for entity " + this.entity + " to " + this.collisionTileGoalX + "/" + this.collisionTileGoalY);
+		Log.KI.info("Created GotoKI for entity " + this.entity + " to " + this.collisionTileGoalX + "/" + this.collisionTileGoalY);
 	}
 
 	public GotoKI(int collisionTileGoalX, int collisionTileGoalY) {
 		this.collisionTileGoalX = collisionTileGoalX;
 		this.collisionTileGoalY = collisionTileGoalY;
 
-		Log.KI.debug("Created GotoKI for entity " + this.entity + " to " + collisionTileGoalX + "/" + collisionTileGoalY);
+		Log.KI.info("Created GotoKI for entity " + this.entity + " to " + collisionTileGoalX + "/" + collisionTileGoalY);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class GotoKI extends BaseKI {
 
 		if (this.pathfinderWorker != null && this.pathfinderWorker.done()) {
 			Path path = this.pathfinderWorker.get();
-			Log.KI.debug("Found path for entity " + this.entity + ": " + path);
+			Log.KI.info("Found path for entity " + this.entity + ": " + path);
 			this.pathfinderWorker = null;
 			if (path.isPathNotPossible()) {
 				this.activeKICallback.onFailure();

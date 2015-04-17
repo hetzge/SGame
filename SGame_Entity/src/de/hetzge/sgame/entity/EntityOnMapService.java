@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.Path;
+import de.hetzge.sgame.common.Predicator;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.definition.IF_ReserveMap;
@@ -126,8 +127,7 @@ public class EntityOnMapService {
 		 * Checks if around a entity is a non colliding coordinate. Return null
 		 * if no coordinate is found.
 		 */
-		public IF_Coordinate_ImmutableView findEmptyCoordinateAround(Predicate<IF_Coordinate_ImmutableView>... predicates) {
-			List<Predicate<IF_Coordinate_ImmutableView>> predicatesList = Arrays.asList(predicates);
+		public IF_Coordinate_ImmutableView findEmptyCoordinateAround(Predicator<IF_Coordinate_ImmutableView> predicator) {
 			IF_Coordinate_MutableView coordinate = new XY(0, 0);
 
 			int positionToCheckCount = (this.widthInCollisionTiles + 2) * 2 + this.heightInCollisionTiles * 2;
@@ -155,7 +155,7 @@ public class EntityOnMapService {
 			for (int i2 = 0; i2 < xs.length; i2++) {
 				coordinate.setIX(xs[i2]);
 				coordinate.setIY(ys[i2]);
-				boolean isCollision = this.checkCollisionCoordinate(predicatesList, coordinate);
+				boolean isCollision = this.checkCollisionCoordinate(predicator, coordinate);
 				if (!isCollision) {
 					return coordinate;
 				}
@@ -164,21 +164,17 @@ public class EntityOnMapService {
 			return null;
 		}
 
-		private boolean checkCollisionCoordinate(List<Predicate<IF_Coordinate_ImmutableView>> predicatesList, IF_Coordinate_ImmutableView coordinate) {
+		private boolean checkCollisionCoordinate(Predicator<IF_Coordinate_ImmutableView> predicator, IF_Coordinate_ImmutableView coordinate) {
 			int x = coordinate.getIX();
 			int y = coordinate.getIY();
 
 			boolean isOnCollisionMap = EntityOnMapService.this.mapProvider.provide().isOnCollisionMap(x, y);
 			if (isOnCollisionMap) {
-				boolean isCollision = this.anyPredicateMatch(predicatesList, coordinate);
+				boolean isCollision = predicator.any(coordinate);
 				return isCollision;
 			} else {
 				return true;
 			}
-		}
-
-		private boolean anyPredicateMatch(List<Predicate<IF_Coordinate_ImmutableView>> predicatesList, IF_Coordinate_ImmutableView coordinate) {
-			return predicatesList.stream().anyMatch(predicate -> predicate.test(coordinate));
 		}
 
 	}

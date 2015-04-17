@@ -13,6 +13,11 @@ import de.hetzge.sgame.common.definition.IF_ReserveMap;
 import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
 import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 
+/**
+ * TODO move to SGame_Map ?!
+ * @author Markus
+ *
+ */
 public class MoveOnMapService {
 
 	private final IF_ReserveMap reserveMap;

@@ -49,6 +49,8 @@ public class BaseGame extends Application {
 			entity.setDimension(new XY(40f, 40f));
 			entity.setCollision(this.onMapService.on(entity.getRealRectangle()).asCollisionArray());
 			entity.setEntityKI(new EntityKI(entity));
+
+			entity.getContainerHas().setMax(Definition.Item.WOOD, 10);
 		});
 
 		this.entityFactory.registerFactory(EntityType.TREE, (entity) -> {
@@ -57,6 +59,8 @@ public class BaseGame extends Application {
 			entity.setRealDimension(new XY(40f, 40f));
 			entity.setFixedPosition(true);
 			entity.setCollision(this.onMapService.on(entity.getRealRectangle()).asCollisionArray());
+
+			entity.getContainerProvides().set(Definition.Item.WOOD, 100);
 		});
 
 	}

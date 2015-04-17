@@ -3,6 +3,7 @@ package de.hetzge.sgame.game;
 import se.jbee.inject.Dependency;
 import de.hetzge.sgame.common.application.Application;
 import de.hetzge.sgame.common.definition.IF_EntityType;
+import de.hetzge.sgame.entity.item.IF_Item;
 import de.hetzge.sgame.map.GroundType;
 import de.hetzge.sgame.map.IF_Ground;
 import de.hetzge.sgame.render.IF_PixelAccess;
@@ -10,6 +11,10 @@ import de.hetzge.sgame.render.RenderService;
 import de.hetzge.sgame.render.RenderableRessourcePool;
 
 public class Definition {
+
+	public static enum Item implements IF_Item{
+		WOOD, STONE, GOLD;
+	}
 
 	public static enum EntityType implements IF_EntityType {
 		SILLY_BLOCK, TREE;

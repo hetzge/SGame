@@ -6,6 +6,7 @@ import de.hetzge.sgame.common.Log;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.PathfinderThread;
 import de.hetzge.sgame.common.PathfinderThread.PathfinderWorker;
+import de.hetzge.sgame.common.Predicator;
 import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.definition.IF_ReserveMap;
@@ -17,13 +18,8 @@ import de.hetzge.sgame.entity.EntityOnMapService.IgnoreEntityCollisionWrapper;
 import de.hetzge.sgame.entity.EntityOnMapService.On;
 import de.hetzge.sgame.entity.EntityUtil;
 import de.hetzge.sgame.entity.ki.BaseKI;
-import de.hetzge.sgame.entity.ki.BaseKICallback;
 
 public class GotoEntityKI extends BaseKI {
-
-	public abstract class Callback implements BaseKICallback {
-
-	}
 
 	private final Entity gotoEntity;
 
@@ -33,26 +29,23 @@ public class GotoEntityKI extends BaseKI {
 	private final PathfinderThread pathfinderThread = this.get(PathfinderThread.class);
 	private final MoveOnMapService moveOnMapService = this.get(MoveOnMapService.class);
 	private final IF_ReserveMap reserveMap = this.get(IF_ReserveMap.class);
+	private boolean initialized = false;
 
 	private PathfinderWorker pathfinderWorker;
 
 	public GotoEntityKI(Entity gotoEntity) {
 		this.gotoEntity = gotoEntity;
 
-		Log.KI.debug("Created GotoKI for entity " + this.entity + " to " + gotoEntity);
+		Log.KI.info("Created GotoKI for entity " + this.entity + " to " + gotoEntity);
 	}
 
 	@Override
 	protected boolean callImpl() {
-		if (isNotInitialized()) {
+		if (!this.initialized) {
 			return this.init();
 		} else {
 			return this.update();
 		}
-	}
-
-	private boolean isNotInitialized() {
-		return this.pathfinderWorker == null;
 	}
 
 	private boolean init() {
@@ -65,7 +58,7 @@ public class GotoEntityKI extends BaseKI {
 		int startY = entityCollisionTilePosition.getIY();
 
 		On on = this.entityOnMapService.on(this.gotoEntity.getRealRectangle());
-		IF_Coordinate_ImmutableView goalCollisionCoordinate = on.findEmptyCoordinateAround(this.entityOnMapService.CHECK_FLEXIBLE_COLLISION, this.entityOnMapService.CHECK_RESERVERD);
+		IF_Coordinate_ImmutableView goalCollisionCoordinate = on.findEmptyCoordinateAround(Predicator.of(this.entityOnMapService.CHECK_FLEXIBLE_COLLISION, this.entityOnMapService.CHECK_RESERVERD));
 		if (goalCollisionCoordinate == null) {
 			this.activeKICallback.onFailure();
 			return false;
@@ -81,6 +74,8 @@ public class GotoEntityKI extends BaseKI {
 				return GotoEntityKI.this.aStarService.findPath(map, ignoreEntityCollisionWrapper, startX, startY, goalX, goalY);
 			}
 		};
+
+		this.initialized = true;
 		return true;
 	}
 

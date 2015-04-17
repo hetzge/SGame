@@ -10,7 +10,7 @@ public class SillyGotoKI extends BaseKI {
 
 	@Override
 	protected boolean callImpl() {
-		FindFixEntityKI findFixEntityKI = new FindFixEntityKI();
+		final FindFixEntityKI findFixEntityKI = new FindFixEntityKI();
 
 		this.changeActiveKI(findFixEntityKI, new BaseKICallback() {
 			@Override
