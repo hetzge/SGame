@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class Container implements Serializable {
 
-	private class Value {
+	private class Value implements Serializable {
 		private int max;
 		private int amount;
 	}

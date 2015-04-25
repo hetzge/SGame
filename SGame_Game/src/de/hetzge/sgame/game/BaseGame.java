@@ -28,7 +28,7 @@ public class BaseGame extends Application {
 	protected final EntityPool entityPool;
 	protected final EntityOnMapService onMapService;
 
-	public BaseGame(Class<? extends BootstrapperBundle> bootstrapperBundle) {
+	public BaseGame(boolean singleplayer, Class<? extends BootstrapperBundle> bootstrapperBundle) {
 		super(bootstrapperBundle);
 		this.mapModule = this.get(MapModule.class);
 		this.networkModule = this.get(NetworkModule.class);
@@ -40,7 +40,10 @@ public class BaseGame extends Application {
 		this.messageModule = this.get(MessageModule.class);
 		this.onMapService = this.get(EntityOnMapService.class);
 
-		this.modulePool.registerModules(this.mapModule, this.networkModule, this.syncModule, this.entityModule, this.messageModule);
+		if (!singleplayer) {
+			this.modulePool.registerModules(this.networkModule, this.syncModule);
+		}
+		this.modulePool.registerModules(this.mapModule, this.entityModule);
 
 		this.entityFactory.registerFactory(EntityType.SILLY_BLOCK, (entity) -> {
 			entity.setEntityKey(EntityType.SILLY_BLOCK);

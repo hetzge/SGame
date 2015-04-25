@@ -3,7 +3,6 @@ package de.hetzge.sgame.entity;
 import java.util.Collection;
 
 import de.hetzge.sgame.common.IF_DependencyInjection;
-import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.entity.Entity.RenderRectangle;
 import de.hetzge.sgame.render.IF_DrawService;
 import de.hetzge.sgame.render.IF_Renderable;
@@ -34,7 +33,10 @@ public class EntityRenderer implements IF_Renderable<IF_RenderableContext>, IF_D
 			for (Entity entity : entities) {
 				RenderRectangle renderRectangle = entity.getRenderRectangle();
 				this.renderService.render(context, renderRectangle, entity.getRenderableKey());
-				this.drawService.printText(renderRectangle.getCenteredPosition(), "...");
+				String text = entity.getText();
+				if (text != null) {
+					this.drawService.printText(renderRectangle.getCenteredPosition(), "   " + text);
+				}
 			}
 
 			// TODO return null weg machen
@@ -45,19 +47,21 @@ public class EntityRenderer implements IF_Renderable<IF_RenderableContext>, IF_D
 	@Override
 	public void renderShapes(IF_RenderableContext context) {
 
-		this.viewport.iterateVisibleTiles((int x, int y) -> {
-			Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(x, y);
-			for (Entity entity : entities) {
-				this.drawService.drawRectangle(entity.getRealRectangle());
-				Path path = entity.getPath();
-				if (path != null) {
-					this.drawService.drawLine(path.getStartPosition(), path.getEndPosition());
-				}
-			}
-
-			// TODO return null weg machen
-			return null;
-		});
+		// this.viewport.iterateVisibleTiles((int x, int y) -> {
+		// Collection<Entity> entities =
+		// this.activeEntityMap.getConnectedObjects(x, y);
+		// for (Entity entity : entities) {
+		// this.drawService.drawRectangle(entity.getRealRectangle());
+		// Path path = entity.getPath();
+		// if (path != null) {
+		// this.drawService.drawLine(path.getStartPosition(),
+		// path.getEndPosition());
+		// }
+		// }
+		//
+		// // TODO return null weg machen
+		// return null;
+		// });
 
 	}
 

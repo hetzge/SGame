@@ -54,6 +54,14 @@ public abstract class BaseKI implements IF_DependencyInjection {
 		}
 	}
 
+	public BaseKI currentActiveKI() {
+		if (this.activeKI != null) {
+			return this.activeKI.currentActiveKI();
+		} else {
+			return this;
+		}
+	}
+
 	/**
 	 * Return true if the ki is still active or false if the ki is finish
 	 */

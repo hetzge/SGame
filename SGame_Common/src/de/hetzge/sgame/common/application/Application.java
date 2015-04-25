@@ -5,7 +5,6 @@ import se.jbee.inject.bootstrap.Bootstrap;
 import se.jbee.inject.bootstrap.BootstrapperBundle;
 import de.hetzge.sgame.common.FPS;
 import de.hetzge.sgame.common.IF_DependencyInjection;
-import de.hetzge.sgame.common.ModulePool;
 import de.hetzge.sgame.common.Util;
 import de.hetzge.sgame.common.timer.Timer;
 
@@ -13,7 +12,7 @@ public abstract class Application implements IF_DependencyInjection {
 
 	public static Injector INJECTOR;
 	protected final ModulePool modulePool;
-	private final Timer updateTimer = new Timer(ApplicationConfig.INSTANCE.FPS);
+	private final Timer updateTimer = new Timer(1000 / ApplicationConfig.INSTANCE.FPS);
 
 	public Application(Class<? extends BootstrapperBundle> bootstrapperBundle) {
 		Application.INJECTOR = Bootstrap.injector(bootstrapperBundle);

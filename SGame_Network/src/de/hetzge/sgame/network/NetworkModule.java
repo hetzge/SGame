@@ -2,8 +2,10 @@ package de.hetzge.sgame.network;
 
 import java.util.List;
 
+import de.hetzge.sgame.common.Log;
 import de.hetzge.sgame.common.Util;
 import de.hetzge.sgame.common.definition.IF_Module;
+import de.hetzge.sgame.message.BatchMessage;
 import de.hetzge.sgame.message.MessageConfig;
 import de.hetzge.sgame.message.MessagePool;
 
@@ -19,9 +21,13 @@ public class NetworkModule implements IF_Module {
 			while (true) {
 				List<Object> messages = NetworkModule.this.messagePool.flush();
 				for (Object message : messages) {
+					Log.NETWORK.info("send message " + message.getClass());
+					if(message instanceof BatchMessage) {
+						Log.NETWORK.info("send message batch size " + ((BatchMessage) message).size());
+					}
 					NetworkModule.this.networkConfig.peer.sendMessage(message);
 				}
-				Util.sleep(100);
+				Util.sleep(10);
 			}
 		}
 	}

@@ -29,4 +29,8 @@ public class BatchMessage implements Serializable {
 		return this.messages;
 	}
 
+	public int size() {
+		return this.messages.size();
+	}
+
 }

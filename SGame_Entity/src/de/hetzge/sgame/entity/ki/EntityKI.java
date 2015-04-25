@@ -2,7 +2,7 @@ package de.hetzge.sgame.entity.ki;
 
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.entity.EntityOnMapService;
-import de.hetzge.sgame.entity.ki.high.SillyGotoKI;
+import de.hetzge.sgame.entity.ki.high.SillyWalkerKI;
 
 /**
  * This ki is base ki a entity has and which never changes.
@@ -22,7 +22,7 @@ public class EntityKI extends BaseKI {
 
 	@Override
 	protected boolean callImpl() {
-		this.changeActiveKI(new SillyGotoKI());
+		this.changeActiveKI(new SillyWalkerKI());
 		return true;
 	}
 

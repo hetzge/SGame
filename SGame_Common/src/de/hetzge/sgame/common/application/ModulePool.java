@@ -1,4 +1,4 @@
-package de.hetzge.sgame.common;
+package de.hetzge.sgame.common.application;
 
 import java.util.Set;
 

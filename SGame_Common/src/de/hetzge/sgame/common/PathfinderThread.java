@@ -6,6 +6,8 @@ public class PathfinderThread extends Thread {
 
 	public abstract class PathfinderWorker {
 		private Path path;
+		private Boolean pathFound;
+
 
 		public PathfinderWorker() {
 			PathfinderThread.this.addWorker(this);
@@ -15,11 +17,20 @@ public class PathfinderThread extends Thread {
 
 		public void execute() {
 			Path path = this.findPath();
+			this.pathFound = path != null;
 			this.path = path;
 		}
 
 		public boolean done() {
-			return this.path != null;
+			return this.pathFound != null;
+		}
+
+		public boolean success() {
+			return this.pathFound != null && this.pathFound;
+		}
+
+		public boolean failure() {
+			return this.pathFound != null && !this.pathFound;
 		}
 
 		public Path get() {

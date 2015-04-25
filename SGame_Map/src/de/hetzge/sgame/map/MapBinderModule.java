@@ -17,6 +17,7 @@ public class MapBinderModule extends BinderModule {
 		this.bind(IF_MapProvider.class).to(TileMapProvider.class);
 		this.bind(TileMapMessageHandler.class).to(TileMapMessageHandler.class);
 		this.bind(IF_ReserveMap.class).to(ReservedMap.class);
+		this.bind(MapRenderer.class).to(MapRenderer.class);
 	}
 
 }

@@ -7,6 +7,7 @@ import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.PathfinderThread;
 import de.hetzge.sgame.common.PathfinderThread.PathfinderWorker;
 import de.hetzge.sgame.common.Predicator;
+import de.hetzge.sgame.common.Stopwatch;
 import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.definition.IF_ReserveMap;
@@ -32,6 +33,8 @@ public class GotoEntityKI extends BaseKI {
 	private boolean initialized = false;
 
 	private PathfinderWorker pathfinderWorker;
+
+	private Stopwatch stopwatch = new Stopwatch("GotoKI");
 
 	public GotoEntityKI(Entity gotoEntity) {
 		this.gotoEntity = gotoEntity;
@@ -82,15 +85,17 @@ public class GotoEntityKI extends BaseKI {
 	private boolean update() {
 		if (this.pathfinderWorker != null && this.pathfinderWorker.done()) {
 			Path path = this.pathfinderWorker.get();
-			this.pathfinderWorker = null;
-			if (path.isPathNotPossible()) {
+			if(this.pathfinderWorker.failure() || path.isPathNotPossible()) {
 				this.activeKICallback.onFailure();
 				return false;
 			}
+			this.pathfinderWorker = null;
 			this.moveOnMapService.setPath(this.entity, path);
 		}
 
 		this.moveOnMapService.move(this.entity);
+		this.stopwatch.stop();
+
 		boolean goalReached = this.moveOnMapService.reachedGoal(this.entity);
 		if (goalReached) {
 			System.out.println("Is near enought: " + EntityUtil.isNearEnought(this.entity, this.gotoEntity));

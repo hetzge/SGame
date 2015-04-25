@@ -26,6 +26,8 @@ public class GotoKI extends BaseKI {
 	private final EntityOnMapService entityOnMapService = this.get(EntityOnMapService.class);
 	private final MoveOnMapService moveOnMapService = this.get(MoveOnMapService.class);
 
+	private boolean initialized = false;
+
 	public GotoKI(IF_Coordinate_ImmutableView goalCollisionTileCoordinate) {
 		this(goalCollisionTileCoordinate.getIX(), goalCollisionTileCoordinate.getIY());
 	}
@@ -55,7 +57,7 @@ public class GotoKI extends BaseKI {
 	}
 
 	private boolean isNotInitialized() {
-		return this.pathfinderWorker == null;
+		return !this.initialized;
 	}
 
 	private boolean update() {
@@ -65,16 +67,20 @@ public class GotoKI extends BaseKI {
 
 		if (this.pathfinderWorker != null && this.pathfinderWorker.done()) {
 			Path path = this.pathfinderWorker.get();
-			Log.KI.info("Found path for entity " + this.entity + ": " + path);
-			this.pathfinderWorker = null;
-			if (path.isPathNotPossible()) {
+			if (this.pathfinderWorker.failure() || path.isPathNotPossible()) {
+				System.out.println("cant go to " + this.collisionTileGoalX + " " + this.collisionTileGoalY);
+
 				this.activeKICallback.onFailure();
 				return false;
+			} else {
+				Log.KI.info("Found path for entity " + this.entity + ": " + path);
+				this.pathfinderWorker = null;
+				this.moveOnMapService.setPath(this.entity, path);
 			}
-			this.moveOnMapService.setPath(this.entity, path);
 		}
 
 		this.moveOnMapService.move(this.entity);
+
 		boolean goalReached = this.moveOnMapService.reachedGoal(this.entity);
 		if (goalReached) {
 			this.activeKICallback.onSuccess();
@@ -106,6 +112,8 @@ public class GotoKI extends BaseKI {
 				return GotoKI.this.aStarService.findPath(map, startX, startY, GotoKI.this.collisionTileGoalX, GotoKI.this.collisionTileGoalY);
 			}
 		};
+
+		this.initialized = true;
 
 		return true;
 	}

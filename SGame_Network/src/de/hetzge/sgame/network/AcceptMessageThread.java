@@ -20,11 +20,16 @@ public class AcceptMessageThread extends Thread {
 	@Override
 	public void run() {
 		while (true) {
+			Object message = null;
 			try {
-				Object message = this.connection.read();
+				message = this.connection.read();
+			} catch (Exception ex) {
+				throw new NetworkException(ex);
+			}
+			try {
 				this.messageHandlerPool.handleMessage(message);
-			} catch (Exception e) {
-				throw new NetworkException(e);
+			} catch (Exception ex) {
+				throw new IllegalStateException("Error while handling message", ex);
 			}
 			Util.sleep(10);
 		}

@@ -6,7 +6,6 @@ import org.nustaq.serialization.FSTConfiguration;
 
 import de.hetzge.sgame.common.Util;
 import de.hetzge.sgame.common.definition.IF_Module;
-import de.hetzge.sgame.message.BatchMessage;
 import de.hetzge.sgame.message.MessageHandlerPool;
 import de.hetzge.sgame.message.MessagePool;
 import de.hetzge.sgame.sync.message.SyncMessage;
@@ -25,11 +24,15 @@ public class SyncModule implements IF_Module {
 		public void run() {
 			while (true) {
 				List<SyncMessage> syncMessages = SyncModule.this.syncPool.collectSyncMessages();
-				if (!syncMessages.isEmpty()) {
-					BatchMessage batchMessage = new BatchMessage();
-					batchMessage.addCollection(syncMessages);
-					SyncModule.this.messagePool.addMessage(batchMessage);
+				for (SyncMessage syncMessage : syncMessages) {
+					SyncModule.this.messagePool.addMessage(syncMessage);
 				}
+
+				//				if (!syncMessages.isEmpty()) {
+				//					BatchMessage batchMessage = new BatchMessage();
+				//					batchMessage.addCollection(syncMessages);
+				//					SyncModule.this.messagePool.addMessage(batchMessage);
+				//				}
 				Util.sleep(100);
 			}
 		}

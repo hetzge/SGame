@@ -6,6 +6,7 @@ import se.jbee.inject.Dependency;
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.PathPosition;
+import de.hetzge.sgame.common.Player;
 import de.hetzge.sgame.common.UUID;
 import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.activemap.ActiveMap;
@@ -90,6 +91,8 @@ public class Entity implements Serializable, IF_MapMoveable {
 	private ActiveCollisionMap activeCollisionMap = new ActiveCollisionMap(0, 0);
 	private boolean fixed = false;
 	private PathPosition pathPosition;
+	private int playerId = Player.GAIA_ID;
+	private transient String text;
 
 	/*
 	 * Container properties
@@ -331,6 +334,24 @@ public class Entity implements Serializable, IF_MapMoveable {
 
 	public Container getContainerProvides() {
 		return this.containerProvides;
+	}
+
+	public int getPlayerId() {
+		return this.playerId;
+	}
+
+	public String getText() {
+		if(this.entityKI != null) {
+			return this.entityKI.currentActiveKI().getClass().getName();
+		} else {
+			return this.text;
+		}
+
+		//		return this.text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
 	}
 
 	@Override
