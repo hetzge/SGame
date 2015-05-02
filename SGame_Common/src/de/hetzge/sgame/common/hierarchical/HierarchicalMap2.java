@@ -359,7 +359,7 @@ public class HierarchicalMap2 implements Serializable {
 						AStar<AStarWaypoint> aStar = new AStar<AStarWaypoint>(transitionPointOne.asAStarWaypoint(), transitionPointTwo.asAStarWaypoint());
 						List<AStarWaypoint> foundPath = aStar.findPath();
 						if (foundPath != null) {
-							Path path = new Path( foundPath.get(0),  foundPath.get(foundPath.size() - 1), foundPath, HierarchicalMap2.this.map);
+							Path path = new Path( foundPath.get(0),  foundPath.get(foundPath.size() - 1), foundPath);
 							innerMap.put(transitionPointTwo, path);
 						}
 					}

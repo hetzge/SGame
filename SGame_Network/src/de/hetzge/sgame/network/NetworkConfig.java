@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.hetzge.sgame.common.definition.IF_Callback;
+import de.hetzge.sgame.message.BaseMessage;
+import de.hetzge.sgame.message.BatchMessage;
 import de.hetzge.sgame.message.MessageHandlerPool;
 
 public class NetworkConfig {
@@ -11,7 +13,7 @@ public class NetworkConfig {
 	public PeerRole peerRole;
 	public Peer peer;
 	public NetworkData networkData = new NetworkData("127.0.0.1", 4321);
-	public Object registerMessage = new Object();
+	public BaseMessage registerMessage = new BatchMessage();
 	public final List<IF_Callback<?>> initClientMessageCallbacks = new LinkedList<>();
 
 	private final MessageHandlerPool messageHandlerPool;

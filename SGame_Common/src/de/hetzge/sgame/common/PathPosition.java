@@ -1,19 +1,14 @@
 package de.hetzge.sgame.common;
 
 import java.io.Serializable;
-
-import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
+import java.util.function.Consumer;
 
 public class PathPosition implements Serializable {
 
 	private final Path path;
 	private int positionOnPath;
 
-	private IF_Coordinate_ImmutableView currentCollisionCoordinate;
-	private IF_Position_ImmutableView currentPosition;
-	private Orientation orientationToCurrentPosition;
-	private float distanceToCurrentPosition;
+	private transient Consumer<PathPosition> onPathPositionChangedCallback;
 
 	public PathPosition(Path path) {
 		this(path, 0);
@@ -22,7 +17,6 @@ public class PathPosition implements Serializable {
 	public PathPosition(Path path, int positionOnPath) {
 		this.path = path;
 		this.positionOnPath = positionOnPath;
-		this.onChangePathPosition();
 	}
 
 	public int getPositionOnPath() {
@@ -46,8 +40,8 @@ public class PathPosition implements Serializable {
 			this.positionOnPath = this.path.getPathLength() - 1;
 		} else {
 			this.positionOnPath++;
-			this.onChangePathPosition();
 		}
+		this.callOnPathPositionChangedCallback();
 	}
 
 	public void moveBackward() {
@@ -55,47 +49,17 @@ public class PathPosition implements Serializable {
 			this.positionOnPath = 0;
 		} else {
 			this.positionOnPath--;
-			this.onChangePathPosition();
 		}
+		this.callOnPathPositionChangedCallback();
 	}
 
-	public IF_Coordinate_ImmutableView getCurrentCollisionCoordinate() {
-		return this.currentCollisionCoordinate;
+	public void setOnPathPositionChangedCallback(Consumer<PathPosition> onPathPositionChangedCallback) {
+		this.onPathPositionChangedCallback = onPathPositionChangedCallback;
 	}
 
-	public IF_Position_ImmutableView getCurrentPosition() {
-		return this.currentPosition;
-	}
-
-	public Orientation getOrientationFromWaypointBeforeToNext() {
-		return this.orientationToCurrentPosition;
-	}
-
-	public float getDistanceToWaypointBefore() {
-		return this.distanceToCurrentPosition;
-	}
-
-	private void onChangePathPosition() {
-		// collision coordinate
-		this.currentCollisionCoordinate = this.path.getPathCollisionCoordinate(this.positionOnPath);
-
-		// position
-		this.currentPosition = this.path.getPathPosition(this.positionOnPath);
-
-		// orientation
-		if (this.isOnEndOfPath()) {
-			this.orientationToCurrentPosition = Orientation.DEFAULT;
-		} else if (!this.isOnStartOfPath()) {
-			IF_Position_ImmutableView waypointBefore = this.path.getPathPosition(this.positionOnPath - 1);
-			this.orientationToCurrentPosition = this.getCurrentPosition().orientationToOther(waypointBefore);
-		}
-
-		// distance
-		if (this.isOnStartOfPath()) {
-			this.distanceToCurrentPosition = 0f;
-		} else {
-			IF_Position_ImmutableView waypointBefore = this.path.getPathPosition(this.positionOnPath - 1);
-			this.distanceToCurrentPosition = waypointBefore.distance(this.getCurrentPosition());
+	private void callOnPathPositionChangedCallback() {
+		if(this.onPathPositionChangedCallback != null) {
+			this.onPathPositionChangedCallback.accept(this);
 		}
 	}
 

@@ -3,7 +3,9 @@ package de.hetzge.sgame.sync;
 import java.io.Serializable;
 import java.util.function.Consumer;
 
+import se.jbee.inject.Dependency;
 import de.hetzge.sgame.common.UUID;
+import de.hetzge.sgame.common.application.Application;
 import de.hetzge.sgame.sync.message.SyncMessage;
 
 public class SyncProperty<TYPE> implements Serializable {
@@ -12,9 +14,15 @@ public class SyncProperty<TYPE> implements Serializable {
 	private TYPE value;
 	private TYPE oldValue;
 
-	protected SyncProperty(TYPE value) {
-		this.key = UUID.generateKey();
+	public SyncProperty(TYPE value, String key) {
 		this.value = value;
+		this.key = key;
+
+		Application.INJECTOR.resolve(Dependency.dependency(SyncPool.class)).registerSyncProperty(this);
+	}
+
+	public SyncProperty(TYPE value) {
+		this(value, UUID.generateKey());
 	}
 
 	public SyncProperty() {
@@ -23,11 +31,13 @@ public class SyncProperty<TYPE> implements Serializable {
 
 	public void setValue(TYPE value) {
 		this.value = value;
+		this.onSetValue(this);
 	}
 
 	public void setValueResetChange(TYPE value) {
 		this.setValue(value);
 		this.oldValue = value;
+		this.onSetValue(this);
 	}
 
 	public void setChanged() {
@@ -36,7 +46,7 @@ public class SyncProperty<TYPE> implements Serializable {
 	}
 
 	protected SyncMessage flush() {
-		if (this.value != this.oldValue) {
+		if (this.isChanged()) {
 			this.oldValue = this.value;
 			SyncMessage syncMessage = new SyncMessage();
 			syncMessage.key = this.key;
@@ -46,9 +56,20 @@ public class SyncProperty<TYPE> implements Serializable {
 		return null;
 	}
 
-	public void change(Consumer<TYPE> consumer){
+	public boolean isChanged() {
+		return this.isChanged(this.oldValue);
+	}
+
+	public boolean isChanged(TYPE otherValue) {
+		return (this.value != null && otherValue == null) || (this.value != null && !this.value.equals(otherValue));
+	}
+
+	public void change(Consumer<TYPE> consumer) {
+		TYPE valueBefore = this.value;
 		consumer.accept(this.value);
-		this.setChanged();
+		if (this.isChanged(valueBefore)) {
+			this.setChanged();
+		}
 	}
 
 	public TYPE getValue() {
@@ -69,6 +90,10 @@ public class SyncProperty<TYPE> implements Serializable {
 
 	public void setOldValue(TYPE oldValue) {
 		this.oldValue = oldValue;
+	}
+
+	public void onSetValue(SyncProperty<TYPE> syncProperty) {
+		// to override
 	}
 
 }

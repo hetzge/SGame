@@ -5,7 +5,6 @@ import se.jbee.inject.bootstrap.Bootstrap;
 import se.jbee.inject.bootstrap.BootstrapperBundle;
 import de.hetzge.sgame.common.FPS;
 import de.hetzge.sgame.common.IF_DependencyInjection;
-import de.hetzge.sgame.common.Util;
 import de.hetzge.sgame.common.timer.Timer;
 
 public abstract class Application implements IF_DependencyInjection {
@@ -37,10 +36,10 @@ public abstract class Application implements IF_DependencyInjection {
 
 	public void update() {
 		FPS.update();
-		if (this.updateTimer.isTime()) {
-			this.modulePool.update();
-		}
-		Util.sleep(this.updateTimer.restTime());
+		//		if (this.updateTimer.isTime()) {
+		this.modulePool.update();
+		//		}
+		//		Util.sleep(this.updateTimer.restTime());
 	}
 
 }

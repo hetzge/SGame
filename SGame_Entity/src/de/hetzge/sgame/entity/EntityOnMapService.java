@@ -240,7 +240,7 @@ public class EntityOnMapService {
 	}
 
 	public Path getPathTo(Entity entity, IF_Coordinate_ImmutableView goalCollisionCoordinate) {
-		return new Path(this.entityCollisionTileStartCoordinate(entity), goalCollisionCoordinate, Arrays.asList(goalCollisionCoordinate), this.mapProvider.provide());
+		return new Path(this.entityCollisionTileStartCoordinate(entity), goalCollisionCoordinate, Arrays.asList(goalCollisionCoordinate));
 	}
 
 	public Entity circleSearch(IF_Coordinate_ImmutableView source, int radius, Set<Entity> ignore, Predicator<Entity> predicator) {

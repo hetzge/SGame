@@ -1,10 +1,9 @@
 package de.hetzge.sgame.map.message;
 
-import java.io.Serializable;
-
 import de.hetzge.sgame.map.TileMap;
+import de.hetzge.sgame.message.BaseMessage;
 
-public class TileMapMessage implements Serializable {
+public class TileMapMessage extends BaseMessage {
 
 	public final TileMap tileMap;
 

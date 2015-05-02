@@ -67,15 +67,17 @@ public class GotoKI extends BaseKI {
 
 		if (this.pathfinderWorker != null && this.pathfinderWorker.done()) {
 			Path path = this.pathfinderWorker.get();
-			if (this.pathfinderWorker.failure() || path.isPathNotPossible()) {
-				System.out.println("cant go to " + this.collisionTileGoalX + " " + this.collisionTileGoalY);
-
-				this.activeKICallback.onFailure();
-				return false;
-			} else {
-				Log.KI.info("Found path for entity " + this.entity + ": " + path);
-				this.pathfinderWorker = null;
-				this.moveOnMapService.setPath(this.entity, path);
+			try {
+				if (this.pathfinderWorker.failure() || path.isPathNotPossible()) {
+					this.activeKICallback.onFailure();
+					return false;
+				} else {
+					Log.KI.info("Found path for entity " + this.entity + ": " + path);
+					this.pathfinderWorker = null;
+					this.moveOnMapService.setPath(this.entity, path);
+				}
+			} catch (NullPointerException ex) {
+				throw new IllegalStateException(path + " / " + this.pathfinderWorker);
 			}
 		}
 

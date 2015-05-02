@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.hetzge.sgame.common.FPS;
+import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.PathPosition;
@@ -21,9 +22,11 @@ import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 public class MoveOnMapService {
 
 	private final IF_ReserveMap reserveMap;
+	private final IF_MapProvider mapProvider;
 
-	public MoveOnMapService(IF_ReserveMap reserveMap) {
+	public MoveOnMapService(IF_ReserveMap reserveMap, IF_MapProvider mapProvider) {
 		this.reserveMap = reserveMap;
+		this.mapProvider = mapProvider;
 	}
 
 	public void move(IF_MapMoveable moveable) {
@@ -32,8 +35,11 @@ public class MoveOnMapService {
 		}
 
 		PathPosition pathPosition = moveable.getPathPosition();
+		Path path = pathPosition.getPath();
+
 		IF_Position_ImmutableView centeredPosition = moveable.getCenteredPosition();
-		IF_Position_ImmutableView currentGoal = pathPosition.getCurrentPosition();
+		IF_Position_ImmutableView currentGoal =  this.mapProvider.provide().convertCollisionTileXYInPxXY(path.getPathCollisionCoordinate(pathPosition.getPositionOnPath()));
+
 		float distanceInPixel = moveable.getSpeed() * FPS.ticks();
 
 		if (!this.isPositionReached(centeredPosition, currentGoal, distanceInPixel)) {

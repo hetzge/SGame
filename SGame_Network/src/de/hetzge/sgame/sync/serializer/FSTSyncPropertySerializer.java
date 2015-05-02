@@ -23,18 +23,21 @@ public class FSTSyncPropertySerializer extends FSTBasicObjectSerializer {
 	public void writeObject(FSTObjectOutput out, Object object, FSTClazzInfo clazzInfo, FSTFieldInfo fieldInfo, int str) throws IOException {
 		SyncProperty<Object> syncProperty = (SyncProperty<Object>) object;
 		out.writeObject(syncProperty.getValue());
-		out.writeObject(syncProperty.getOldValue());
+		// write the same value as old value that the sync property can't reach
+		// in a changed state.
+		out.writeObject(syncProperty.getValue());
 		out.writeStringUTF(syncProperty.getKey());
 	}
 
 	@Override
-	public void readObject(FSTObjectInput in, Object toRead, FSTClazzInfo clzInfo, FSTFieldInfo referencedBy) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-		SyncProperty<Object> syncProperty = (SyncProperty<Object>) toRead;
+	public Object instantiate(Class objectClass, FSTObjectInput in, FSTClazzInfo serializationInfo, FSTFieldInfo referencee, int streamPositioin) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		SyncProperty<Object> syncProperty = new SyncProperty<>();
 		syncProperty.setValue(in.readObject());
 		syncProperty.setOldValue(in.readObject());
 		syncProperty.setKey(in.readStringUTF());
 
 		this.syncPool.registerSyncProperty(syncProperty);
-		super.readObject(in, syncProperty, clzInfo, referencedBy);
+
+		return syncProperty;
 	}
 }

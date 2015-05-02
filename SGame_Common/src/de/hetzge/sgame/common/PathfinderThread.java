@@ -17,8 +17,8 @@ public class PathfinderThread extends Thread {
 
 		public void execute() {
 			Path path = this.findPath();
-			this.pathFound = path != null;
 			this.path = path;
+			this.pathFound = path != null;
 		}
 
 		public boolean done() {

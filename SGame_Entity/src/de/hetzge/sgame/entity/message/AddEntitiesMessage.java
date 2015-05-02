@@ -1,11 +1,11 @@
 package de.hetzge.sgame.entity.message;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 import de.hetzge.sgame.entity.Entity;
+import de.hetzge.sgame.message.BaseMessage;
 
-public class AddEntitiesMessage implements Serializable {
+public class AddEntitiesMessage extends BaseMessage {
 
 	public final Collection<Entity> entities;
 

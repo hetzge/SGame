@@ -33,7 +33,9 @@ public class SyncModule implements IF_Module {
 				//					batchMessage.addCollection(syncMessages);
 				//					SyncModule.this.messagePool.addMessage(batchMessage);
 				//				}
-				Util.sleep(100);
+				Util.sleep(10);
+
+				// Util.sleep(100);
 			}
 		}
 	}
@@ -63,7 +65,9 @@ public class SyncModule implements IF_Module {
 
 	@Override
 	public void postInit() {
-		this.syncThread.start();
+		if (this.syncConfig.isSyncThreadEnabled()) {
+			this.syncThread.start();
+		}
 	}
 
 	@Override

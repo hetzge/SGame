@@ -3,7 +3,6 @@ package de.hetzge.sgame.common;
 import java.util.ArrayList;
 
 import de.hetzge.sgame.common.newgeometry.IF_XY;
-import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
 
 public final class Util {
 
@@ -111,18 +110,6 @@ public final class Util {
 
 	public static String toString(IF_XY xy) {
 		return xy.getX() + "|" + xy.getY();
-	}
-
-	public static String toString(Path path) {
-		if (path == null) {
-			return null;
-		}
-
-		String result = "Path: ";
-		for (IF_Coordinate_ImmutableView coordinate : path) {
-			result += Util.toString(coordinate) + "->-";
-		}
-		return result;
 	}
 
 	public static void main(String[] args) {

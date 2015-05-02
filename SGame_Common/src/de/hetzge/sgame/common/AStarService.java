@@ -212,7 +212,7 @@ public final class AStarService {
 
 		if (found) {
 			List<IF_Coordinate> path = this.evaluatePath(rating, startX, startY, goalX, goalY);
-			return new Path(start, goal, path, map);
+			return new Path(start, goal, path);
 		} else {
 			return null;
 		}

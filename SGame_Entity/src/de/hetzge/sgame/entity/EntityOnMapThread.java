@@ -27,7 +27,7 @@ public class EntityOnMapThread extends Thread {
 		Timer updateEntityOnMapTimer = new Timer(100);
 
 		while (true) {
-			Util.sleep(100);
+			Util.sleep(1000);
 			if (updateEntityOnMapTimer.isTime()) {
 				Collection<Entity> entities = this.entityPool.getEntities();
 				for (Entity entity : entities) {

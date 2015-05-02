@@ -1,13 +1,13 @@
 package de.hetzge.sgame.game;
 
 import de.hetzge.sgame.common.Orientation;
+import de.hetzge.sgame.common.Stopwatch;
 import de.hetzge.sgame.game.Definition.EntityType;
 import de.hetzge.sgame.libgdx.LibGdxModule;
 import de.hetzge.sgame.libgdx.PixmapWrapper;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableAnimation;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableTexture;
 import de.hetzge.sgame.map.TilePool;
-import de.hetzge.sgame.network.PeerRole;
 import de.hetzge.sgame.render.DefaultAnimationKey;
 import de.hetzge.sgame.render.PredefinedRenderId;
 import de.hetzge.sgame.render.RenderConfig;
@@ -23,11 +23,14 @@ public class Client extends BaseGame {
 	private final RenderPool renderPool;
 	private final TilePool tilePool;
 
-	public Client(boolean singleplayer, Class<? extends BaseGameBootstrapperBundle> bootstrapperBundle) {
-		super(singleplayer, bootstrapperBundle != null ? bootstrapperBundle : ClientBootstrapperBundle.class);
+	public Client(boolean singleplayer, boolean client, boolean server, Class<? extends BaseGameBootstrapperBundle> bootstrapperBundle) {
+		super(singleplayer, client, server, bootstrapperBundle != null ? bootstrapperBundle : ClientBootstrapperBundle.class);
 
-		if (singleplayer) {
-			this.networkConfig.peerRole = PeerRole.CLIENT;
+		Stopwatch stopwatch = new Stopwatch("Init Client");
+
+		if (singleplayer || client) {
+			this.syncConfig.setSyncThreadEnabled(true); // TODO
+
 			this.renderConfig = this.get(RenderConfig.class);
 			this.renderPool = this.get(RenderPool.class);
 			this.renderPool.registerComponentToRender(this.mapModule);
@@ -36,6 +39,7 @@ public class Client extends BaseGame {
 			this.libGdxModule = this.get(LibGdxModule.class);
 			this.renderModule = this.get(RenderModule.class);
 			this.tilePool = this.get(TilePool.class);
+
 
 			this.modulePool.registerModules(this.libGdxModule, this.renderModule);
 
@@ -56,6 +60,7 @@ public class Client extends BaseGame {
 			});
 
 			this.tilePool.map(0, RenderId.GRASS_RENDERABLE_ID);
+
 		} else {
 			this.libGdxModule = null;
 			this.renderModule = null;
@@ -63,15 +68,19 @@ public class Client extends BaseGame {
 			this.renderPool = null;
 			this.tilePool = null;
 		}
+
+		stopwatch.stop();
 	}
 
 	@Override
 	public void update() {
+		//		if (this.server) {
 		super.update();
+		//		} 
 	}
 
 	public static void main(String[] args) {
-		Client client = new Client(true, null);
+		Client client = new Client(false, true, false, null);
 		client.start();
 	}
 

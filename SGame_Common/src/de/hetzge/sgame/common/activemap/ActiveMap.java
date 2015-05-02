@@ -87,8 +87,6 @@ public class ActiveMap<TYPE> implements Serializable {
 		}
 	}
 
-	// private final ActiveNode<TYPE>[][] nodes;
-
 	private final Map<IF_Coordinate, ActiveNode> nodesByXY = new FastMap<IF_Coordinate, ActiveNode>().shared();
 
 	public ActiveMap() {

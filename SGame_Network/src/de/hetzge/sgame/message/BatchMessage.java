@@ -1,31 +1,33 @@
 package de.hetzge.sgame.message;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BatchMessage implements Serializable {
+public class BatchMessage extends BaseMessage {
 
-	private final List<Object> messages = new LinkedList<>();
+	private final List<BaseMessage> messages = new LinkedList<>();
 
-	public void add(Object message) {
+	public BatchMessage() {
+	}
+
+	public void add(BaseMessage message) {
 		this.messages.add(message);
 	}
 
-	public void addAll(Object... messages) {
-		for (Object object : messages) {
-			this.add(object);
+	public void addAll(BaseMessage... messages) {
+		for (BaseMessage message : messages) {
+			this.add(message);
 		}
 	}
 
-	public void addCollection(Collection<? extends Object> messages) {
-		for (Object object : messages) {
-			this.add(object);
+	public void addCollection(Collection<? extends BaseMessage> messages) {
+		for (BaseMessage message : messages) {
+			this.add(message);
 		}
 	}
 
-	public List<Object> getMessages() {
+	public List<BaseMessage> getMessages() {
 		return this.messages;
 	}
 

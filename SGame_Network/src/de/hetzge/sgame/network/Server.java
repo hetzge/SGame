@@ -13,13 +13,15 @@ import de.hetzge.sgame.common.definition.IF_Callback;
 import de.hetzge.sgame.common.exception.DefaultUncaughtExceptionHandler;
 import de.hetzge.sgame.common.exception.NetworkException;
 import de.hetzge.sgame.common.exception.SomeException;
+import de.hetzge.sgame.message.BaseMessage;
 import de.hetzge.sgame.message.BatchMessage;
 import de.hetzge.sgame.message.MessageConfig;
 import de.hetzge.sgame.message.MessageHandlerPool;
+import de.hetzge.sgame.network.connection.FSTConnection;
 
 public class Server implements Peer {
 
-	private final Map<String, Connection> clients = new HashMap<>();
+	private final Map<String, FSTConnection> clients = new HashMap<>();
 
 	private final FSTConfiguration fstConfiguration;
 	private final NetworkConfig networkConfig;
@@ -38,12 +40,11 @@ public class Server implements Peer {
 		Thread acceptClientsThread = new Thread(() -> {
 			try (ServerSocket serverSocket = new ServerSocket(this.networkConfig.networkData.port)) {
 				while (true) {
-
 					Log.NETWORK.info("Server wait for connection");
 
 					Socket socket = serverSocket.accept();
 					this.networkConfig.serverLifecycle.onClientConnected();
-					Connection connection = new Connection(socket, this.fstConfiguration);
+					FSTConnection connection = new FSTConnection(socket, this.fstConfiguration);
 
 					Log.NETWORK.info("Server received connection");
 
@@ -53,7 +54,8 @@ public class Server implements Peer {
 
 					this.networkConfig.serverLifecycle.onClientRegister(registerMessage);
 
-					connection.write(this.collectInitClientMessage());
+					BatchMessage initClientBatchMessage = this.collectInitClientMessage();
+					connection.write(initClientBatchMessage);
 
 					Log.NETWORK.info("Server answered register message to client");
 
@@ -74,10 +76,11 @@ public class Server implements Peer {
 	}
 
 	@Override
-	public void sendMessage(Object message) {
+	public void sendMessage(BaseMessage message) {
 		synchronized (this.clients) {
-			for (Map.Entry<String, Connection> entry : this.clients.entrySet()) {
+			for (Map.Entry<String, FSTConnection> entry : this.clients.entrySet()) {
 				try {
+					message.sendTimestamp = System.currentTimeMillis();
 					entry.getValue().write(message);
 				} catch (Exception e) {
 					throw new NetworkException(e);
@@ -90,10 +93,10 @@ public class Server implements Peer {
 		BatchMessage batchMessage = new BatchMessage();
 		for (Object object : this.messageConfig.serverToNewClientMessages) {
 			if (object instanceof IF_Callback) {
-				IF_Callback<Object> callback = (IF_Callback<Object>) object;
+				IF_Callback<BaseMessage> callback = (IF_Callback<BaseMessage>) object;
 				batchMessage.add(callback.callback());
 			} else {
-				batchMessage.add(object);
+				batchMessage.add((BaseMessage) object);
 			}
 		}
 		return batchMessage;

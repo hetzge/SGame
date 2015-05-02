@@ -32,6 +32,8 @@ public abstract class BaseKI implements IF_DependencyInjection {
 	protected void changeActiveKI(BaseKI activeKI, BaseKICallback callback) {
 		Log.KI.info("Change KI for entity " + this.entity + " to " + activeKI);
 
+		this.entity.setText(activeKI.getClass().getName());
+
 		activeKI.parent = this;
 		activeKI.entity = this.entity;
 

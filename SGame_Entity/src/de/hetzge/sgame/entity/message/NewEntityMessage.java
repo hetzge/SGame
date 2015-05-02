@@ -1,10 +1,9 @@
 package de.hetzge.sgame.entity.message;
 
-import java.io.Serializable;
-
 import de.hetzge.sgame.entity.Entity;
+import de.hetzge.sgame.message.BaseMessage;
 
-public class NewEntityMessage implements Serializable {
+public class NewEntityMessage extends BaseMessage {
 
 	public final Entity entity;
 

@@ -2,6 +2,8 @@ package de.hetzge.sgame.entity;
 
 import java.util.ArrayList;
 
+import org.nustaq.serialization.FSTConfiguration;
+
 import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.definition.IF_Callback;
 import de.hetzge.sgame.common.definition.IF_Module;
@@ -28,8 +30,9 @@ public class EntityModule implements IF_Module, IF_Renderable<IF_RenderableConte
 	public final MessageHandlerPool messageHandlerPool;
 	public final MessageConfig messageConfig;
 	private final EntityRenderer entityRenderer;
+	private final FSTConfiguration fstConfiguration;
 
-	public EntityModule(EntityOnMapThread entityOnMapThread, EntityPool entityPool, EntityRenderer entityRenderer, EntityFactory entityFactory, EntityConfig entityConfig, ActiveEntityMap activeEntityMap, IF_MapProvider mapProvider, MessageHandlerPool messageHandlerPool, MessageConfig messageConfig) {
+	public EntityModule(EntityOnMapThread entityOnMapThread, EntityPool entityPool, EntityRenderer entityRenderer, EntityFactory entityFactory, EntityConfig entityConfig, ActiveEntityMap activeEntityMap, IF_MapProvider mapProvider, MessageHandlerPool messageHandlerPool, MessageConfig messageConfig, FSTConfiguration fstConfiguration) {
 		this.entityOnMapThread = entityOnMapThread;
 		this.entityPool = entityPool;
 		this.entityRenderer = entityRenderer;
@@ -39,6 +42,7 @@ public class EntityModule implements IF_Module, IF_Renderable<IF_RenderableConte
 		this.mapProvider = mapProvider;
 		this.messageHandlerPool = messageHandlerPool;
 		this.messageConfig = messageConfig;
+		this.fstConfiguration = fstConfiguration;
 	}
 
 	@Override
