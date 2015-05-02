@@ -1,6 +1,7 @@
 package de.hetzge.sgame.sync.serializer;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.nustaq.serialization.FSTBasicObjectSerializer;
 import org.nustaq.serialization.FSTClazzInfo;
@@ -21,7 +22,7 @@ public class FSTSyncPropertySerializer extends FSTBasicObjectSerializer {
 
 	@Override
 	public void writeObject(FSTObjectOutput out, Object object, FSTClazzInfo clazzInfo, FSTFieldInfo fieldInfo, int str) throws IOException {
-		SyncProperty<Object> syncProperty = (SyncProperty<Object>) object;
+		SyncProperty<Serializable> syncProperty = (SyncProperty<Serializable>) object;
 		out.writeObject(syncProperty.getValue());
 		// write the same value as old value that the sync property can't reach
 		// in a changed state.
@@ -31,13 +32,8 @@ public class FSTSyncPropertySerializer extends FSTBasicObjectSerializer {
 
 	@Override
 	public Object instantiate(Class objectClass, FSTObjectInput in, FSTClazzInfo serializationInfo, FSTFieldInfo referencee, int streamPositioin) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-		SyncProperty<Object> syncProperty = new SyncProperty<>();
-		syncProperty.setValue(in.readObject());
-		syncProperty.setOldValue(in.readObject());
-		syncProperty.setKey(in.readStringUTF());
-
+		SyncProperty<Serializable> syncProperty = new SyncProperty<Serializable>((Serializable) in.readObject(), (Serializable) in.readObject(), in.readStringUTF());
 		this.syncPool.registerSyncProperty(syncProperty);
-
 		return syncProperty;
 	}
 }

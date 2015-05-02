@@ -21,7 +21,6 @@ import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
 import de.hetzge.sgame.common.service.MoveOnMapService;
 import de.hetzge.sgame.entity.item.Container;
 import de.hetzge.sgame.entity.ki.BaseKI;
-import de.hetzge.sgame.render.DefaultAnimationKey;
 import de.hetzge.sgame.render.IF_AnimationKey;
 import de.hetzge.sgame.render.RenderableKey;
 import de.hetzge.sgame.sync.SyncProperty;
@@ -33,7 +32,7 @@ public class Entity implements Serializable, IF_MapMoveable {
 		/**
 		 * The dimension of the entity on the screen.
 		 */
-		private final SyncProperty<InterpolateXY> dimensionSyncProperty = new SyncProperty<>(new InterpolateXY(), "dimensionSyncProperty");
+		private final SyncProperty<InterpolateXY> dimensionSyncProperty = new SyncProperty<>(new InterpolateXY(), "dimensionSyncProperty" + UUID.generateId());
 
 		@Override
 		public IF_Position_ImmutableView getCenteredPosition() {
@@ -51,7 +50,7 @@ public class Entity implements Serializable, IF_MapMoveable {
 		/**
 		 * The real dimension of the entity in the virtual world.
 		 */
-		private final SyncProperty<InterpolateXY> realDimensionSyncProperty = new SyncProperty<>(new InterpolateXY(), "realDimensionSyncProperty");
+		private final SyncProperty<InterpolateXY> realDimensionSyncProperty = new SyncProperty<>(new InterpolateXY(), "realDimensionSyncProperty" + UUID.generateId());
 
 		@Override
 		public IF_Position_ImmutableView getCenteredPosition() {
@@ -74,7 +73,9 @@ public class Entity implements Serializable, IF_MapMoveable {
 		public void onSetValue(de.hetzge.sgame.sync.SyncProperty<PathPosition> syncProperty) {
 			PathPosition pathPosition = syncProperty.getValue();
 			if (pathPosition != null) {
-				pathPosition.setOnPathPositionChangedCallback(x -> Entity.this.syncCenteredPosition());
+				pathPosition.setOnPathPositionChangedCallback(x -> {
+					Entity.this.syncCenteredPosition();
+				});
 			}
 		};
 	}
@@ -82,11 +83,11 @@ public class Entity implements Serializable, IF_MapMoveable {
 	/**
 	 * The centered position of the entity on the map.
 	 */
-	private final SyncProperty<IF_Position_MutableView> centeredPositionSyncProperty = new SyncProperty<>(new XY(0f), "centeredPositionSyncProperty");
+	private final SyncProperty<IF_Position_MutableView> centeredPositionSyncProperty = new SyncProperty<>(new XY(0f), "centeredPositionSyncProperty" + UUID.generateId());
 	private final SyncProperty<Float> speedPerTickSyncProperty = new SyncProperty<>(1f, "speedPerTickSyncProperty");
-	private final SyncProperty<PathPosition> pathPositionSyncProperty = new PathPositionSyncProperty(null, "pathPositionSyncProperty");
-	private final SyncProperty<RenderableKey> renderableKeySyncProperty = new SyncProperty<>(new RenderableKey(), "renderableKeySyncProperty");
-	private final SyncProperty<String> textSyncProperty = new SyncProperty<>("", "textSyncProperty");
+	private final SyncProperty<PathPosition> pathPositionSyncProperty = new PathPositionSyncProperty(null, "pathPositionSyncProperty" + UUID.generateId());
+	private final SyncProperty<RenderableKey> renderableKeySyncProperty = new SyncProperty<>(new RenderableKey(), "renderableKeySyncProperty" + UUID.generateId());
+	private final SyncProperty<String> textSyncProperty = new SyncProperty<>("", "textSyncProperty" + UUID.generateId());
 
 	private final RenderRectangle renderRectangle = new RenderRectangle();
 	private final RealRectangle realRectangle = new RealRectangle();
@@ -165,7 +166,6 @@ public class Entity implements Serializable, IF_MapMoveable {
 	public void setPath(Path path) {
 		PathPosition pathPosition = new PathPosition(path, 0);
 		this.pathPositionSyncProperty.setValue(pathPosition);
-		this.setAnimationKey(DefaultAnimationKey.WALK);
 	}
 
 	public void syncCenteredPosition() {
@@ -179,7 +179,6 @@ public class Entity implements Serializable, IF_MapMoveable {
 	@Override
 	public void unsetPath() {
 		this.pathPositionSyncProperty.setValue(null);
-		this.setAnimationKey(DefaultAnimationKey.DEFAULT);
 	}
 
 	@Override
@@ -295,6 +294,10 @@ public class Entity implements Serializable, IF_MapMoveable {
 		this.renderableKeySyncProperty.change(renderableKey -> renderableKey.entityType = entityType);
 	}
 
+	public void setAnimationKeyWithoutSync(IF_AnimationKey animationKey) {
+		this.renderableKeySyncProperty.getValue().animationKey = animationKey;
+	}
+
 	public void setAnimationKey(IF_AnimationKey animationKey) {
 		this.renderableKeySyncProperty.change(renderableKey -> renderableKey.animationKey = animationKey);
 	}
@@ -329,7 +332,7 @@ public class Entity implements Serializable, IF_MapMoveable {
 		// if (this.ki != null) {
 		// return this.ki.currentActiveKI().getClass().getName();
 		// } else {
-		return this.id;
+		return this.getOrientation().name() + " vs " + this.textSyncProperty.getValue();
 		// }
 
 		// return this.text;

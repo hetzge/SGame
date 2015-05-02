@@ -13,6 +13,7 @@ import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 import de.hetzge.sgame.common.service.MoveOnMapService;
 import de.hetzge.sgame.entity.EntityOnMapService;
 import de.hetzge.sgame.entity.ki.BaseKI;
+import de.hetzge.sgame.render.DefaultAnimationKey;
 
 public class GotoKI extends BaseKI {
 
@@ -81,6 +82,7 @@ public class GotoKI extends BaseKI {
 			}
 		}
 
+		this.entity.setAnimationKey(DefaultAnimationKey.WALK);
 		this.moveOnMapService.move(this.entity);
 
 		boolean goalReached = this.moveOnMapService.reachedGoal(this.entity);

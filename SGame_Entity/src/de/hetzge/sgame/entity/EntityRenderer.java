@@ -8,6 +8,7 @@ import de.hetzge.sgame.render.IF_DrawService;
 import de.hetzge.sgame.render.IF_Renderable;
 import de.hetzge.sgame.render.IF_RenderableContext;
 import de.hetzge.sgame.render.RenderService;
+import de.hetzge.sgame.render.RenderableKey;
 import de.hetzge.sgame.render.Viewport;
 
 public class EntityRenderer implements IF_Renderable<IF_RenderableContext>, IF_DependencyInjection {
@@ -32,11 +33,13 @@ public class EntityRenderer implements IF_Renderable<IF_RenderableContext>, IF_D
 			Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(x, y);
 			for (Entity entity : entities) {
 				RenderRectangle renderRectangle = entity.getRenderRectangle();
-				this.renderService.render(context, renderRectangle, entity.getRenderableKey());
-				String text = entity.getText();
-				if (text != null) {
-					this.drawService.printText(renderRectangle.getCenteredPosition(), "   " + text);
-				}
+				RenderableKey renderableKey = entity.getRenderableKey();
+				this.renderService.render(context, renderRectangle, renderableKey);
+				//				entity.setText(renderableKey.orientation.name() + " " + renderableKey.hashCode());
+				//				String text = entity.getText();
+				//				if (text != null) {
+				//					this.drawService.printText(renderRectangle.getCenteredPosition(), "   " + text);
+				//				}
 			}
 
 			// TODO return null weg machen

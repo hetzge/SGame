@@ -29,7 +29,6 @@ public class FSTConnection implements IF_Connection {
 		// System.out.println("Write: " + sizeOf.deepSizeOf(Integer.MAX_VALUE,
 		// true, message).getCalculated());
 
-		System.out.println("write: " + message.getClass().getName());
 		this.tcpObjectSocket.writeObject(message);
 		this.tcpObjectSocket.flush();
 	}

@@ -32,7 +32,8 @@ public class EntityOnMapThread extends Thread {
 				Collection<Entity> entities = this.entityPool.getEntities();
 				for (Entity entity : entities) {
 
-					// TODO this staff could be done everytime the position of entity changes
+					// TODO this staff could be done everytime the position of
+					// entity changes
 					this.updateEntityOnMap(entity);
 					this.updateCollisionOnMap(entity);
 				}

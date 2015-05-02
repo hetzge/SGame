@@ -16,6 +16,7 @@ import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
 
 /**
  * TODO move to SGame_Map ?!
+ * 
  * @author Markus
  *
  */
@@ -38,7 +39,7 @@ public class MoveOnMapService {
 		Path path = pathPosition.getPath();
 
 		IF_Position_ImmutableView centeredPosition = moveable.getCenteredPosition();
-		IF_Position_ImmutableView currentGoal =  this.mapProvider.provide().convertCollisionTileXYInPxXY(path.getPathCollisionCoordinate(pathPosition.getPositionOnPath()));
+		IF_Position_ImmutableView currentGoal = this.mapProvider.provide().convertCollisionTileXYInPxXY(path.getPathCollisionCoordinate(pathPosition.getPositionOnPath()));
 
 		float distanceInPixel = moveable.getSpeed() * FPS.ticks();
 

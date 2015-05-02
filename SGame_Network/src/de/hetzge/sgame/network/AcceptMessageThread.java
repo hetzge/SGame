@@ -1,6 +1,5 @@
 package de.hetzge.sgame.network;
 
-import de.hetzge.sgame.common.Util;
 import de.hetzge.sgame.common.exception.DefaultUncaughtExceptionHandler;
 import de.hetzge.sgame.common.exception.NetworkException;
 import de.hetzge.sgame.common.timer.Timer;
@@ -41,8 +40,7 @@ public class AcceptMessageThread extends Thread {
 				throw new IllegalStateException("Error while handling message", ex);
 			}
 
-			System.out.println("Accept");
-			Util.sleep(10);
+			//			Util.sleep(10);
 		}
 	}
 

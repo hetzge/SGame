@@ -2,7 +2,6 @@ package de.hetzge.sgame.network;
 
 import java.util.List;
 
-import de.hetzge.sgame.common.Util;
 import de.hetzge.sgame.common.definition.IF_Module;
 import de.hetzge.sgame.message.BaseMessage;
 import de.hetzge.sgame.message.MessageConfig;
@@ -22,7 +21,7 @@ public class NetworkModule implements IF_Module {
 				for (BaseMessage message : messages) {
 					NetworkModule.this.networkConfig.peer.sendMessage(message);
 				}
-				Util.sleep(10);
+				//				Util.sleep(10);
 			}
 		}
 	}

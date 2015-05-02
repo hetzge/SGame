@@ -44,15 +44,6 @@ public class PathPosition implements Serializable {
 		this.callOnPathPositionChangedCallback();
 	}
 
-	public void moveBackward() {
-		if (this.positionOnPath - 1 < 0) {
-			this.positionOnPath = 0;
-		} else {
-			this.positionOnPath--;
-		}
-		this.callOnPathPositionChangedCallback();
-	}
-
 	public void setOnPathPositionChangedCallback(Consumer<PathPosition> onPathPositionChangedCallback) {
 		this.onPathPositionChangedCallback = onPathPositionChangedCallback;
 	}

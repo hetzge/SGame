@@ -85,7 +85,7 @@ public class BaseGame extends Application {
 			entity.setOrientation(Orientation.SOUTH);
 			entity.setRealDimension(new XY(10f, 10f));
 			entity.setDimension(new XY(40f, 40f));
-			entity.setCollision(this.onMapService.on(entity.getRealRectangle()).asCollisionArray());
+			entity.setCollision(new boolean[][] { new boolean[] { true }});
 			entity.setKI(new EntityKI(entity));
 
 			entity.getContainerHas().setMax(Definition.Item.WOOD, 10);

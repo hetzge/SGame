@@ -12,23 +12,29 @@ public class Server extends Client {
 
 		Stopwatch stopwatch = new Stopwatch("Init Server");
 
-		for (int i = 0; i < 10; i++) {
-			this.entityFactory.build(EntityType.SILLY_BLOCK, (entity) -> {
-				entity.setCenteredPosition(new XY((float) Math.random() * 1000 + 100, (float) Math.random() * 1000 + 100));
-				// module.set(new Position((float) Math.random() * 1000, (float)
-				// Math.random() * 800), 50000);
-			});
+		for (int x = 0; x < 50; x++) {
+			int ix = 3 + x;
+			for (int y = 0; y < 50; y++) {
+				int iy = 3 + y;
+				this.entityFactory.build(EntityType.SILLY_BLOCK, (entity) -> {
+					entity.setCenteredPosition(new XY(ix * 20, iy * 20));
+					// module.set(new Position((float) Math.random() * 1000,
+					// (float)
+					// Math.random() * 800), 50000);
+				});
+			}
 		}
 
 		this.entityFactory.build(EntityType.TREE, (entity) -> {
 			entity.setPositionA(new XY(500f, 500f));
 		});
 
-		//				for (int i = 0; i < 50; i++) {
-		//					this.entityFactory.build(EntityType.TREE, (entity) -> {
-		//						entity.setPosition(new XY((float) Math.random() * 1000 + 200, (float) Math.random() * 1000 + 200));
-		//					});
-		//				}
+		// for (int i = 0; i < 50; i++) {
+		// this.entityFactory.build(EntityType.TREE, (entity) -> {
+		// entity.setPosition(new XY((float) Math.random() * 1000 + 200, (float)
+		// Math.random() * 1000 + 200));
+		// });
+		// }
 
 		// TODO Server sollte keine Render abhängigkeit haben ?!
 		this.modulePool.registerModule(this.get(RenderModule.class));

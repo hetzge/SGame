@@ -85,6 +85,11 @@ public class XY implements IF_Position, IF_Dimension, IF_Coordinate {
 	}
 
 	@Override
+	public String toString() {
+		return "(" + this.getFX() + " | " + this.getFY() + ")";
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

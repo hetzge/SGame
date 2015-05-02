@@ -19,6 +19,7 @@ import de.hetzge.sgame.entity.EntityOnMapService.IgnoreEntityCollisionWrapper;
 import de.hetzge.sgame.entity.EntityOnMapService.On;
 import de.hetzge.sgame.entity.EntityUtil;
 import de.hetzge.sgame.entity.ki.BaseKI;
+import de.hetzge.sgame.render.DefaultAnimationKey;
 
 public class GotoEntityKI extends BaseKI {
 
@@ -93,6 +94,7 @@ public class GotoEntityKI extends BaseKI {
 			this.moveOnMapService.setPath(this.entity, path);
 		}
 
+		this.entity.setAnimationKey(DefaultAnimationKey.WALK);
 		this.moveOnMapService.move(this.entity);
 		this.stopwatch.stop();
 
