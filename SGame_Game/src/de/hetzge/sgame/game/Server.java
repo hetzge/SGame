@@ -1,7 +1,7 @@
 package de.hetzge.sgame.game;
 
 import de.hetzge.sgame.common.Stopwatch;
-import de.hetzge.sgame.common.newgeometry.XY;
+import de.hetzge.sgame.common.newgeometry2.XY;
 import de.hetzge.sgame.game.Definition.EntityType;
 import de.hetzge.sgame.render.RenderModule;
 
@@ -12,9 +12,9 @@ public class Server extends Client {
 
 		Stopwatch stopwatch = new Stopwatch("Init Server");
 
-		for (int x = 0; x < 50; x++) {
+		for (int x = 0; x < 3; x++) {
 			int ix = 3 + x;
-			for (int y = 0; y < 50; y++) {
+			for (int y = 0; y < 3; y++) {
 				int iy = 3 + y;
 				this.entityFactory.build(EntityType.SILLY_BLOCK, (entity) -> {
 					entity.setCenteredPosition(new XY(ix * 20, iy * 20));
@@ -25,9 +25,20 @@ public class Server extends Client {
 			}
 		}
 
-		this.entityFactory.build(EntityType.TREE, (entity) -> {
-			entity.setPositionA(new XY(500f, 500f));
-		});
+		for (int i = 0; i < 20; i++) {
+			XY xy = new XY(200f + i * 48, 500f);
+			this.entityFactory.build(EntityType.TREE, (entity) -> {
+				entity.setPositionA(xy);
+			});
+		}
+
+		for (int i = 0; i < 20; i++) {
+			XY xy = new XY(200f + i * 48, 800f);
+			this.entityFactory.build(EntityType.TREE, (entity) -> {
+				entity.setPositionA(xy);
+			});
+		}
+
 
 		// for (int i = 0; i < 50; i++) {
 		// this.entityFactory.build(EntityType.TREE, (entity) -> {

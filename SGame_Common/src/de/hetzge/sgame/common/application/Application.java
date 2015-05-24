@@ -11,11 +11,19 @@ public abstract class Application implements IF_DependencyInjection {
 
 	public static Injector INJECTOR;
 	protected final ModulePool modulePool;
+
+	private final boolean server;
+	private final boolean client;
+	private final boolean singleplayer;
+
 	private final Timer updateTimer = new Timer(1000 / ApplicationConfig.INSTANCE.FPS);
 
-	public Application(Class<? extends BootstrapperBundle> bootstrapperBundle) {
+	public Application(Class<? extends BootstrapperBundle> bootstrapperBundle, boolean singleplayer, boolean server, boolean client) {
 		Application.INJECTOR = Bootstrap.injector(bootstrapperBundle);
 		this.modulePool = this.get(ModulePool.class);
+		this.singleplayer = singleplayer;
+		this.server = server;
+		this.client = client;
 	}
 
 	public void start() {
@@ -36,10 +44,22 @@ public abstract class Application implements IF_DependencyInjection {
 
 	public void update() {
 		FPS.update();
-		//		if (this.updateTimer.isTime()) {
+		// if (this.updateTimer.isTime()) {
 		this.modulePool.update();
-		//		}
-		//		Util.sleep(this.updateTimer.restTime());
+		// }
+		// Util.sleep(this.updateTimer.restTime());
+	}
+
+	public boolean isServer() {
+		return this.server;
+	}
+
+	public boolean isClient() {
+		return this.client;
+	}
+
+	public boolean isSingleplayer() {
+		return this.singleplayer;
 	}
 
 }

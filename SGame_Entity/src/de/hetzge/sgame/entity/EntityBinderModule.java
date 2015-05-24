@@ -2,8 +2,12 @@ package de.hetzge.sgame.entity;
 
 import se.jbee.inject.bind.BinderModule;
 import se.jbee.inject.util.Scoped;
+import de.hetzge.sgame.entity.api.EntityApi;
+import de.hetzge.sgame.entity.api.EntityApiServer;
+import de.hetzge.sgame.entity.api.IF_EntityApi;
 import de.hetzge.sgame.entity.ki.high.CollectorKI;
 import de.hetzge.sgame.entity.ki.high.SillyWalkerKI;
+import de.hetzge.sgame.entity.ki.low.DieKI;
 import de.hetzge.sgame.entity.ki.low.GotoKI;
 import de.hetzge.sgame.entity.message.AddEntitiesMessageHandler;
 import de.hetzge.sgame.entity.message.NewEntityMessageHandler;
@@ -25,8 +29,29 @@ public class EntityBinderModule extends BinderModule {
 		this.bind(EntityOnMapService.class).to(EntityOnMapService.class);
 		this.bind(EntityRenderer.class).to(EntityRenderer.class);
 
+		this.require(IF_EntityApi.class);
+
 		this.per(Scoped.INJECTION).bind(SillyWalkerKI.class).to(SillyWalkerKI.class);
 		this.per(Scoped.INJECTION).bind(CollectorKI.class).to(CollectorKI.class);
 		this.per(Scoped.INJECTION).bind(GotoKI.class).to(GotoKI.class);
+		this.per(Scoped.INJECTION).bind(DieKI.class).to(DieKI.class);
+	}
+
+	public static class ServerBinderModule extends BinderModule {
+
+		@Override
+		protected void declare() {
+			this.provide(EntityApiServer.class);
+		}
+
+	}
+
+	public static class ClientBinderModule extends BinderModule {
+
+		@Override
+		protected void declare() {
+			this.provide(EntityApi.class);
+		}
+
 	}
 }

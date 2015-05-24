@@ -7,9 +7,8 @@ import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.PathfinderThread;
 import de.hetzge.sgame.common.PathfinderThread.PathfinderWorker;
 import de.hetzge.sgame.common.definition.IF_Map;
-import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
-import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
+import de.hetzge.sgame.common.newgeometry2.IF_Coordinate_Immutable;
+import de.hetzge.sgame.common.newgeometry2.IF_Position_Immutable;
 import de.hetzge.sgame.common.service.MoveOnMapService;
 import de.hetzge.sgame.entity.EntityOnMapService;
 import de.hetzge.sgame.entity.ki.BaseKI;
@@ -29,14 +28,14 @@ public class GotoKI extends BaseKI {
 
 	private boolean initialized = false;
 
-	public GotoKI(IF_Coordinate_ImmutableView goalCollisionTileCoordinate) {
-		this(goalCollisionTileCoordinate.getIX(), goalCollisionTileCoordinate.getIY());
+	public GotoKI(IF_Coordinate_Immutable goalCollisionTileCoordinate) {
+		this(goalCollisionTileCoordinate.getColumn(), goalCollisionTileCoordinate.getRow());
 	}
 
-	public GotoKI(IF_Position_ImmutableView goalPosition) {
-		IF_Coordinate collisionTileGoal = this.mapProvider.provide().convertPxXYInCollisionTileXY(goalPosition);
-		this.collisionTileGoalX = collisionTileGoal.getIX();
-		this.collisionTileGoalY = collisionTileGoal.getIY();
+	public GotoKI(IF_Position_Immutable goalPosition) {
+		IF_Coordinate_Immutable collisionTileGoal = this.mapProvider.provide().convertPxXYInCollisionTileXY(goalPosition);
+		this.collisionTileGoalX = collisionTileGoal.getColumn();
+		this.collisionTileGoalY = collisionTileGoal.getRow();
 
 		Log.KI.info("Created GotoKI for entity " + this.entity + " to " + this.collisionTileGoalX + "/" + this.collisionTileGoalY);
 	}
@@ -103,9 +102,9 @@ public class GotoKI extends BaseKI {
 			return false;
 		}
 
-		IF_Coordinate_ImmutableView entityCollisionTilePosition = this.entityOnMapService.entityCollisionTileCenterCoordinate(this.entity);
-		int startX = entityCollisionTilePosition.getIX();
-		int startY = entityCollisionTilePosition.getIY();
+		IF_Coordinate_Immutable entityCollisionTilePosition = this.entityOnMapService.entityCollisionTileCenterCoordinate(this.entity);
+		int startX = entityCollisionTilePosition.getColumn();
+		int startY = entityCollisionTilePosition.getRow();
 
 		this.pathfinderWorker = this.pathfinderThread.new PathfinderWorker() {
 			@Override

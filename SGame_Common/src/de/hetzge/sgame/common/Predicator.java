@@ -1,6 +1,7 @@
 package de.hetzge.sgame.common;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -33,6 +34,24 @@ public class Predicator<T> {
 			}
 		}
 		return false;
+	}
+
+	public List<T> filterByMatchingAll(Collection<T> collection) {
+		return this.filterBy(collection, this::all);
+	}
+
+	public List<T> filterByMatchingAny(Collection<T> collection) {
+		return this.filterBy(collection, this::any);
+	}
+
+	private List<T> filterBy(Collection<T> collection, Predicate<T> predicate) {
+		LinkedList<T> result = new LinkedList<>();
+		for (T t : collection) {
+			if (t != null && this.all(t)) {
+				result.add(t);
+			}
+		}
+		return result;
 	}
 
 }

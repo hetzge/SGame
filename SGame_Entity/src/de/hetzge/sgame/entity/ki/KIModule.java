@@ -32,7 +32,11 @@ public class KIModule implements IF_Module {
 	public void update() {
 		Collection<Entity> entities = this.entityPool.getEntities();
 		for (Entity entity : entities) {
+			if (entity == null) {
+				continue;
+			}
 			entity.updateKI();
+
 		}
 	}
 

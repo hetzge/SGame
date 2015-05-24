@@ -3,9 +3,9 @@ package de.hetzge.sgame.render;
 import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.IF_XYFunction;
 import de.hetzge.sgame.common.definition.IF_Map;
-import de.hetzge.sgame.common.newgeometry.Rectangle;
-import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
+import de.hetzge.sgame.common.newgeometry2.IF_Dimension_Immutable;
+import de.hetzge.sgame.common.newgeometry2.IF_Position_Immutable;
+import de.hetzge.sgame.common.newgeometry2.Rectangle;
 
 public class Viewport extends Rectangle {
 
@@ -18,8 +18,8 @@ public class Viewport extends Rectangle {
 	public void iterateVisibleTiles(IF_XYFunction<Void> function) {
 		IF_Map map = this.mapProvider.provide();
 
-		IF_Position_ImmutableView positionA = this.getPositionA();
-		IF_Dimension_ImmutableView dimension = this.getDimension();
+		IF_Position_Immutable positionA = this.getA();
+		IF_Dimension_Immutable dimension = this.getDimension();
 
 		int startX = map.convertPxInTile(positionA.getFX()) - 1;
 		int startY = map.convertPxInTile(positionA.getFY()) - 1;

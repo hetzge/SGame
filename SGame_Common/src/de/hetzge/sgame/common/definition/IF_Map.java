@@ -1,11 +1,9 @@
 package de.hetzge.sgame.common.definition;
 
 import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
-import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
-import de.hetzge.sgame.common.newgeometry.IF_Position;
-import de.hetzge.sgame.common.newgeometry.XY;
-import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
+import de.hetzge.sgame.common.newgeometry2.IF_Coordinate_Immutable;
+import de.hetzge.sgame.common.newgeometry2.IF_Position_Immutable;
+import de.hetzge.sgame.common.newgeometry2.XY;
 
 public interface IF_Map {
 
@@ -59,19 +57,19 @@ public interface IF_Map {
 		return collisionTile * this.getCollisionTileSize();
 	}
 
-	public default IF_Position convertCollisionTileXYInPxXY(IF_Coordinate_ImmutableView coordinate) {
+	public default IF_Position_Immutable convertCollisionTileXYInPxXY(IF_Coordinate_Immutable coordinate) {
 		return coordinate.copy().multiply(new XY(this.getCollisionTileSize()));
 	}
 
-	public default IF_Position convertTileXYInPxXY(IF_Coordinate_ImmutableView coordinate) {
+	public default IF_Position_Immutable convertTileXYInPxXY(IF_Coordinate_Immutable coordinate) {
 		return coordinate.copy().multiply(new XY(this.getTileSize()));
 	}
 
-	public default IF_Coordinate convertPxXYInCollisionTileXY(IF_Position_ImmutableView position) {
+	public default IF_Coordinate_Immutable convertPxXYInCollisionTileXY(IF_Position_Immutable position) {
 		return position.copy().divide(new XY(this.getCollisionTileSize()));
 	}
 
-	public default IF_Coordinate convertPxXYInTileXY(IF_Position_ImmutableView position){
+	public default IF_Coordinate_Immutable convertPxXYInTileXY(IF_Position_Immutable position){
 		return position.copy().divide(new XY(this.getTileSize()));
 	}
 

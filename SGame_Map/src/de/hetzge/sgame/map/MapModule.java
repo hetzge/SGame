@@ -1,7 +1,8 @@
 package de.hetzge.sgame.map;
 
+import java.util.function.Supplier;
+
 import de.hetzge.sgame.common.IF_MapProvider;
-import de.hetzge.sgame.common.definition.IF_Callback;
 import de.hetzge.sgame.common.definition.IF_Module;
 import de.hetzge.sgame.map.message.TileMapMessage;
 import de.hetzge.sgame.map.message.TileMapMessageHandler;
@@ -37,7 +38,7 @@ public class MapModule implements IF_Module, IF_Renderable<IF_RenderableContext>
 	@Override
 	public void init() {
 		this.messageHandlerPool.registerMessageHandler(TileMapMessage.class, this.get(TileMapMessageHandler.class));
-		this.messageConfig.serverToNewClientMessages.add((IF_Callback<Object>) () -> {
+		this.messageConfig.serverToNewClientMessages.add((Supplier<?>) () -> {
 			return new TileMapMessage((TileMap) this.mapProvider.provide());
 		});
 	}

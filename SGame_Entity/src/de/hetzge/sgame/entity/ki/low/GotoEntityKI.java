@@ -11,7 +11,7 @@ import de.hetzge.sgame.common.Stopwatch;
 import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.definition.IF_ReserveMap;
-import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
+import de.hetzge.sgame.common.newgeometry2.IF_Coordinate_Immutable;
 import de.hetzge.sgame.common.service.MoveOnMapService;
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.entity.EntityOnMapService;
@@ -57,20 +57,20 @@ public class GotoEntityKI extends BaseKI {
 		ActiveCollisionMap fixEntityCollisionMap = map.getFixEntityCollisionMap();
 		IgnoreEntityCollisionWrapper ignoreEntityCollisionWrapper = this.entityOnMapService.new IgnoreEntityCollisionWrapper(fixEntityCollisionMap, this.gotoEntity);
 
-		IF_Coordinate_ImmutableView entityCollisionTilePosition = this.entityOnMapService.entityCollisionTileCenterCoordinate(this.entity);
-		int startX = entityCollisionTilePosition.getIX();
-		int startY = entityCollisionTilePosition.getIY();
+		IF_Coordinate_Immutable entityCollisionTilePosition = this.entityOnMapService.entityCollisionTileCenterCoordinate(this.entity);
+		int startX = entityCollisionTilePosition.getColumn();
+		int startY = entityCollisionTilePosition.getRow();
 
 		On on = this.entityOnMapService.on(this.gotoEntity.getRealRectangle());
-		IF_Coordinate_ImmutableView goalCollisionCoordinate = on.findEmptyCoordinateAround(Predicator.of(this.entityOnMapService.CHECK_FLEXIBLE_COLLISION, this.entityOnMapService.CHECK_RESERVERD));
+		IF_Coordinate_Immutable goalCollisionCoordinate = on.findEmptyCoordinateAround(Predicator.of(this.entityOnMapService.CHECK_FLEXIBLE_COLLISION, this.entityOnMapService.CHECK_RESERVERD));
 		if (goalCollisionCoordinate == null) {
 			this.activeKICallback.onFailure();
 			return false;
 		}
 		this.reserveMap.reserve(goalCollisionCoordinate, this.entity);
 
-		int goalX = goalCollisionCoordinate.getIX();
-		int goalY = goalCollisionCoordinate.getIY();
+		int goalX = goalCollisionCoordinate.getColumn();
+		int goalY = goalCollisionCoordinate.getRow();
 
 		this.pathfinderWorker = this.pathfinderThread.new PathfinderWorker() {
 			@Override

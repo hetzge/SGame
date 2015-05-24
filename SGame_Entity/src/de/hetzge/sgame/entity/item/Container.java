@@ -172,7 +172,7 @@ public class Container implements Serializable {
 		return value;
 	}
 
-	public synchronized void destroy() {
+	public synchronized void unchain() {
 		for (Booking booking : this.bookings) {
 			booking.to.removeBooking(booking);
 		}

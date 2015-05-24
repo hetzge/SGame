@@ -5,7 +5,7 @@ import de.hetzge.sgame.common.Log;
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.Stopwatch;
 import de.hetzge.sgame.common.application.Application;
-import de.hetzge.sgame.common.newgeometry.XY;
+import de.hetzge.sgame.common.newgeometry2.XY;
 import de.hetzge.sgame.entity.EntityFactory;
 import de.hetzge.sgame.entity.EntityModule;
 import de.hetzge.sgame.entity.EntityOnMapService;
@@ -35,19 +35,10 @@ public class BaseGame extends Application {
 	protected final EntityOnMapService onMapService;
 	protected final KIModule kiModule;
 
-	// TODO singleplayer, client, server in AppConfig oder sowas packen
-	protected final boolean singleplayer;
-	protected final boolean client;
-	protected final boolean server;
-
 	public BaseGame(boolean singleplayer, boolean client, boolean server, Class<? extends BootstrapperBundle> bootstrapperBundle) {
-		super(bootstrapperBundle);
+		super(bootstrapperBundle, singleplayer, server, client);
 
 		Stopwatch stopwatch = new Stopwatch("Init BaseGame");
-
-		this.singleplayer = singleplayer;
-		this.client = client;
-		this.server = server;
 
 		Log.LOG.info("singleplayer: " + singleplayer);
 		Log.LOG.info("client: " + client);

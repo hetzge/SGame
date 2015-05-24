@@ -96,14 +96,14 @@ public class HierarchicalMap implements Serializable {
 		private Connection connectToNeighbor(Orientation orientation, Tile tile) {
 
 			// check if in the given orienation is the border
-			int outsideX = (int) (tile.x + orientation.orientationFactor.getX());
-			int outsideY = (int) (tile.y + orientation.orientationFactor.getY());
+			int outsideX = tile.x + orientation.orientationFactor.getColumn();
+			int outsideY = tile.y + orientation.orientationFactor.getRow();
 			if (this.isInsideSector(outsideX, outsideY)) {
 				return null;
 			}
 
-			int sectorX = (int) (this.subX + orientation.orientationFactor.getX());
-			int sectorY = (int) (this.subY + orientation.orientationFactor.getY());
+			int sectorX = this.subX + orientation.orientationFactor.getColumn();
+			int sectorY = this.subY + orientation.orientationFactor.getRow();
 
 			Orientation oppositOrienation = Orientation.OPPOSITS.get(orientation);
 
@@ -111,8 +111,8 @@ public class HierarchicalMap implements Serializable {
 				Sector neighbor = HierarchicalMap.this.sectors[sectorX][sectorY];
 				if (neighbor != null) {
 
-					int neighborSectorTileX = oppositOrienation.orientationFactor.getX() < 0 ? neighbor.width - 1 : oppositOrienation.orientationFactor.getX() > 0 ? 1 : tile.x;
-					int neighborSectorTileY = oppositOrienation.orientationFactor.getY() < 0 ? neighbor.height - 1 : oppositOrienation.orientationFactor.getY() > 0 ? 1 : tile.y;
+					int neighborSectorTileX = oppositOrienation.orientationFactor.getColumn() < 0 ? neighbor.width - 1 : oppositOrienation.orientationFactor.getColumn() > 0 ? 1 : tile.x;
+					int neighborSectorTileY = oppositOrienation.orientationFactor.getRow() < 0 ? neighbor.height - 1 : oppositOrienation.orientationFactor.getRow() > 0 ? 1 : tile.y;
 
 					Tile neighborTile = neighbor.tiles[neighborSectorTileX][neighborSectorTileY];
 					if (neighborTile != null) {

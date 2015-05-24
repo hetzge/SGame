@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-import de.hetzge.sgame.common.newgeometry.views.IF_Dimension_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
+import de.hetzge.sgame.common.newgeometry2.IF_Dimension_Immutable;
+import de.hetzge.sgame.common.newgeometry2.IF_Position_Immutable;
+import de.hetzge.sgame.common.newgeometry2.IF_Rectangle_Immutable;
 import de.hetzge.sgame.render.IF_DrawService;
 
 public class LibGdxDrawService implements IF_DrawService {
@@ -35,18 +35,18 @@ public class LibGdxDrawService implements IF_DrawService {
 	}
 
 	@Override
-	public void drawLine(IF_Position_ImmutableView from, IF_Position_ImmutableView to) {
+	public void drawLine(IF_Position_Immutable from, IF_Position_Immutable to) {
 		ShapeRenderer shapeRenderer = this.lineShapeRendererThreadLocal.get();
 		this.checkShapeRenderer(shapeRenderer);
 		shapeRenderer.line(from.getFX(), from.getFY(), to.getFX(), to.getFY());
 	}
 
 	@Override
-	public void drawRectangle(IF_Rectangle_ImmutableView rectangle) {
+	public void drawRectangle(IF_Rectangle_Immutable rectangle) {
 		ShapeRenderer shapeRenderer = this.lineShapeRendererThreadLocal.get();
 		this.checkShapeRenderer(shapeRenderer);
-		IF_Position_ImmutableView positionA = rectangle.getPositionA();
-		IF_Dimension_ImmutableView dimension = rectangle.getDimension();
+		IF_Position_Immutable positionA = rectangle.getA();
+		IF_Dimension_Immutable dimension = rectangle.getDimension();
 		shapeRenderer.rect(positionA.getFX(), positionA.getFY(), dimension.getWidth(), dimension.getHeight());
 	}
 
@@ -63,7 +63,7 @@ public class LibGdxDrawService implements IF_DrawService {
 	}
 
 	@Override
-	public void printText(IF_Position_ImmutableView position, String text) {
+	public void printText(IF_Position_Immutable position, String text) {
 		SpriteBatch spriteBatch = this.fontSpriteBatchThreadLocal.get();
 		this.checkSpriteBatch(spriteBatch);
 		this.bitmapFont.draw(spriteBatch, text, position.getFX(), position.getFY());

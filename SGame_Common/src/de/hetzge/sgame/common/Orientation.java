@@ -3,12 +3,12 @@ package de.hetzge.sgame.common;
 import java.util.EnumSet;
 
 import javolution.util.FastMap;
-import de.hetzge.sgame.common.newgeometry.XY;
+import de.hetzge.sgame.common.newgeometry2.XY;
 
 public enum Orientation {
 
 	// important that north, east, south and west are first
-	NORTH(new XY(0, -1)), EAST(new XY(1, 0)), SOUTH(new XY(0, 1)), WEST(new XY(-1, 0)), NORTH_EAST(new XY(1, -1)), SOUTH_EAST(new XY(1, 1)), SOUTH_WEST(new XY(-1, 1)), NORTH_WEST(new XY(-1, -1));
+	NORTH(XY.xy(0, -1)), EAST(XY.xy(1, 0)), SOUTH(XY.xy(0, 1)), WEST(XY.xy(-1, 0)), NORTH_EAST(XY.xy(1, -1)), SOUTH_EAST(XY.xy(1, 1)), SOUTH_WEST(XY.xy(-1, 1)), NORTH_WEST(XY.xy(-1, -1));
 
 	public static final EnumSet<Orientation> Simple = EnumSet.of(NORTH, EAST, SOUTH, WEST);
 	public static final EnumSet<Orientation> Diagonal = EnumSet.of(NORTH_EAST, SOUTH_EAST, SOUTH_WEST, NORTH_WEST);
@@ -39,8 +39,11 @@ public enum Orientation {
 
 	private Orientation(XY orientationFactor) {
 		this.orientationFactor = orientationFactor;
-		if (orientationFactor.getX() != 0 && orientationFactor.getY() != 0) {
-			this.orientationFactorOptimized = orientationFactor.copy().divide(new XY((float) Math.sqrt(2d) * orientationFactor.getX(), (float) Math.sqrt(2d) * orientationFactor.getY()));
+		if (orientationFactor.getFX() != 0 && orientationFactor.getFY() != 0) {
+			XY xy = new XY((float) Math.sqrt(2d) * orientationFactor.getFX(), (float) Math.sqrt(2d) * orientationFactor.getFY());
+			XY copy = orientationFactor.copy();
+			copy.divide(xy);
+			this.orientationFactorOptimized = copy;
 		} else {
 			this.orientationFactorOptimized = orientationFactor;
 		}

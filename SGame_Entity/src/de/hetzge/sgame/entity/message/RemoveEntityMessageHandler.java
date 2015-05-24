@@ -13,6 +13,7 @@ public class RemoveEntityMessageHandler implements IF_MessageHandler<RemoveEntit
 
 	@Override
 	public void handle(RemoveEntityMessage message) {
+		System.out.println("remove entity " + message.entity.getId());
 		this.entityPool.removeEntity(message.entity);
 	}
 

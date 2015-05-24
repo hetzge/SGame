@@ -15,8 +15,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
-import de.hetzge.sgame.common.newgeometry.XY;
-import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
+import de.hetzge.sgame.common.newgeometry2.IF_Position_Immutable;
+import de.hetzge.sgame.common.newgeometry2.XY;
 import de.hetzge.sgame.libgdx.renderable.LibGdxRenderableContext;
 import de.hetzge.sgame.render.RenderConfig;
 import de.hetzge.sgame.render.RenderPool;
@@ -113,15 +113,13 @@ public class LibGdxApplication implements ApplicationListener {
 		}
 
 		if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
-			IF_Position_ImmutableView mouseClickPosition = new XY(Gdx.input.getX(), Gdx.input.getY()).add(this.mapViewport.getPositionA());
-			System.out.println("You clicked " + mouseClickPosition.getX() + "/" + mouseClickPosition.getY());
+			IF_Position_Immutable mouseClickPosition = new XY(Gdx.input.getX(), Gdx.input.getY()).add(this.mapViewport.getA());
+			System.out.println("You clicked " + mouseClickPosition.getFX() + "/" + mouseClickPosition.getFY());
 		}
 
 		this.fpsLogger.log();
 		// System.out.println(RenderUtil.renderCount);
 		RenderService.renderCount = 0;
-
-
 
 		LibGdxConfig.INSTANCE.stateTime += Gdx.graphics.getDeltaTime();
 	}

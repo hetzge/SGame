@@ -4,12 +4,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.nustaq.serialization.FSTConfiguration;
 
 import de.hetzge.sgame.common.Log;
 import de.hetzge.sgame.common.UUID;
-import de.hetzge.sgame.common.definition.IF_Callback;
 import de.hetzge.sgame.common.exception.DefaultUncaughtExceptionHandler;
 import de.hetzge.sgame.common.exception.NetworkException;
 import de.hetzge.sgame.common.exception.SomeException;
@@ -92,9 +92,9 @@ public class Server implements Peer {
 	private BatchMessage collectInitClientMessage() {
 		BatchMessage batchMessage = new BatchMessage();
 		for (Object object : this.messageConfig.serverToNewClientMessages) {
-			if (object instanceof IF_Callback) {
-				IF_Callback<BaseMessage> callback = (IF_Callback<BaseMessage>) object;
-				batchMessage.add(callback.callback());
+			if (object instanceof Supplier) {
+				Supplier<? extends BaseMessage> callback = (Supplier<? extends BaseMessage>) object;
+				batchMessage.add(callback.get());
 			} else {
 				batchMessage.add((BaseMessage) object);
 			}

@@ -2,7 +2,8 @@ package de.hetzge.sgame.entity.ki;
 
 import de.hetzge.sgame.entity.Entity;
 import de.hetzge.sgame.entity.EntityOnMapService;
-import de.hetzge.sgame.entity.ki.high.SillyWalkerKI;
+import de.hetzge.sgame.entity.ki.low.DieKI;
+import de.hetzge.sgame.entity.ki.low.WaitKI;
 
 /**
  * This ki is base ki a entity has and which never changes.
@@ -22,7 +23,12 @@ public class EntityKI extends BaseKI {
 
 	@Override
 	protected boolean callImpl() {
-		this.changeActiveKI(new SillyWalkerKI());
+		this.changeActiveKI(new WaitKI(15000), new BaseKICallback() {
+			@Override
+			public void onSuccess() {
+				EntityKI.this.changeActiveKI(EntityKI.this.get(DieKI.class));
+			}
+		});
 		return true;
 	}
 

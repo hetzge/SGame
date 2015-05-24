@@ -3,14 +3,14 @@ package de.hetzge.sgame.common.definition;
 import de.hetzge.sgame.common.Orientation;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.PathPosition;
-import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
+import de.hetzge.sgame.common.newgeometry2.IF_Coordinate_Immutable;
+import de.hetzge.sgame.common.newgeometry2.IF_Position_Immutable;
 
 public interface IF_MapMoveable {
 
 	PathPosition getPathPosition();
 
-	IF_Position_ImmutableView getCenteredPosition();
+	IF_Position_Immutable getCenteredPosition();
 
 	float getSpeed();
 
@@ -20,7 +20,7 @@ public interface IF_MapMoveable {
 
 	void unsetPath();
 
-	default IF_Coordinate_ImmutableView getGoalCollisionCoordinate() {
+	default IF_Coordinate_Immutable getGoalCollisionCoordinate() {
 		PathPosition pathPosition = this.getPathPosition();
 		if (pathPosition != null) {
 			Path path = pathPosition.getPath();

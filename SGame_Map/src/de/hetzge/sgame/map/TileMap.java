@@ -8,7 +8,7 @@ import de.hetzge.sgame.common.Stopwatch;
 import de.hetzge.sgame.common.activemap.ActiveCollisionMap;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
-import de.hetzge.sgame.common.newgeometry.Rectangle;
+import de.hetzge.sgame.common.newgeometry2.Rectangle;
 import de.hetzge.sgame.map.tmx.TMXMap;
 import de.hetzge.sgame.map.tmx.TMXMap.Layer;
 import de.hetzge.sgame.render.IF_RenderableLoader;
@@ -20,14 +20,9 @@ public class TileMap implements IF_Map, Serializable {
 
 		private final int tileId;
 
-		private final int x;
-		private final int y;
-
 		public Tile(int x, int y, int tileId) {
 			super(x * TileMap.this.tileSize + TileMap.this.tileSize / 2, y  * TileMap.this.tileSize + TileMap.this.tileSize / 2, TileMap.this.tileSize, TileMap.this.tileSize);
 			this.tileId = tileId;
-			this.x = x;
-			this.y = y;
 		}
 
 		public int getRenderId() {

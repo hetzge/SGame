@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import de.hetzge.sgame.common.IF_MapProvider;
 import de.hetzge.sgame.common.Util;
-import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
+import de.hetzge.sgame.common.newgeometry2.IF_Coordinate_Immutable;
 import de.hetzge.sgame.common.timer.Timer;
 
 public class EntityOnMapThread extends Thread {
@@ -42,17 +42,17 @@ public class EntityOnMapThread extends Thread {
 	}
 
 	private void updateCollisionOnMap(Entity entity) {
-		IF_Coordinate_ImmutableView entityStartCoordinate = this.entityOnMapService.entityCollisionTileStartCoordinate(entity);
+		IF_Coordinate_Immutable entityStartCoordinate = this.entityOnMapService.entityCollisionTileStartCoordinate(entity);
 		if (entity.isFixedPosition()) {
-			this.mapProvider.provide().getFixEntityCollisionMap().connect(entityStartCoordinate.getIX(), entityStartCoordinate.getIY(), entity.getActiveCollisionMap());
+			this.mapProvider.provide().getFixEntityCollisionMap().connect(entityStartCoordinate.getColumn(), entityStartCoordinate.getRow(), entity.getActiveCollisionMap());
 		} else {
-			this.mapProvider.provide().getFlexibleEntityCollisionMap().connect(entityStartCoordinate.getIX(), entityStartCoordinate.getIY(), entity.getActiveCollisionMap());
+			this.mapProvider.provide().getFlexibleEntityCollisionMap().connect(entityStartCoordinate.getColumn(), entityStartCoordinate.getRow(), entity.getActiveCollisionMap());
 		}
 	}
 
 	private void updateEntityOnMap(Entity entity) {
-		IF_Coordinate_ImmutableView entityCenteredCoordinate = this.entityOnMapService.entityTileCenterCoordinate(entity);
-		this.activeEntityMap.connect(entityCenteredCoordinate.getIX(), entityCenteredCoordinate.getIY(), entity.getEntityOnMap());
+		IF_Coordinate_Immutable entityCenteredCoordinate = this.entityOnMapService.entityTileCenterCoordinate(entity);
+		this.activeEntityMap.connect(entityCenteredCoordinate.getColumn(), entityCenteredCoordinate.getRow(), entity.getEntityOnMap());
 	}
 
 }

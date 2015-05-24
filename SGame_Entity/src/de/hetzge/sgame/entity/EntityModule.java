@@ -1,11 +1,11 @@
 package de.hetzge.sgame.entity;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 import org.nustaq.serialization.FSTConfiguration;
 
 import de.hetzge.sgame.common.IF_MapProvider;
-import de.hetzge.sgame.common.definition.IF_Callback;
 import de.hetzge.sgame.common.definition.IF_Module;
 import de.hetzge.sgame.entity.message.AddEntitiesMessage;
 import de.hetzge.sgame.entity.message.AddEntitiesMessageHandler;
@@ -50,7 +50,7 @@ public class EntityModule implements IF_Module, IF_Renderable<IF_RenderableConte
 		this.messageHandlerPool.registerMessageHandler(NewEntityMessage.class, this.get(NewEntityMessageHandler.class));
 		this.messageHandlerPool.registerMessageHandler(RemoveEntityMessage.class, this.get(RemoveEntityMessageHandler.class));
 		this.messageHandlerPool.registerMessageHandler(AddEntitiesMessage.class, this.get(AddEntitiesMessageHandler.class));
-		this.messageConfig.serverToNewClientMessages.add((IF_Callback<Object>) () -> {
+		this.messageConfig.serverToNewClientMessages.add((Supplier<?>) () -> {
 			return new AddEntitiesMessage(new ArrayList<>(this.entityPool.getEntities()));
 		});
 

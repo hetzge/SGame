@@ -11,8 +11,8 @@ import de.hetzge.sgame.common.Log;
 import de.hetzge.sgame.common.Path;
 import de.hetzge.sgame.common.Stopwatch;
 import de.hetzge.sgame.common.definition.IF_Map;
-import de.hetzge.sgame.common.newgeometry.IF_Position;
-import de.hetzge.sgame.common.newgeometry.XY;
+import de.hetzge.sgame.common.newgeometry2.IF_Position_Immutable;
+import de.hetzge.sgame.common.newgeometry2.XY;
 
 public class HierarchicalMap2 implements Serializable {
 
@@ -30,26 +30,26 @@ public class HierarchicalMap2 implements Serializable {
 				int nextX;
 				int nextY;
 
-				nextX = waypoint.getIX() - 1;
-				nextY = waypoint.getIY();
+				nextX = waypoint.getColumn() - 1;
+				nextY = waypoint.getRow();
 				if (Area.this.isAreaPosition(nextX, nextY) && !Area.this.isCollision(nextX, nextY)) {
 					result.add(new AStarWaypoint(nextX, nextY));
 				}
 
-				nextX = waypoint.getIX();
-				nextY = waypoint.getIY() - 1;
+				nextX = waypoint.getColumn();
+				nextY = waypoint.getRow() - 1;
 				if (Area.this.isAreaPosition(nextX, nextY) && !Area.this.isCollision(nextX, nextY)) {
 					result.add(new AStarWaypoint(nextX, nextY));
 				}
 
-				nextX = waypoint.getIX() + 1;
-				nextY = waypoint.getIY();
+				nextX = waypoint.getColumn() + 1;
+				nextY = waypoint.getRow();
 				if (Area.this.isAreaPosition(nextX, nextY) && !Area.this.isCollision(nextX, nextY)) {
 					result.add(new AStarWaypoint(nextX, nextY));
 				}
 
-				nextX = waypoint.getIX();
-				nextY = waypoint.getIY() + 1;
+				nextX = waypoint.getColumn();
+				nextY = waypoint.getRow() + 1;
 				if (Area.this.isAreaPosition(nextX, nextY) && !Area.this.isCollision(nextX, nextY)) {
 					result.add(new AStarWaypoint(nextX, nextY));
 				}
@@ -57,8 +57,8 @@ public class HierarchicalMap2 implements Serializable {
 				return result;
 			}
 
-			public IF_Position asGlobalPosition() {
-				return HierarchicalMap2.this.map.convertCollisionTileXYInPxXY(new XY(Area.this.startX, Area.this.startY).add(new XY(this.getIX(), this.getIY())));
+			public IF_Position_Immutable asGlobalPosition() {
+				return HierarchicalMap2.this.map.convertCollisionTileXYInPxXY(new XY(Area.this.startX, Area.this.startY).add(new XY(this.getColumn(), this.getRow())));
 			}
 
 		}

@@ -6,8 +6,8 @@ import java.util.List;
 
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
-import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
-import de.hetzge.sgame.common.newgeometry.XY;
+import de.hetzge.sgame.common.newgeometry2.IF_Coordinate_Immutable;
+import de.hetzge.sgame.common.newgeometry2.XY;
 
 public final class AStarService {
 
@@ -20,12 +20,12 @@ public final class AStarService {
 	/**
 	 * call with current rating 1 and changed start goal coordinates
 	 */
-	private XY[] rate(int[][] rating, IF_Collision mapCollision, int currentRating, IF_Coordinate startRatePosition, IF_Coordinate goalRatePosition) {
-		int x = startRatePosition.getIX();
-		int y = startRatePosition.getIY();
+	private XY[] rate(int[][] rating, IF_Collision mapCollision, int currentRating, IF_Coordinate_Immutable startRatePosition, IF_Coordinate_Immutable goalRatePosition) {
+		int x = startRatePosition.getColumn();
+		int y = startRatePosition.getRow();
 
-		int goalX = goalRatePosition.getIX();
-		int goalY = goalRatePosition.getIY();
+		int goalX = goalRatePosition.getColumn();
+		int goalY = goalRatePosition.getRow();
 
 		XY[] next = new XY[4];
 
@@ -90,9 +90,9 @@ public final class AStarService {
 		}
 	}
 
-	public List<IF_Coordinate> evaluatePath(int[][] rating, int x, int y, int goalX, int goalY) {
+	public List<IF_Coordinate_Immutable> evaluatePath(int[][] rating, int x, int y, int goalX, int goalY) {
 
-		List<IF_Coordinate> result = new ArrayList<>(rating[x][y]);
+		List<IF_Coordinate_Immutable> result = new ArrayList<>(rating[x][y]);
 
 		int mapWidthInCollisionTiles = rating.length;
 		int mapHeightInCollisionTiles = rating[0].length;
@@ -144,7 +144,7 @@ public final class AStarService {
 			x = nextSelectionX;
 			y = nextSelectionY;
 
-			IF_Coordinate coordinate = new XY(x, y);
+			IF_Coordinate_Immutable coordinate = new XY(x, y);
 			result.add(coordinate);
 		}
 
@@ -174,8 +174,8 @@ public final class AStarService {
 
 		int step = 1;
 
-		IF_Coordinate start = new XY(startX, startY);
-		IF_Coordinate goal = new XY(goalX, goalY);
+		IF_Coordinate_Immutable start = new XY(startX, startY);
+		IF_Coordinate_Immutable goal = new XY(goalX, goalY);
 
 		List<XY[]> trampolines;
 		List<XY[]> nextTramponlines = new LinkedList<>();
@@ -211,7 +211,7 @@ public final class AStarService {
 		}
 
 		if (found) {
-			List<IF_Coordinate> path = this.evaluatePath(rating, startX, startY, goalX, goalY);
+			List<IF_Coordinate_Immutable> path = this.evaluatePath(rating, startX, startY, goalX, goalY);
 			return new Path(start, goal, path);
 		} else {
 			return null;

@@ -14,12 +14,11 @@ import de.hetzge.sgame.common.Predicator;
 import de.hetzge.sgame.common.definition.IF_Collision;
 import de.hetzge.sgame.common.definition.IF_Map;
 import de.hetzge.sgame.common.definition.IF_ReserveMap;
-import de.hetzge.sgame.common.newgeometry.IF_Coordinate;
-import de.hetzge.sgame.common.newgeometry.XY;
-import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Coordinate_MutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Position_ImmutableView;
-import de.hetzge.sgame.common.newgeometry.views.IF_Rectangle_ImmutableView;
+import de.hetzge.sgame.common.newgeometry2.IF_Coordinate_Immutable;
+import de.hetzge.sgame.common.newgeometry2.IF_Coordinate_Mutable;
+import de.hetzge.sgame.common.newgeometry2.IF_Position_Immutable;
+import de.hetzge.sgame.common.newgeometry2.IF_Rectangle_Immutable;
+import de.hetzge.sgame.common.newgeometry2.XY;
 
 public class EntityOnMapService {
 
@@ -36,9 +35,9 @@ public class EntityOnMapService {
 		public IgnoreEntityCollisionWrapper(IF_Collision collision, Entity ignoreEntity) {
 			this.collision = collision;
 
-			IF_Coordinate_ImmutableView entityCollisionTileStartCoordinate = EntityOnMapService.this.entityCollisionTileStartCoordinate(ignoreEntity);
-			this.ignoreCollisionX = entityCollisionTileStartCoordinate.getIX();
-			this.ignoreCollisionY = entityCollisionTileStartCoordinate.getIY();
+			IF_Coordinate_Immutable entityCollisionTileStartCoordinate = EntityOnMapService.this.entityCollisionTileStartCoordinate(ignoreEntity);
+			this.ignoreCollisionX = entityCollisionTileStartCoordinate.getColumn();
+			this.ignoreCollisionY = entityCollisionTileStartCoordinate.getRow();
 
 			this.ignoreCollisionWidth = ignoreEntity.getActiveCollisionMap().getWidthInTiles();
 			this.ignoreCollisionHeight = ignoreEntity.getActiveCollisionMap().getHeightInTiles();
@@ -68,7 +67,7 @@ public class EntityOnMapService {
 
 	public class On {
 
-		private final IF_Rectangle_ImmutableView rectangle;
+		private final IF_Rectangle_Immutable rectangle;
 
 		private final int startCollisionTileX;
 		private final int startCollisionTileY;
@@ -85,27 +84,27 @@ public class EntityOnMapService {
 		private final int widthInTiles;
 		private final int heightInTiles;
 
-		public On(IF_Rectangle_ImmutableView rectangle) {
+		public On(IF_Rectangle_Immutable rectangle) {
 			IF_Map map = EntityOnMapService.this.mapProvider.provide();
 
 			this.rectangle = rectangle;
 
-			IF_Position_ImmutableView positionA = rectangle.getPositionA();
-			IF_Position_ImmutableView positionD = rectangle.getPositionD();
-			IF_Coordinate collisionTilePositionA = map.convertPxXYInCollisionTileXY(positionA);
-			IF_Coordinate tilePositionA = map.convertPxXYInTileXY(positionA);
-			IF_Coordinate collisionTilePositionD = map.convertPxXYInCollisionTileXY(positionD);
-			IF_Coordinate tilePositionD = map.convertPxXYInTileXY(positionD);
+			IF_Position_Immutable positionA = rectangle.getA();
+			IF_Position_Immutable positionD = rectangle.getD();
+			IF_Coordinate_Immutable collisionTilePositionA = map.convertPxXYInCollisionTileXY(positionA);
+			IF_Coordinate_Immutable tilePositionA = map.convertPxXYInTileXY(positionA);
+			IF_Coordinate_Immutable collisionTilePositionD = map.convertPxXYInCollisionTileXY(positionD);
+			IF_Coordinate_Immutable tilePositionD = map.convertPxXYInTileXY(positionD);
 
-			this.startCollisionTileX = collisionTilePositionA.getIX();
-			this.startCollisionTileY = collisionTilePositionA.getIY();
-			this.endCollisionTileX = collisionTilePositionD.getIX();
-			this.endCollisionTileY = collisionTilePositionD.getIY();
+			this.startCollisionTileX = collisionTilePositionA.getColumn();
+			this.startCollisionTileY = collisionTilePositionA.getRow();
+			this.endCollisionTileX = collisionTilePositionD.getColumn();
+			this.endCollisionTileY = collisionTilePositionD.getRow();
 
-			this.startTileX = tilePositionA.getIX();
-			this.startTileY = tilePositionA.getIY();
-			this.endTileX = tilePositionD.getIX();
-			this.endTileY = tilePositionD.getIY();
+			this.startTileX = tilePositionA.getColumn();
+			this.startTileY = tilePositionA.getRow();
+			this.endTileX = tilePositionD.getColumn();
+			this.endTileY = tilePositionD.getRow();
 
 			this.widthInCollisionTiles = this.endCollisionTileX - this.startCollisionTileX + 1;
 			this.heightInCollisionTiles = this.endCollisionTileY - this.startCollisionTileY + 1;
@@ -128,8 +127,8 @@ public class EntityOnMapService {
 		 * Checks if around a entity is a non colliding coordinate. Return null
 		 * if no coordinate is found.
 		 */
-		public IF_Coordinate_ImmutableView findEmptyCoordinateAround(Predicator<IF_Coordinate_ImmutableView> predicator) {
-			IF_Coordinate_MutableView coordinate = new XY(0, 0);
+		public IF_Coordinate_Immutable findEmptyCoordinateAround(Predicator<IF_Coordinate_Immutable> predicator) {
+			IF_Coordinate_Mutable coordinate = new XY(0, 0);
 
 			int positionToCheckCount = (this.widthInCollisionTiles + 2) * 2 + this.heightInCollisionTiles * 2;
 			int[] xs = new int[positionToCheckCount];
@@ -154,8 +153,8 @@ public class EntityOnMapService {
 			}
 
 			for (int i2 = 0; i2 < xs.length; i2++) {
-				coordinate.setIX(xs[i2]);
-				coordinate.setIY(ys[i2]);
+				coordinate.setColumn(xs[i2]);
+				coordinate.setRow(ys[i2]);
 				boolean isCollision = this.checkCollisionCoordinate(predicator, coordinate);
 				if (!isCollision) {
 					return coordinate;
@@ -165,9 +164,9 @@ public class EntityOnMapService {
 			return null;
 		}
 
-		private boolean checkCollisionCoordinate(Predicator<IF_Coordinate_ImmutableView> predicator, IF_Coordinate_ImmutableView coordinate) {
-			int x = coordinate.getIX();
-			int y = coordinate.getIY();
+		private boolean checkCollisionCoordinate(Predicator<IF_Coordinate_Immutable> predicator, IF_Coordinate_Immutable coordinate) {
+			int x = coordinate.getColumn();
+			int y = coordinate.getRow();
 
 			boolean isOnCollisionMap = EntityOnMapService.this.mapProvider.provide().isOnCollisionMap(x, y);
 			if (isOnCollisionMap) {
@@ -180,9 +179,9 @@ public class EntityOnMapService {
 
 	}
 
-	public final Predicate<IF_Coordinate_ImmutableView> CHECK_FIXED_COLLISION = coordinate -> this.mapProvider.provide().getFixEntityCollisionMap().isCollision(coordinate.getIX(), coordinate.getIY());
-	public final Predicate<IF_Coordinate_ImmutableView> CHECK_FLEXIBLE_COLLISION = coordinate -> this.mapProvider.provide().getFlexibleEntityCollisionMap().isCollision(coordinate.getIX(), coordinate.getIY());
-	public final Predicate<IF_Coordinate_ImmutableView> CHECK_RESERVERD = coordinate -> this.reserveMap.isReserved(coordinate);
+	public final Predicate<IF_Coordinate_Immutable> CHECK_FIXED_COLLISION = coordinate -> this.mapProvider.provide().getFixEntityCollisionMap().isCollision(coordinate.getColumn(), coordinate.getRow());
+	public final Predicate<IF_Coordinate_Immutable> CHECK_FLEXIBLE_COLLISION = coordinate -> this.mapProvider.provide().getFlexibleEntityCollisionMap().isCollision(coordinate.getColumn(), coordinate.getRow());
+	public final Predicate<IF_Coordinate_Immutable> CHECK_RESERVERD = coordinate -> this.reserveMap.isReserved(coordinate);
 
 	private final IF_MapProvider mapProvider;
 	private final ActiveEntityMap activeEntityMap;
@@ -194,14 +193,14 @@ public class EntityOnMapService {
 		this.reserveMap = reserveMap;
 	}
 
-	public On on(IF_Rectangle_ImmutableView rectangle) {
+	public On on(IF_Rectangle_Immutable rectangle) {
 		return new On(rectangle);
 	}
 
 	public List<Entity> findEntitiesInAreaAround(Entity around, Predicate<Entity> filter, int radius, int max) {
 		List<Entity> result = new LinkedList<>();
 
-		IF_Coordinate coordinate = this.mapProvider.provide().convertPxXYInCollisionTileXY(around.getRealRectangle().getCenteredPosition());
+		IF_Coordinate_Mutable coordinate = this.mapProvider.provide().convertPxXYInCollisionTileXY(around.getRealRectangle().getCenter()).copy();
 		Orientation[] orientations = new Orientation[] { Orientation.NORTH, Orientation.EAST, Orientation.SOUTH, Orientation.WEST };
 
 		mainLoop: for (int i = 0; i < radius * 4; i++) {
@@ -209,7 +208,7 @@ public class EntityOnMapService {
 			int add = (int) (Math.floor(i / 2) + 1);
 			for (int a = 0; a < add; a++) {
 				coordinate.add(nextOrientation.orientationFactor);
-				Collection<Entity> connectedObjects = this.activeEntityMap.getConnectedObjects(coordinate.getIX(), coordinate.getIY());
+				Collection<Entity> connectedObjects = this.activeEntityMap.getConnectedObjects(coordinate.getColumn(), coordinate.getRow());
 				for (Entity entity : connectedObjects) {
 					if (filter.test(entity) && !entity.equals(around)) {
 						result.add(entity);
@@ -227,23 +226,23 @@ public class EntityOnMapService {
 	/**
 	 * The top left corner of the entity rectangle as collision coordinate.
 	 */
-	public IF_Coordinate_ImmutableView entityCollisionTileStartCoordinate(Entity entity) {
-		return this.mapProvider.provide().convertPxXYInCollisionTileXY(entity.getRealRectangle().getPositionA().asPositionImmutableView());
+	public IF_Coordinate_Immutable entityCollisionTileStartCoordinate(Entity entity) {
+		return this.mapProvider.provide().convertPxXYInCollisionTileXY(entity.getRealRectangle().getA());
 	}
 
-	public IF_Coordinate_ImmutableView entityCollisionTileCenterCoordinate(Entity entity) {
-		return this.mapProvider.provide().convertPxXYInCollisionTileXY(entity.getRealRectangle().getCenteredPosition());
+	public IF_Coordinate_Immutable entityCollisionTileCenterCoordinate(Entity entity) {
+		return this.mapProvider.provide().convertPxXYInCollisionTileXY(entity.getRealRectangle().getCenter());
 	}
 
-	public IF_Coordinate_ImmutableView entityTileCenterCoordinate(Entity entity) {
-		return this.mapProvider.provide().convertPxXYInTileXY(entity.getRealRectangle().getCenteredPosition());
+	public IF_Coordinate_Immutable entityTileCenterCoordinate(Entity entity) {
+		return this.mapProvider.provide().convertPxXYInTileXY(entity.getRealRectangle().getCenter());
 	}
 
-	public Path getPathTo(Entity entity, IF_Coordinate_ImmutableView goalCollisionCoordinate) {
+	public Path getPathTo(Entity entity, IF_Coordinate_Immutable goalCollisionCoordinate) {
 		return new Path(this.entityCollisionTileStartCoordinate(entity), goalCollisionCoordinate, Arrays.asList(goalCollisionCoordinate));
 	}
 
-	public Entity circleSearch(IF_Coordinate_ImmutableView source, int radius, Set<Entity> ignore, Predicator<Entity> predicator) {
+	public Entity circleSearch(IF_Coordinate_Immutable source, int radius, Set<Entity> ignore, Predicator<Entity> predicator) {
 		List<Entity> result = this.circleSearch(source, radius, ignore, predicator, 1);
 		if (result != null && !result.isEmpty()) {
 			return result.get(0);
@@ -254,11 +253,11 @@ public class EntityOnMapService {
 
 
 	// TODO test this
-	public List<Entity> circleSearch(IF_Coordinate_ImmutableView source, int radius, Set<Entity> ignore, Predicator<Entity> predicator, int maxResult) {
+	public List<Entity> circleSearch(IF_Coordinate_Immutable source, int radius, Set<Entity> ignore, Predicator<Entity> predicator, int maxResult) {
 		int counter = 0;
 		int counterGoal = 2 * radius + 1;
 		int currentRadius = 0;
-		IF_Coordinate_ImmutableView currentCoordinate = (IF_Coordinate_ImmutableView) source.copy();
+		IF_Coordinate_Mutable currentCoordinate = source.copy();
 		Orientation orientation = Orientation.NORTH;
 
 		List<Entity> entities = new LinkedList<>();
@@ -295,9 +294,9 @@ public class EntityOnMapService {
 		}
 	}
 
-	private List<Entity> checkCoordinate(Set<Entity> ignore, Predicator<Entity> predicator, IF_Coordinate_ImmutableView currentCoordinate, int maxResult) {
+	private List<Entity> checkCoordinate(Set<Entity> ignore, Predicator<Entity> predicator, IF_Coordinate_Immutable currentCoordinate, int maxResult) {
 		List<Entity> result = null;
-		Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(currentCoordinate.getIX(), currentCoordinate.getIY());
+		Collection<Entity> entities = this.activeEntityMap.getConnectedObjects(currentCoordinate.getColumn(), currentCoordinate.getRow());
 		for (Entity entity : entities) {
 			boolean match = predicator.all(entity);
 			if (match && ignore != null && !ignore.contains(entity)) {
